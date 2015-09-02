@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerScanner", "GingerScanner\GingerScanner.csproj", "{D4797D5D-D4E3-47A6-AC0C-11F037644D95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerScannerTest", "GingerScannerTest\GingerScannerTest.csproj", "{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ginger", "Ginger\Ginger.csproj", "{EB3A5012-F35E-437A-8AE1-D8BC292D7391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerTest", "GingerTest\GingerTest.csproj", "{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4797D5D-D4E3-47A6-AC0C-11F037644D95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4797D5D-D4E3-47A6-AC0C-11F037644D95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4797D5D-D4E3-47A6-AC0C-11F037644D95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4797D5D-D4E3-47A6-AC0C-11F037644D95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB3A5012-F35E-437A-8AE1-D8BC292D7391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB3A5012-F35E-437A-8AE1-D8BC292D7391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB3A5012-F35E-437A-8AE1-D8BC292D7391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB3A5012-F35E-437A-8AE1-D8BC292D7391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

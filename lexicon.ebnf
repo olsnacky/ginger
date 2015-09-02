@@ -1,0 +1,30 @@
+white-space = ? white space characters ? ;
+underscore = "_" ;
+negate = "-";
+
+upper-alphabetic-character = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
+lower-aplhabetic-character = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" ;
+alphabetic-character = lower-alphabetic-character | upper-alphabetic-character ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+integer = [negate](digit | digit, {digit}) ;
+
+boolean = "true" | "false"
+
+all-character = alphabetic-character | digit | underscore | negate ;
+
+operation = "+" ;
+equality = "<" ;
+assignment = "=" ;
+
+open-precedent = "(" ;
+closed-precedent = ")" ;
+open-statement-list = "{" ;
+closed-statement-list = "}" ;
+
+if = "if" ;
+while = "while" ;
+
+type = "int" | "bool"
+
+identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
