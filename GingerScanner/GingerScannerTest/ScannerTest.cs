@@ -1,54 +1,59 @@
-﻿//using System;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using GingerScanner;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GingerScanner;
 
-//namespace GingerScannerTest
-//{
-//    [TestClass]
-//    public class ScannerTest
-//    {
-//        [TestMethod]
-//        public void TestConstructor()
-//        {
-//            string test = "David";
-//            Scanner gs = new Scanner(test);
+namespace GingerScannerTest
+{
+    [TestClass]
+    public class ScannerTest
+    {
+        [TestMethod]
+        public void TestSimple()
+        {
+            string test = @"int george_HELLO = 20;
+                            bool _kim;
+                            if george_HELLO < 30 {
+                                while george_HELLO < 25 {
+                                    george_HELLO = (george_HELLO + 1);
+                                }
+                            }
+                            int paddington = -30;";
 
-//            Assert.AreEqual(test, gs.ReadToEnd());
-//        }
-
-//        [TestMethod]
-//        public void TestNextSingle()
-//        {
-//            string test = "test";
-//            Scanner gs = new Scanner(test);
-
-//            Assert.AreEqual(new Token(test), gs.next());
-//        }
-
-//        [TestMethod]
-//        public void TestNextCouple()
-//        {
-//            string first = "test";
-//            string second = "david";
-//            string test = $"{first} {second}";
-//            Scanner s = new Scanner(test);
-
-//            Assert.AreEqual(new Token(first), s.next());
-//            Assert.AreEqual(new Token(second), s.next());
-//        }
-
-//        [TestMethod]
-//        public void TestNextMulti()
-//        {
-//            string first = "test";
-//            string second = "david";
-//            string third = "hello";
-//            string test = $"{first} {second} {third}";
-//            Scanner s = new Scanner(test);
-
-//            Assert.AreEqual(new Token(first), s.next());
-//            Assert.AreEqual(new Token(second), s.next());
-//            Assert.AreEqual(new Token(third), s.next());
-//        }
-//    }
-//}
+            Scanner gs = new Scanner(test);
+            Assert.AreEqual(GingerToken.Int, gs.next(), "int 1");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 1");
+            Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 1");
+            Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 1");
+            Assert.AreEqual(GingerToken.EndOfLine, gs.next(), "eol 1");
+            Assert.AreEqual(GingerToken.Bool, gs.next(), "bool");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 2");
+            Assert.AreEqual(GingerToken.EndOfLine, gs.next(), "eol 2");
+            Assert.AreEqual(GingerToken.If, gs.next(), "if");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 3");
+            Assert.AreEqual(GingerToken.LessThan, gs.next(), "< 1");
+            Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 2");
+            Assert.AreEqual(GingerToken.OpenStatementList, gs.next(), "osl 1");
+            Assert.AreEqual(GingerToken.While, gs.next(), "while");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 4");
+            Assert.AreEqual(GingerToken.LessThan, gs.next(), "< 2");
+            Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 3");
+            Assert.AreEqual(GingerToken.OpenStatementList, gs.next(), "osl 2");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 5");
+            Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 2");
+            Assert.AreEqual(GingerToken.OpenPrecedent, gs.next(), "op");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 6");
+            Assert.AreEqual(GingerToken.Addition, gs.next(), "+");
+            Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 4");
+            Assert.AreEqual(GingerToken.ClosePrecedent, gs.next(), "cp");
+            Assert.AreEqual(GingerToken.EndOfLine, gs.next(), "eol 3");
+            Assert.AreEqual(GingerToken.CloseStatementList, gs.next(), "csl 1");
+            Assert.AreEqual(GingerToken.CloseStatementList, gs.next(), "csl 2");
+            Assert.AreEqual(GingerToken.Int, gs.next(), "int 2");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 7");
+            Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 3");
+            Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 5");
+            Assert.AreEqual(GingerToken.EndOfLine, gs.next(), "eol 4");
+            Assert.AreEqual(GingerToken.EndOfFile, gs.next(), "eof 1");
+        }
+    }
+}
