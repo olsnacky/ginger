@@ -1,0 +1,3 @@
+statement-list = [statement, [statement-list]] ;
+statement = ("if" | "while"), expression, "{", statement-list, "}" |  type, identifier | identifier, "=", expression ;
+expression = identifier | expression ("+" | "<") expression | integer | "(", expression, ")" ;

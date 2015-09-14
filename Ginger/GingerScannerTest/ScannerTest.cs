@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GingerScanner;
+using Ginger;
+using System.IO;
 
 namespace GingerScannerTest
 {
@@ -10,16 +12,7 @@ namespace GingerScannerTest
         [TestMethod]
         public void TestSimple()
         {
-            string test = @"int george_HELLO = 20;
-                            bool _kim;
-                            if george_HELLO < 30 {
-                                while george_HELLO < 25 {
-                                    george_HELLO = (george_HELLO + 1);
-                                }
-                            }
-                            int paddington = -30;";
-
-            Scanner gs = new Scanner(test);
+            Scanner gs = new Scanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
             Assert.AreEqual(GingerToken.Int, gs.next(), "int 1");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 1");
             Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 1");
@@ -54,6 +47,15 @@ namespace GingerScannerTest
             Assert.AreEqual(GingerToken.IntegerLiteral, gs.next(), "literal 5");
             Assert.AreEqual(GingerToken.EndOfLine, gs.next(), "eol 4");
             Assert.AreEqual(GingerToken.EndOfFile, gs.next(), "eof 1");
+        }
+
+        [TestMethod]
+        public void TestSpy()
+        {
+            Scanner gs = new Scanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
+            Assert.AreEqual(GingerToken.Int, gs.next(), "int 1");
+            Assert.AreEqual(GingerToken.Identifier, gs.spy(), "ident 1/1");
+            Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 2/1");
         }
     }
 }

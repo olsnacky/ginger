@@ -6,6 +6,47 @@ using System.Threading.Tasks;
 
 namespace Ginger
 {
+    public enum GingerToken
+    {
+        Identifier,
+        If,
+        While,
+        IntegerLiteral,
+        Assignment,
+        OpenPrecedent,
+        ClosePrecedent,
+        OpenStatementList,
+        CloseStatementList,
+        LessThan,
+        Addition,
+        Bool,
+        Int,
+        Unknown,
+        EndOfLine,
+        EndOfFile,
+        Statement,
+        StatementList,
+        Expression
+    }
+
+    public static class Grammar
+    {
+        public static bool isType(GingerToken token)
+        {
+            return token == GingerToken.Int || token == GingerToken.Bool;
+        }
+
+        public static bool isControl(GingerToken token)
+        {
+            return token == GingerToken.If || token == GingerToken.While;
+        }
+
+        public static bool isBinaryOperator(GingerToken token)
+        {
+            return token == GingerToken.Addition || token == GingerToken.LessThan;
+        }
+    }
+
     public static class Lexicon
     {
         public static char ASSIGNMENT = '=';

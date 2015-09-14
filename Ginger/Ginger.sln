@@ -13,8 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerTest", "GingerTest\Gi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{91ADF978-DD38-444F-951F-ACDDDD01A568}"
 	ProjectSection(SolutionItems) = preProject
+		..\grammar.ebnf = ..\grammar.ebnf
 		..\lexicon.ebnf = ..\lexicon.ebnf
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerParser", "GingerParser\GingerParser.csproj", "{63C5428C-7821-4B7E-A4DE-85D0672051DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerParserTest", "GingerParserTest\GingerParserTest.csproj", "{408EBAFA-14DB-45AC-A2B2-93015273FEFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +43,14 @@ Global
 		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C5428C-7821-4B7E-A4DE-85D0672051DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C5428C-7821-4B7E-A4DE-85D0672051DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C5428C-7821-4B7E-A4DE-85D0672051DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C5428C-7821-4B7E-A4DE-85D0672051DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408EBAFA-14DB-45AC-A2B2-93015273FEFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408EBAFA-14DB-45AC-A2B2-93015273FEFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408EBAFA-14DB-45AC-A2B2-93015273FEFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408EBAFA-14DB-45AC-A2B2-93015273FEFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

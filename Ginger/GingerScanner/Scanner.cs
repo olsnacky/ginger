@@ -7,32 +7,13 @@ using Ginger;
 
 namespace GingerScanner
 {
-    public enum GingerToken
-    {
-        Identifier,
-        If,
-        While,
-        IntegerLiteral,
-        Assignment,
-        OpenPrecedent,
-        ClosePrecedent,
-        OpenStatementList,
-        CloseStatementList,
-        LessThan,
-        Addition,
-        Bool,
-        Int,
-        Unknown,
-        EndOfLine,
-        EndOfFile
-    }
-
-    public class Scanner : System.IO.StringReader
+    public class Scanner : System.IO.StreamReader
     {
         private const char EOF = '\0';
         private const int NO_MORE_CHAR = -1;
         private char currentChar;
         private List<char> semanticValue;
+        private int charCount;
 
         public char[] tokenValue
         {
@@ -42,10 +23,17 @@ namespace GingerScanner
             }
         }
 
-        public Scanner(string source) : base(source)
+        public Scanner(string filename) : base(filename)
         {
+            charCount = 0;
             clearSemanticValue();
             nextChar();
+        }
+
+        public GingerToken spy()
+        {
+            Scanner s = (Scanner)this.MemberwiseClone();
+            return s.next();
         }
 
         public GingerToken next()
@@ -76,7 +64,8 @@ namespace GingerScanner
                     nextChar();
                 } while (Lexicon.isKeywordOrIdentifierChar(currentChar));
 
-                if (tokenValue.SequenceEqual(Lexicon.IF)) {
+                if (tokenValue.SequenceEqual(Lexicon.IF))
+                {
                     return GingerToken.If;
                 }
                 else if (tokenValue.SequenceEqual(Lexicon.WHILE))
@@ -135,7 +124,8 @@ namespace GingerScanner
             {
                 nextChar();
                 return GingerToken.Assignment;
-            } else if (currentChar == EOF)
+            }
+            else if (currentChar == EOF)
             {
                 nextChar();
                 return GingerToken.EndOfFile;
@@ -159,6 +149,7 @@ namespace GingerScanner
             }
 
             currentChar = c;
+            charCount++;
         }
 
         private void clearSemanticValue()

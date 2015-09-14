@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}</ProjectGuid>
+    <ProjectGuid>{408EBAFA-14DB-45AC-A2B2-93015273FEFB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GingerTest</RootNamespace>
-    <AssemblyName>GingerTest</AssemblyName>
+    <RootNamespace>GingerParserTest</RootNamespace>
+    <AssemblyName>GingerParserTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,13 +50,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="LexiconTest.cs" />
+    <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ginger\Ginger.csproj">
-      <Project>{eb3a5012-f35e-437a-8ae1-d8bc292d7391}</Project>
-      <Name>Ginger</Name>
+    <EmbeddedResource Include="Data\parser.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GingerParser\GingerParser.csproj">
+      <Project>{63c5428c-7821-4b7e-a4de-85d0672051dc}</Project>
+      <Name>GingerParser</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

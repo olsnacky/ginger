@@ -1,0 +1,12 @@
+﻿int george_HELLO
+george_HELLO = 20
+bool _kim
+
+if george_HELLO < 30 {
+	while george_HELLO < 25 {
+		george_HELLO = (george_HELLO + 1)
+    }
+}
+
+int paddington
+paddington = -30

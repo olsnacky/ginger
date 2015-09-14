@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612}</ProjectGuid>
+    <ProjectGuid>{CF7FD46B-AFD5-4C7D-9516-F102DDC61C86}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GingerScannerTest</RootNamespace>
-    <AssemblyName>GingerScannerTest</AssemblyName>
+    <RootNamespace>GingerTest</RootNamespace>
+    <AssemblyName>GingerTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -52,13 +52,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ScannerTest.cs" />
+    <Compile Include="GrammarTest.cs" />
+    <Compile Include="LexiconTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GingerScanner\GingerScanner.csproj">
-      <Project>{d4797d5d-d4e3-47a6-ac0c-11f037644d95}</Project>
-      <Name>GingerScanner</Name>
+    <ProjectReference Include="..\Ginger\Ginger.csproj">
+      <Project>{eb3a5012-f35e-437a-8ae1-d8bc292d7391}</Project>
+      <Name>Ginger</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
