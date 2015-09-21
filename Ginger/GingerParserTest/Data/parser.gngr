@@ -9,4 +9,4 @@ if george_HELLO < 30 {
 }
 
 int paddington
-paddington = -30
+paddington = george_HELLO

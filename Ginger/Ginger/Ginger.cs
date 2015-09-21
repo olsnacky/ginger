@@ -43,7 +43,12 @@ namespace Ginger
 
         public static bool isBinaryOperator(GingerToken token)
         {
-            return token == GingerToken.Addition || token == GingerToken.LessThan;
+            return token == GingerToken.Addition;
+        }
+
+        public static bool isCompareOperator(GingerToken token)
+        {
+            return token == GingerToken.LessThan;
         }
     }
 

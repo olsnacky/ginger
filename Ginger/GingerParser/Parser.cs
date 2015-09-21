@@ -12,6 +12,15 @@ namespace GingerParser
     {
         private Scanner scanner;
         private GingerToken currentScannerToken;
+        private StatementList statementList;
+
+        public StatementList ast
+        {
+            get
+            {
+                return statementList;
+            }
+        }
 
         public Parser(string source)
         {
@@ -21,14 +30,15 @@ namespace GingerParser
         public void parse()
         {
             nextScannerToken();
-            parseStatementList(GingerToken.EndOfFile);
+            statementList = parseStatementList(GingerToken.EndOfFile);
         }
 
-        private void parseStatementList(GingerToken endToken)
+        private StatementList parseStatementList(GingerToken endToken)
         {
+            StatementList sl = new StatementList();
             do
             {
-                parseStatement();
+                sl.add(parseStatement());
                 nextScannerToken();
 
                 //if (currentScannerToken != GingerToken.EndOfLine)
@@ -38,73 +48,136 @@ namespace GingerParser
 
                 //nextScannerToken();
             } while (currentScannerToken != endToken);
+
+            return sl;
         }
 
-        private void parseStatement()
+        private NodeCollection parseStatement()
         {
+            NodeCollection nc;
             // statement = ("if" | "while"), expression, "{", statement-list, "}"
             if (Grammar.isControl(currentScannerToken))
             {
+                StatementList sl;
+                GingerToken controlToken = currentScannerToken;
+
                 nextScannerToken();
-                parseExpression();
+                Compare condition = (Compare)parseExpression();
 
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
                 {
                     nextScannerToken();
-                    parseStatementList(GingerToken.CloseStatementList);
+                    sl = parseStatementList(GingerToken.CloseStatementList);
+                }
+                else
+                {
+                    throw new ParseException();
+                }
+
+                if (controlToken == GingerToken.While)
+                {
+                    nc = new While(condition, sl);
+                }
+                else
+                {
+                    nc = new Branch(condition, sl);
+                }
+            }
+            // statement = type, identifier
+            else if (Grammar.isType(currentScannerToken))
+            {
+                Node type;
+                if (currentScannerToken == GingerToken.Int)
+                {
+                    type = new Integer();
+                }
+                else
+                {
+                    type = new Boolean();
+                }
+
+
+                nextScannerToken();
+                if (currentScannerToken != GingerToken.Identifier)
+                {
+                    throw new ParseException();
+                }
+                else
+                {
+                    nc = new Declaration(type, new Identifier());
+                }
+            }
+            // statement = identifier, "=", expression
+            else if (currentScannerToken == GingerToken.Identifier)
+            {
+                Identifier identifier = new Identifier();
+                nextScannerToken();
+                if (currentScannerToken == GingerToken.Assignment)
+                {
+                    nextScannerToken();
+                    nc = new Assign(identifier, parseExpression());
                 }
                 else
                 {
                     throw new ParseException();
                 }
             }
-            // statement = type, identifier
-            else if (Grammar.isType(currentScannerToken))
-            {
-                nextScannerToken();
-                if (currentScannerToken != GingerToken.Identifier)
-                {
-                    throw new ParseException();
-                }
-            }
-            // statement = identifier, "=", expression
-            else if (currentScannerToken == GingerToken.Identifier)
-            {
-                nextScannerToken();
-                if (currentScannerToken == GingerToken.Assignment)
-                {
-                    nextScannerToken();
-                    parseExpression();
-                }
-            }
             else
             {
                 throw new ParseException();
             }
+
+            return nc;
         }
 
-        private void parseExpression()
+        private Node parseExpression()
         {
+            Node n;
             // expression = identifier | expression("+" | "<") expression | integer
             if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.IntegerLiteral)
             {
-                spyScannerToken();
-                if (Grammar.isBinaryOperator(currentScannerToken))
+                Node value;
+                if (currentScannerToken == GingerToken.Identifier)
                 {
+                    value = new Identifier();
+                }
+                else
+                {
+                    value = new Literal();
+                }
+
+                n = value;
+
+                spyScannerToken();
+                if (Grammar.isBinaryOperator(currentScannerToken) || Grammar.isCompareOperator(currentScannerToken))
+                {
+                    NodeCollection nc;
+                    GingerToken opToken;
+
                     // move to the spied position
                     nextScannerToken();
+                    opToken = currentScannerToken;
 
                     // move to the next position
                     nextScannerToken();
-                    parseExpression();
+                    if (Grammar.isBinaryOperator(opToken))
+                    {
+                        nc = new BinaryOperation(currentScannerToken, value, parseExpression());
+                    }
+                    else
+                    {
+                        nc = new Compare(currentScannerToken, value, parseExpression());
+                    }
+
+                    n = nc;
                 }
             }
             // expression = "(", expression, ")"
             else if (currentScannerToken == GingerToken.OpenPrecedent)
             {
                 nextScannerToken();
-                parseExpression();
+                n = parseExpression();
 
                 nextScannerToken();
                 if (currentScannerToken != GingerToken.ClosePrecedent)
@@ -116,6 +189,8 @@ namespace GingerParser
             {
                 throw new ParseException();
             }
+
+            return n;
         }
 
         private void nextScannerToken()

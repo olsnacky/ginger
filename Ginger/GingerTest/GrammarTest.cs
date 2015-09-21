@@ -44,7 +44,22 @@ namespace GingerTest
         {
             foreach (GingerToken token in Enum.GetValues(typeof(GingerToken)))
             {
-                if (token == GingerToken.Addition || token == GingerToken.LessThan)
+                if (token == GingerToken.Addition)
+                {
+                    Assert.IsTrue(Grammar.isBinaryOperator(token), token.ToString());
+                }
+                else
+                {
+                    Assert.IsFalse(Grammar.isBinaryOperator(token), token.ToString());
+                }
+            }
+        }
+
+        public void CompareOperator()
+        {
+            foreach (GingerToken token in Enum.GetValues(typeof(GingerToken)))
+            {
+                if (token == GingerToken.LessThan)
                 {
                     Assert.IsTrue(Grammar.isBinaryOperator(token), token.ToString());
                 }
