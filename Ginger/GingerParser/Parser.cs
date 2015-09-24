@@ -62,7 +62,7 @@ namespace GingerParser
                 GingerToken controlToken = currentScannerToken;
 
                 nextScannerToken();
-                Compare condition = (Compare)parseExpression();
+                Compare condition = parseCondition();
 
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
@@ -131,10 +131,28 @@ namespace GingerParser
             return nc;
         }
 
+        private Compare parseCondition()
+        {
+            // expression, "<", expression
+            Node leftExpression = parseExpression();
+
+            nextScannerToken();
+            if (Grammar.isCompareOperator(currentScannerToken))
+            {
+                GingerToken compareOp = currentScannerToken;
+                nextScannerToken();
+                return new Compare(compareOp, leftExpression, parseExpression());
+            }
+            else
+            {
+                throw new ParseException();
+            }
+        }
+
         private Node parseExpression()
         {
             Node n;
-            // expression = identifier | expression("+" | "<") expression | integer
+            // expression = identifier | expression, "+", expression | integer
             if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.IntegerLiteral)
             {
                 Node value;
@@ -150,9 +168,9 @@ namespace GingerParser
                 n = value;
 
                 spyScannerToken();
-                if (Grammar.isBinaryOperator(currentScannerToken) || Grammar.isCompareOperator(currentScannerToken))
+                if (Grammar.isBinaryOperator(currentScannerToken))
                 {
-                    NodeCollection nc;
+                    //NodeCollection nc;
                     GingerToken opToken;
 
                     // move to the spied position
@@ -161,16 +179,18 @@ namespace GingerParser
 
                     // move to the next position
                     nextScannerToken();
-                    if (Grammar.isBinaryOperator(opToken))
-                    {
-                        nc = new BinaryOperation(currentScannerToken, value, parseExpression());
-                    }
-                    else
-                    {
-                        nc = new Compare(currentScannerToken, value, parseExpression());
-                    }
 
-                    n = nc;
+                    n = new BinaryOperation(currentScannerToken, value, parseExpression());
+                   // if (Grammar.isBinaryOperator(opToken))
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                      //  nc = new Compare(currentScannerToken, value, parseExpression());
+                    //}
+
+                    //n = nc;
                 }
             }
             // expression = "(", expression, ")"

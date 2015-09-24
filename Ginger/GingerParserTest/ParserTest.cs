@@ -208,6 +208,65 @@ namespace GingerParserTest
         }
 
         [TestMethod]
+        public void Precedence()
+        {
+            const int COUNT = 13;
+            List<Node> nodes = new List<Node>();
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\precedence.gngr"));
+            parser.parse();
+            TestVisitor tv = new TestVisitor(parser.ast);
+
+            for (int i = 0; i < COUNT; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
+                        break;
+                    case 1:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Branch), $"{i}");
+                        break;
+                    case 2:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Compare), $"{i}");
+                        break;
+                    case 3:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
+                        break;
+                    case 4:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 5:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        break;
+                    case 6:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
+                        break;
+                    case 7:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 8:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        break;
+                    case 9:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
+                        break;
+                    case 10:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        break;
+                    case 11:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 12:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    default:
+                        Assert.Fail();
+                        break;
+                }
+            }
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ParseException))]
         public void NotOpenStatement()
         {
