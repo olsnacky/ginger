@@ -40,13 +40,6 @@ namespace GingerParser
             {
                 sl.add(parseStatement());
                 nextScannerToken();
-
-                //if (currentScannerToken != GingerToken.EndOfLine)
-                //{
-                //    throw new ParseException();
-                //}
-
-                //nextScannerToken();
             } while (currentScannerToken != endToken);
 
             return sl;
@@ -181,16 +174,6 @@ namespace GingerParser
                     nextScannerToken();
 
                     n = new BinaryOperation(currentScannerToken, value, parseExpression());
-                   // if (Grammar.isBinaryOperator(opToken))
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                      //  nc = new Compare(currentScannerToken, value, parseExpression());
-                    //}
-
-                    //n = nc;
                 }
             }
             // expression = "(", expression, ")"
