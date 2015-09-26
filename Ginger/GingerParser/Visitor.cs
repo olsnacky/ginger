@@ -20,4 +20,94 @@ namespace GingerParser
         void visitIdentifier(Identifier i);
         void visitLiteral(Literal l);
     }
+
+    public class ScopeVisitor : NodeVisitor
+    {
+        private Scope currentScope;
+
+        public ScopeVisitor(StatementList ast)
+        {
+            ast.accept(this);
+        }
+
+        public void visitStatementList(StatementList sl)
+        {
+            Scope parentScope = currentScope;
+            // create and assign a new scope to the statement list
+            if (parentScope != null)
+            {
+                currentScope = new Scope(parentScope);
+            }
+            else
+            {
+                currentScope = new Scope();
+            }
+
+            sl.scope = currentScope;
+
+            visitChildren(sl);
+
+            // now that we've finished with the statement list return to the previous scope
+            currentScope = parentScope;
+        }
+
+        public void visitIdentifier(Identifier i)
+        {
+            i.declaration = currentScope.find(i);
+        }
+
+        public void visitDeclaration(Declaration d)
+        {
+            currentScope.add(d);
+            visitChildren(d);
+        }
+
+        public void visitWhile(While w)
+        {
+            visitChildren(w);
+        }
+
+        public void visitBranch(Branch b)
+        {
+            visitChildren(b);
+        }
+
+        public void visitCompare(Compare c)
+        {
+            visitChildren(c);
+        }
+
+        public void visitBinaryOperation(BinaryOperation bo)
+        {
+            visitChildren(bo);
+        }
+
+        public void visitAssign(Assign a)
+        {
+            visitChildren(a);
+        }
+
+        public void visitInteger(Integer i)
+        {
+            return;
+        }
+
+        public void visitBoolean(Boolean b)
+        {
+            return;
+        }
+
+        public void visitLiteral(Literal l)
+        {
+            return;
+        }
+
+        private void visitChildren(NodeCollection nc)
+        {
+            foreach (Node n in nc)
+            {
+                n.accept(this);
+            }
+        }
+    }
 }

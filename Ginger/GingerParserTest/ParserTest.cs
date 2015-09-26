@@ -267,6 +267,101 @@ namespace GingerParserTest
         }
 
         [TestMethod]
+        public void SimpleScope()
+        {
+            const int COUNT = 29;
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\scope.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            TestVisitor tv = new TestVisitor(parser.ast);
+
+            // empty declaration to fool compiler
+            Declaration george = new Declaration(new Integer(), new Identifier("geoerge1Test"));
+            Declaration kim = new Declaration(new Integer(), new Identifier("kim1Test"));
+            Declaration subKim = new Declaration(new Integer(), new Identifier("kim2Test"));
+
+            for (int i = 0; i < COUNT; i++)
+            {
+                switch (i)
+                {
+                    case 1:
+                        george = tv.visitedNodes[i] as Declaration;
+                        break;
+                    case 3:
+                        Identifier ident = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(george, ident.declaration, $"{i}");
+                        break;
+                    case 4:
+                        kim = tv.visitedNodes[i] as Declaration;
+                        break;
+                    case 6:
+                        Identifier ident2 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(kim, ident2.declaration, $"{i}");
+                        break;
+                    case 8:
+                        Identifier ident3 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(george, ident3.declaration, $"{i}");
+                        break;
+                    case 11:
+                        Identifier ident4 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(kim, ident4.declaration, $"{i}");
+                        break;
+                    case 13:
+                        Identifier ident5 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(george, ident5.declaration, $"{i}");
+                        break;
+                    case 17:
+                        Identifier ident6 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(george, ident6.declaration, $"{i}");
+                        break;
+                    case 18:
+                        Identifier ident7 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(kim, ident7.declaration, $"{i}");
+                        break;
+                    case 20:
+                        subKim = tv.visitedNodes[i] as Declaration;
+                        break;
+                    case 22:
+                        Identifier ident8 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(subKim, ident8.declaration, $"{i}");
+                        break;
+                    case 24:
+                        Identifier ident9 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(subKim, ident9.declaration, $"{i}");
+                        break;
+                    case 27:
+                        Identifier ident10 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(george, ident10.declaration, $"{i}");
+                        break;
+                    case 28:
+                        Identifier ident11 = tv.visitedNodes[i] as Identifier;
+                        Assert.AreEqual(subKim, ident11.declaration, $"{i}");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ScopeException))]
+        public void DoubleDeclaration()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\DoubleDeclaration.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ScopeException))]
+        public void IdentifierNotInScope()
+        {
+            Scope scope = new Scope();
+            Identifier ident = new Identifier("david");
+            scope.find(ident);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ParseException))]
         public void NotOpenStatement()
         {

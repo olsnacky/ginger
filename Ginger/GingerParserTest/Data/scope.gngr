@@ -1,0 +1,11 @@
+﻿int george
+int kim
+
+george = 1
+kim = george + 6
+
+if george < kim {
+	int kim
+	kim = 4
+	george = kim
+}

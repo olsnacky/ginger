@@ -98,13 +98,13 @@ namespace GingerParser
                 }
                 else
                 {
-                    nc = new Declaration(type, new Identifier());
+                    nc = new Declaration(type, new Identifier(new string(scanner.tokenValue)));
                 }
             }
             // statement = identifier, "=", expression
             else if (currentScannerToken == GingerToken.Identifier)
             {
-                Identifier identifier = new Identifier();
+                Identifier identifier = new Identifier(new string(scanner.tokenValue));
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.Assignment)
                 {
@@ -151,7 +151,7 @@ namespace GingerParser
                 Node value;
                 if (currentScannerToken == GingerToken.Identifier)
                 {
-                    value = new Identifier();
+                    value = new Identifier(new string(scanner.tokenValue));
                 }
                 else
                 {

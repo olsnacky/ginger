@@ -10,6 +10,14 @@ namespace GingerParser
 {
     public abstract class Node
     {
+        private Node _parent;
+
+        public Node parent
+        {
+            get { return _parent; }
+            set { _parent = value; }
+        }
+
         public virtual void add(Node n)
         {
             throw new NotImplementedException();
@@ -39,6 +47,7 @@ namespace GingerParser
 
         public override void add(Node n)
         {
+            n.parent = this;
             children.Add(n);
         }
 
@@ -65,9 +74,17 @@ namespace GingerParser
 
     public class StatementList : NodeCollection
     {
+        private Scope _scope;
+
+        public Scope scope
+        {
+            get { return _scope; }
+            set { _scope = value; }
+        }
+
         public StatementList() : base()
         {
-
+            
         }
 
         public override void accept(NodeVisitor v)
@@ -138,7 +155,13 @@ namespace GingerParser
 
     public class Declaration : NodeCollection
     {
-        public Declaration(Node type, Node identifier)
+        private const int IDENTIFIER_INDEX = 1;
+        public Identifier identifier
+        {
+            get { return (Identifier)this.get(IDENTIFIER_INDEX); }
+        }
+
+        public Declaration(Node type, Identifier identifier)
         {
             this.add(type);
             this.add(identifier);
@@ -148,6 +171,22 @@ namespace GingerParser
         {
             v.visitDeclaration(this);
         }
+
+        //public override bool Equals(object obj)
+        //{
+        //    Declaration dec2 = obj as Declaration;
+        //    if (dec2 == null)
+        //    {
+        //        return false;
+        //    }
+
+        //    return identifier == dec2.identifier && this.parent == dec2.parent;
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    return base.GetHashCode();
+        //}
     }
 
     public class Assign : NodeCollection
@@ -192,13 +231,50 @@ namespace GingerParser
 
     public class Identifier : Node
     {
-        public Identifier() : base() {
+        private Declaration _declaration;
+        private string _name;
 
+        // the original declaration for this identifier
+        public Declaration declaration
+        {
+            get { return _declaration; }
+            set { _declaration = value; }
+        }
+
+        public string name
+        {
+            get { return _name; }
+        }
+
+        public Identifier(string name) : base() {
+            this._name = name;
         }
 
         public override void accept(NodeVisitor v)
         {
             v.visitIdentifier(this);
+        }
+
+        public override bool Equals(object obj)
+        {
+            Identifier ident2 = obj as Identifier;
+            if (ident2 == null)
+            {
+                return false;
+            }
+
+            return this.name == ident2.name;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                const int HASH_MULTIPLIER = 23;
+                int hash = 17;
+                hash = hash * HASH_MULTIPLIER + _name.GetHashCode();
+                return hash;
+            }
         }
     }
 
