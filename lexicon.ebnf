@@ -19,8 +19,7 @@ closed-statement-list = "}" ;
 if = "if" ;
 while = "while" ;
 
-type = "int" | "bool"
+int = "int"
+bool = "bool"
 
 identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
-
-end-of-statement = ";" ;
