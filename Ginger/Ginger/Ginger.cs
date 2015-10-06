@@ -66,6 +66,7 @@ namespace Ginger
         public static char CLOSE_STATEMENT_LIST = '}';
         public static char[] INT = { 'i', 'n', 't' };
         public static char[] BOOL = { 'b', 'o', 'o', 'l' };
+        public static char ZERO = '0';
 
         private static char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         private static char[] UPPER_ALPHABETIC_CHAR = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -84,7 +85,7 @@ namespace Ginger
 
         public static bool isStartIntegerChar(char c)
         {
-            return (isDigit(c) && !(c == '0')) || c == '-';
+            return isDigit(c) || c == '-';
         }
 
         public static bool isStartKeywordOrIdentifierChar(char c)

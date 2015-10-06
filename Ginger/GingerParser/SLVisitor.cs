@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GingerUtil;
 
 namespace GingerParser
 {
-    public interface NodeVisitor
+    public interface SLVisitor : NodeVisitor
     {
         void visitStatementList(StatementList sl);
         void visitWhile(While w);
@@ -21,7 +22,7 @@ namespace GingerParser
         void visitLiteral(Literal l);
     }
 
-    public class ScopeVisitor : NodeVisitor
+    public class ScopeVisitor : SLVisitor
     {
         private Scope currentScope;
 

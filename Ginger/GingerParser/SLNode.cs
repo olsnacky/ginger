@@ -5,74 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ginger;
+using GingerUtil;
 
 namespace GingerParser
 {
-    public abstract class Node
+    public abstract class SLNodeCollection : NodeCollection
     {
-        private Node _parent;
+        //public SLNodeCollection() : base()
+        //{
 
-        public Node parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
-        }
-
-        public virtual void add(Node n)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void remove(Node n)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual Node get(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public abstract void accept(NodeVisitor v);
-    }
-
-    public abstract class NodeCollection : Node, IEnumerable<Node>
-    {
-        private List<Node> children;
-
-        public NodeCollection()
-        {
-            children = new List<Node>();
-        }
+        //}
 
         public override void add(Node n)
         {
-            n.parent = this;
+            n.parents.Clear();
+            n.parents.Add(this);
             children.Add(n);
-        }
-
-        public override void remove(Node n)
-        {
-            children.Remove(n);
-        }
-
-        public override Node get(int index)
-        {
-            return children[index];
-        }
-
-        public IEnumerator<Node> GetEnumerator()
-        {
-            return children.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 
-    public class StatementList : NodeCollection
+    public class StatementList : SLNodeCollection
     {
         private Scope _scope;
 
@@ -89,11 +41,11 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitStatementList(this);
+            ((SLVisitor)v).visitStatementList(this);
         }
     }
 
-    public class While : NodeCollection
+    public class While : SLNodeCollection
     {
         public While(Compare condition, StatementList body) : base()
         {
@@ -103,12 +55,22 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitWhile(this);
+            ((SLVisitor)v).visitWhile(this);
         }
     }
 
-    public class Branch : NodeCollection
+    public class Branch : SLNodeCollection
     {
+        public Compare condition
+        {
+            get { return (Compare)this.get(0); }
+        }
+
+        public StatementList body
+        {
+            get { return (StatementList)this.get(1); }
+        }
+
         public Branch(Compare condition, StatementList body) : base()
         {
             this.add(condition);
@@ -117,11 +79,11 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitBranch(this);
+            ((SLVisitor)v).visitBranch(this);
         }
     }
 
-    public class Compare : NodeCollection
+    public class Compare : SLNodeCollection
     {
         private GingerToken compareOp;
         public Compare(GingerToken compareOp, Node value1, Node value2) : base()
@@ -133,11 +95,11 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitCompare(this);
+            ((SLVisitor)v).visitCompare(this);
         }
     }
 
-    public class BinaryOperation : NodeCollection
+    public class BinaryOperation : SLNodeCollection
     {
         private GingerToken binaryOp;
         public BinaryOperation(GingerToken binaryOp, Node value1, Node value2) : base()
@@ -149,11 +111,11 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitBinaryOperation(this);
+            ((SLVisitor)v).visitBinaryOperation(this);
         }
     }
 
-    public class Declaration : NodeCollection
+    public class Declaration : SLNodeCollection
     {
         private const int IDENTIFIER_INDEX = 1;
         public Identifier identifier
@@ -169,27 +131,11 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitDeclaration(this);
+            ((SLVisitor)v).visitDeclaration(this);
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    Declaration dec2 = obj as Declaration;
-        //    if (dec2 == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    return identifier == dec2.identifier && this.parent == dec2.parent;
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    return base.GetHashCode();
-        //}
     }
 
-    public class Assign : NodeCollection
+    public class Assign : SLNodeCollection
     {
         public Assign(Identifier identifier, Node expression)
         {
@@ -199,7 +145,7 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitAssign(this);
+            ((SLVisitor)v).visitAssign(this);
         }
     }
 
@@ -212,7 +158,7 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitInteger(this);
+            ((SLVisitor)v).visitInteger(this);
         }
     }
 
@@ -225,7 +171,7 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitBoolean(this);
+            ((SLVisitor)v).visitBoolean(this);
         }
     }
 
@@ -252,7 +198,7 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitIdentifier(this);
+            ((SLVisitor)v).visitIdentifier(this);
         }
 
         public override bool Equals(object obj)
@@ -286,7 +232,7 @@ namespace GingerParser
 
         public override void accept(NodeVisitor v)
         {
-            v.visitLiteral(this);
+            ((SLVisitor)v).visitLiteral(this);
         }
     }
 }

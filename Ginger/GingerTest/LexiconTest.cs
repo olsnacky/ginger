@@ -219,7 +219,7 @@ namespace GingerTest
         [TestMethod]
         public void StartIntegerChar()
         {
-            char[] allowed = { '1', '2', '3', '4', '5', '6', '7', '8', '9', NEGATE };
+            char[] allowed = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', NEGATE };
             foreach (char c in testChars)
             {
                 if (allowed.Contains(c))

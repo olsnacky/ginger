@@ -14,8 +14,7 @@ integer = [-](digit | digit, {digit}) ;
 identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
 
 (* valid binary operations *)
-operation = "+" ;
-equality = "<" ;
+binary-operator = "+" | "<" ;
 
 (* assignment symbol *)
 assignment = "=" ;

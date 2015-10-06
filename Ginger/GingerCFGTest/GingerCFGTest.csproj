@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{408EBAFA-14DB-45AC-A2B2-93015273FEFB}</ProjectGuid>
+    <ProjectGuid>{2398846E-104F-4091-A0DD-B190FD48B928}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GingerParserTest</RootNamespace>
-    <AssemblyName>GingerParserTest</AssemblyName>
+    <RootNamespace>GingerCFGTest</RootNamespace>
+    <AssemblyName>GingerCFGTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,68 +50,32 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ParserTest.cs" />
+    <Compile Include="GingerCFGTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\parser.gngr">
+    <None Include="Data\NestedIfWithStatements.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\NestedIfNoStatements.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GingerCFG\GingerCFG.csproj">
+      <Project>{764ca675-2b95-4d5e-a550-53cc6c94e214}</Project>
+      <Name>GingerCFG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GingerParser\GingerParser.csproj">
       <Project>{63c5428c-7821-4b7e-a4de-85d0672051dc}</Project>
       <Name>GingerParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerUtil\GingerUtil.csproj">
-      <Project>{591a803a-60f9-4625-b214-09e2b6e4dc8d}</Project>
+      <Project>{591A803A-60F9-4625-B214-09E2B6E4DC8D}</Project>
       <Name>GingerUtil</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\NotOpenStatement.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\IdentifierDoesNotFollowType.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionDoesNotFollowAssignment.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionInsteadOfStatement.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionNotClosed.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionNotFound.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\precedence.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\DoubleDeclaration.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\scope.gngr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

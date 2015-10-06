@@ -3,10 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GingerParser;
 using System.IO;
 using System.Collections.Generic;
+using GingerUtil;
 
 namespace GingerParserTest
 {
-    public class TestVisitor : NodeVisitor
+    public class TestVisitor : SLVisitor
     {
         public List<Node> visitedNodes;
 

@@ -1,6 +1,6 @@
-(* statements *)
-statement-list = [statement, [statement-list]] ;
-statement = ("if" | "while"), expression, "{", statement-list, "}" |  type, identifier | identifier, "=", expression ;
-
 (* expressions *)
-expression = identifier | expression ("+" | "<") expression | integer | "(", expression, ")" ;
+expression = identifier | expression, binary-operator, expression | integer | open-precedent, expression, closed-precedent ;
+
+(* statements *)
+statement = (if | while), expression, open-statement-list, statement-list, closed-statement-list |  type, identifier | identifier, assignment, expression ;
+statement-list = [statement, [statement-list]] ;
