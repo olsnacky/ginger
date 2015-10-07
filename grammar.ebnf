@@ -1,6 +1,7 @@
 (* expressions *)
 expression = identifier | expression, binary-operator, expression | integer | open-precedent, expression, closed-precedent ;
+condition-expression = expression, condition-operator, expression
 
 (* statements *)
-statement = (if | while), expression, open-statement-list, statement-list, closed-statement-list |  type, identifier | identifier, assignment, expression ;
+statement = (if | while), condition-expression, open-statement-list, statement-list, closed-statement-list |  type, identifier | identifier, assignment, expression ;
 statement-list = [statement, [statement-list]] ;

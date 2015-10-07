@@ -56,7 +56,7 @@ namespace GingerParser
                 GingerToken controlToken = currentScannerToken;
 
                 nextScannerToken();
-                Compare condition = parseCondition();
+                Compare condition = parseConditionExpression();
 
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
@@ -125,13 +125,13 @@ namespace GingerParser
             return nc;
         }
 
-        private Compare parseCondition()
+        private Compare parseConditionExpression()
         {
             // expression, "<", expression
             Node leftExpression = parseExpression();
 
             nextScannerToken();
-            if (Grammar.isCompareOperator(currentScannerToken))
+            if (Grammar.isConditionOperator(currentScannerToken))
             {
                 GingerToken compareOp = currentScannerToken;
                 nextScannerToken();

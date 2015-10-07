@@ -46,7 +46,7 @@ namespace Ginger
             return token == GingerToken.Addition;
         }
 
-        public static bool isCompareOperator(GingerToken token)
+        public static bool isConditionOperator(GingerToken token)
         {
             return token == GingerToken.LessThan;
         }

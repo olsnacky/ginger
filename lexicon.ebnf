@@ -13,8 +13,9 @@ integer = [-](digit | digit, {digit}) ;
 (* valid variable names *)
 identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
 
-(* valid binary operations *)
-binary-operator = "+" | "<" ;
+(* valid operations *)
+binary-operator = "+" ;
+condition-operator = "<" ;
 
 (* assignment symbol *)
 assignment = "=" ;
@@ -34,4 +35,3 @@ while = "while" ;
 (* types *)
 int = "int"
 bool = "bool"
-
