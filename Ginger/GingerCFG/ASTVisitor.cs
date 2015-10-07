@@ -107,6 +107,8 @@ namespace GingerCFG
         {
             if (sl.Count() > 0)
             {
+                // use this to determine if we need to link the node succeeding
+                // this statement list to be linked to it
                 bool link = true;
                 Node linkNode;
 
@@ -114,9 +116,10 @@ namespace GingerCFG
                 CFGBasicBlock slbb = new CFGBasicBlock();
                 linkNode = slbb;
 
+                // add this basic block as the child to the current node
+                // and then set it as the current node
                 this.currentNode.add(slbb);
                 this.currentNode = slbb;
-                //linkParentNodes();
 
                 for (int i = 0; i < sl.Count(); i++)
                 {
@@ -124,17 +127,20 @@ namespace GingerCFG
                     // create a new basic block and link it
                     if (this.currentNode != slbb)
                     {
+                        // do not link this block to the successer of the statement list
                         link = false;
                         // if there are more statements to come
                         CFGBasicBlock bb = new CFGBasicBlock();
-                        //linkNode = bb;
+
+                        // we've just exited out of some kinf of branch, make this ne wblock as child of it
                         this.currentNode.add(bb);
-                        //linkParentNodes();
+                        // now make this new block a child of the original statement list
                         slbb.add(bb);
+                        // now the new block becomes the representative statement list
                         slbb = bb;
                         this.currentNode = bb;
-                        //linkParentNodes();
-                        clearParentNodes();
+                        // why does this work?????
+                        clearLinkNodes();
                     }
 
                     sl.get(i).accept(this);
@@ -164,7 +170,7 @@ namespace GingerCFG
             }
         }
 
-        private void clearParentNodes()
+        private void clearLinkNodes()
         {
             this.linkNodes.Clear();
         }
