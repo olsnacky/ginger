@@ -12,6 +12,7 @@ namespace GingerCFG
     {
         private CFGEntry _cfg;
         private Node currentNode;
+        private List<Node> linkNodes;
         //private Node previousNode;
 
         public CFGEntry cfg
@@ -26,9 +27,23 @@ namespace GingerCFG
 
         public ASTVisitor(StatementList ast)
         {
+            this.linkNodes = new List<Node>();
             this._cfg = new CFGEntry();
             this.currentNode = this._cfg;
             ast.accept(this);
+
+            CFGExit exit = new CFGExit();
+
+            if (this.linkNodes.Count > 0)
+            {
+                this.currentNode = new CFGExit();
+                linkParentNodes();
+            }
+            else
+            {
+                this.currentNode.add(exit);
+            }
+            
             //this.currentBasicBlock = null;
             //this.previousNode = this._cfg;
         }
@@ -92,10 +107,16 @@ namespace GingerCFG
         {
             if (sl.Count() > 0)
             {
+                bool link = true;
+                Node linkNode;
+
                 // the basic block representing the current point in the statement list
                 CFGBasicBlock slbb = new CFGBasicBlock();
+                linkNode = slbb;
+
                 this.currentNode.add(slbb);
                 this.currentNode = slbb;
+                //linkParentNodes();
 
                 for (int i = 0; i < sl.Count(); i++)
                 {
@@ -103,23 +124,49 @@ namespace GingerCFG
                     // create a new basic block and link it
                     if (this.currentNode != slbb)
                     {
+                        link = false;
                         // if there are more statements to come
                         CFGBasicBlock bb = new CFGBasicBlock();
-                        currentNode.add(bb);
+                        //linkNode = bb;
+                        this.currentNode.add(bb);
+                        //linkParentNodes();
                         slbb.add(bb);
                         slbb = bb;
                         this.currentNode = bb;
+                        //linkParentNodes();
+                        clearParentNodes();
                     }
 
                     sl.get(i).accept(this);
                 }
-            }
+
+                if (link == true)
+                {
+                    linkNodes.Add(linkNode);
+                }
+            } 
         }
 
         public void visitWhile(While w)
         {
             addStatement(w);
             visitChildren(w);
+        }
+
+        private void linkParentNodes()
+        {
+            const int INDEX = 0;
+            while (this.linkNodes.Count > 0)
+            {
+                Node n = this.linkNodes[INDEX];
+                this.linkNodes.RemoveAt(INDEX);
+                n.add(this.currentNode);
+            }
+        }
+
+        private void clearParentNodes()
+        {
+            this.linkNodes.Clear();
         }
 
         private void visitChildren(NodeCollection nc)

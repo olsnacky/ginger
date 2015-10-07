@@ -66,7 +66,8 @@ namespace GingerCFGTest
             ASTVisitor astv = new ASTVisitor(parser.ast);
             TestVisitor tv = new TestVisitor(astv.cfg);
 
-            // create new instance to fool cmpiler
+            // create new instance to fool compiler
+            CFGEntry entry = new CFGEntry();
             CFGBasicBlock b1 = new CFGBasicBlock();
             CFGBasicBlock b2 = new CFGBasicBlock();
             CFGBasicBlock b3 = new CFGBasicBlock();
@@ -78,11 +79,13 @@ namespace GingerCFGTest
                 switch (i)
                 {
                     case 0:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(CFGEntry), $"{i}/1");
+                        entry = (CFGEntry)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(entry, typeof(CFGEntry), $"{i}/1");
                         break;
                     case 1:
                         b1 = (CFGBasicBlock)tv.visitedNodes[i];
                         Assert.IsInstanceOfType(b1, typeof(CFGBasicBlock), $"{i}/1");
+                        Assert.AreEqual(entry, b1.parents[0], $"{i}/1");
                         break;
                     case 2:
                         b2 = (CFGBasicBlock)tv.visitedNodes[i];
@@ -110,6 +113,55 @@ namespace GingerCFGTest
                         CFGExit exit = (CFGExit)tv.visitedNodes[i];
                         Assert.IsInstanceOfType(exit, typeof(CFGExit), $"{i}/1");
                         Assert.AreEqual(b5, exit.parents[0], $"{i}/2");
+                        break;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void NestedIfNoStatements()
+        {
+            const int COUNT = 5;
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\NestedIfNoStatements.gngr"));
+            parser.parse();
+            ASTVisitor astv = new ASTVisitor(parser.ast);
+            TestVisitor tv = new TestVisitor(astv.cfg);
+
+            // create new instance to fool cmpiler
+            CFGEntry entry = new CFGEntry();
+            CFGBasicBlock b1 = new CFGBasicBlock();
+            CFGBasicBlock b2 = new CFGBasicBlock();
+            CFGBasicBlock b3 = new CFGBasicBlock();
+
+            for (int i = 0; i < COUNT; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        entry = (CFGEntry)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(entry, typeof(CFGEntry), $"{i}/1");
+                        break;
+                    case 1:
+                        b1 = (CFGBasicBlock)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(b1, typeof(CFGBasicBlock), $"{i}/1");
+                        Assert.AreEqual(entry, b1.parents[0], $"{i}/1");
+                        break;
+                    case 2:
+                        b2 = (CFGBasicBlock)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(b2, typeof(CFGBasicBlock), $"{i}/1");
+                        Assert.AreEqual(b1, b2.parents[0], $"{i}/2");
+                        break;
+                    case 3:
+                        b3 = (CFGBasicBlock)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(b3, typeof(CFGBasicBlock), $"{i}/1");
+                        Assert.AreEqual(b2, b3.parents[0], $"{i}/2");
+                        break;
+                    case 4:
+                        CFGExit exit = (CFGExit)tv.visitedNodes[i];
+                        Assert.IsInstanceOfType(exit, typeof(CFGExit), $"{i}/1");
+                        Assert.AreEqual(b3, exit.parents[0], $"{i}/2");
+                        Assert.AreEqual(b2, exit.parents[1], $"{i}/3");
+                        Assert.AreEqual(b1, exit.parents[2], $"{i}/4");
                         break;
                 }
             }
