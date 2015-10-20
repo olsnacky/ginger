@@ -226,8 +226,10 @@ namespace GingerParser
 
     public class Literal : Node
     {
-        public Literal() : base() {
+        string _value;
 
+        public Literal(string value) : base() {
+            this._value = value;
         }
 
         public override void accept(NodeVisitor v)

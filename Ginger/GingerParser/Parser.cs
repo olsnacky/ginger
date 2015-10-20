@@ -11,8 +11,29 @@ namespace GingerParser
 {
     public class Parser
     {
+        private const int MIN_PRECEDENCE = 0;
+        // operator precedence mapping
+        private Dictionary<GingerToken, Precedence> OPERATOR_PRECEDENCE = new Dictionary<GingerToken, Precedence>
+        {
+            [GingerToken.Addition] = new Precedence(1, false),
+            [GingerToken.LessThan] = new Precedence(0, false)
+        };
+
+        public struct Precedence
+        {
+            public int precedence;
+            public bool rightAssociated;
+
+            public Precedence(int precedence, bool rightAssociated)
+            {
+                this.precedence = precedence;
+                this.rightAssociated = rightAssociated;
+            }
+        }
+
         private Scanner scanner;
         private GingerToken currentScannerToken;
+        private GingerToken? spiedScannerToken;
         private StatementList statementList;
 
         public StatementList ast
@@ -56,7 +77,7 @@ namespace GingerParser
                 GingerToken controlToken = currentScannerToken;
 
                 nextScannerToken();
-                Compare condition = parseConditionExpression();
+                Compare condition = (Compare)parseExpression();
 
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
@@ -125,59 +146,116 @@ namespace GingerParser
             return nc;
         }
 
-        private Compare parseConditionExpression()
-        {
-            // expression, "<", expression
-            Node leftExpression = parseExpression();
+        //private Compare parseConditionExpression()
+        //{
+        //    // expression, "<", expression
+        //    Node leftExpression = parseExpression();
 
-            nextScannerToken();
-            if (Grammar.isConditionOperator(currentScannerToken))
-            {
-                GingerToken compareOp = currentScannerToken;
-                nextScannerToken();
-                return new Compare(compareOp, leftExpression, parseExpression());
-            }
-            else
-            {
-                throw new ParseException();
-            }
-        }
+        //    nextScannerToken();
+        //    if (Grammar.isConditionOperator(currentScannerToken))
+        //    {
+        //        GingerToken compareOp = currentScannerToken;
+        //        nextScannerToken();
+        //        return new Compare(compareOp, leftExpression, parseExpression());
+        //    }
+        //    else
+        //    {
+        //        throw new ParseException();
+        //    }
+        //}
+
+        //private Node parseExpression()
+        //{
+        //    Node n;
+        //    // expression = identifier | expression, "+", expression | integer
+        //    if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.IntegerLiteral)
+        //    {
+        //        Node value;
+        //        if (currentScannerToken == GingerToken.Identifier)
+        //        {
+        //            value = new Identifier(new string(scanner.tokenValue));
+        //        }
+        //        else
+        //        {
+        //            value = new Literal();
+        //        }
+
+        //        // if all we have is the identifier, return that
+        //        n = value;
+
+        //        spyScannerToken();
+        //        if (Grammar.isBinaryOperator(spiedScannerToken.GetValueOrDefault()))
+        //        {
+        //            GingerToken opToken;
+
+        //            // move to the spied position
+        //            clearSpied();
+        //            nextScannerToken();
+        //            opToken = currentScannerToken;
+
+        //            // move to the next position
+        //            nextScannerToken();
+
+        //            n = new BinaryOperation(currentScannerToken, value, parseExpression());
+        //        }
+        //        clearSpied();
+        //    }
+        //    // expression = "(", expression, ")"
+        //    else if (currentScannerToken == GingerToken.OpenPrecedent)
+        //    {
+        //        nextScannerToken();
+        //        n = parseExpression();
+
+        //        nextScannerToken();
+        //        if (currentScannerToken != GingerToken.ClosePrecedent)
+        //        {
+        //            throw new ParseException();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        throw new ParseException();
+        //    }
+
+        //    spyScannerToken();
+        //    if (Grammar.isConditionOperator(spiedScannerToken.GetValueOrDefault()))
+        //    {
+        //        GingerToken opToken;
+
+        //        // move to the spied position
+        //        clearSpied();
+        //        nextScannerToken();
+        //        opToken = currentScannerToken;
+
+        //        // move to the next position
+        //        nextScannerToken();
+
+        //        n = new Compare(currentScannerToken, n, parseExpression());
+        //    }
+        //    clearSpied();
+
+        //    return n;
+        //}
 
         private Node parseExpression()
         {
+            return parseExpression(parseTerminalExpression(), MIN_PRECEDENCE);
+        }
+
+        private Node parseTerminalExpression()
+        {
             Node n;
-            // expression = identifier | expression, "+", expression | integer
             if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.IntegerLiteral)
             {
-                Node value;
                 if (currentScannerToken == GingerToken.Identifier)
                 {
-                    value = new Identifier(new string(scanner.tokenValue));
+                    n = new Identifier(new string(scanner.tokenValue));
                 }
                 else
                 {
-                    value = new Literal();
-                }
-
-                n = value;
-
-                spyScannerToken();
-                if (Grammar.isBinaryOperator(currentScannerToken))
-                {
-                    //NodeCollection nc;
-                    GingerToken opToken;
-
-                    // move to the spied position
-                    nextScannerToken();
-                    opToken = currentScannerToken;
-
-                    // move to the next position
-                    nextScannerToken();
-
-                    n = new BinaryOperation(currentScannerToken, value, parseExpression());
+                    n = new Literal(new string(scanner.tokenValue));
                 }
             }
-            // expression = "(", expression, ")"
             else if (currentScannerToken == GingerToken.OpenPrecedent)
             {
                 nextScannerToken();
@@ -197,6 +275,57 @@ namespace GingerParser
             return n;
         }
 
+        // precedence-climbing method
+        // https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method
+        private Node parseExpression(Node lhs, int minPrecedence)
+        {
+            spyScannerToken();
+            // the spied token is an operator and has precedence >= the minimumum precedence
+            while (isOperator(spiedScannerToken.GetValueOrDefault()) && OPERATOR_PRECEDENCE[spiedScannerToken.GetValueOrDefault()].precedence >= minPrecedence)
+            {
+                GingerToken op = spiedScannerToken.GetValueOrDefault();
+                // move to spied position
+                nextScannerToken();
+                //clearSpied();
+
+                nextScannerToken();
+                Node rhs = parseTerminalExpression();
+
+                spyScannerToken();
+                // the spied token is an operator, and its precedence is greater than the previous op's precedence OR it is a right associated operator with precedence equal to op's precedence
+                while (isOperator(spiedScannerToken.GetValueOrDefault()) && (OPERATOR_PRECEDENCE[spiedScannerToken.GetValueOrDefault()].precedence > OPERATOR_PRECEDENCE[op].precedence || (OPERATOR_PRECEDENCE[spiedScannerToken.GetValueOrDefault()].rightAssociated && OPERATOR_PRECEDENCE[spiedScannerToken.GetValueOrDefault()].precedence == OPERATOR_PRECEDENCE[op].precedence)))
+                {
+                    //clearSpied();
+                    // move to spied position
+                    //nextScannerToken();
+
+                    rhs = parseExpression(rhs, OPERATOR_PRECEDENCE[spiedScannerToken.GetValueOrDefault()].precedence);
+                    spyScannerToken();
+                }
+
+                if (Grammar.isBinaryOperator(op))
+                {
+                    lhs = new BinaryOperation(op, lhs, rhs);
+                }
+                else if (Grammar.isConditionOperator(op))
+                {
+                    lhs = new Compare(op, lhs, rhs);
+                }
+                else
+                {
+                    throw new ParseException();
+                }
+            }
+            //clearSpied();
+
+            return lhs;
+        }
+
+        private bool isOperator(GingerToken token)
+        {
+            return Grammar.isBinaryOperator(token) || Grammar.isConditionOperator(token);
+        }
+
         private void nextScannerToken()
         {
             currentScannerToken = scanner.next();
@@ -204,7 +333,12 @@ namespace GingerParser
 
         private void spyScannerToken()
         {
-            currentScannerToken = scanner.spy();
+            spiedScannerToken = scanner.spy();
+        }
+
+        private void clearSpied()
+        {
+            spiedScannerToken = null;
         }
     }
 

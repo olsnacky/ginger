@@ -8,6 +8,8 @@ namespace Ginger
 {
     public enum GingerToken
     {
+        // default value
+        Null = 0,
         Identifier,
         If,
         While,
