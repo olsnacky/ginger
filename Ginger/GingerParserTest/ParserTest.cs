@@ -57,7 +57,7 @@ namespace GingerParserTest
             add(i);
         }
 
-        public void visitLiteral(Literal l)
+        public void visitLiteral<T>(Literal<T> l)
         {
             add(l);
         }
@@ -127,7 +127,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 6:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 7:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Declaration), $"{i}");
@@ -148,7 +148,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 13:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 14:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
@@ -163,7 +163,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 18:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 19:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
@@ -181,7 +181,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 24:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 25:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Declaration), $"{i}");
@@ -237,7 +237,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 5:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 6:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
@@ -246,7 +246,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 8:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 9:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
@@ -408,6 +408,32 @@ namespace GingerParserTest
         {
             Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\ExpressionNotFound.gngr"));
             parser.parse();
+        }
+
+        [TestMethod]
+        public void TypeChecking()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\type.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(TypeException))]
+        public void AssignBoolVarToIntVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AssignBoolVarToIntVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(TypeException))]
+        public void AssignIntLiteralToBoolVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AssignIntLiteralToBoolVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
     }
 }

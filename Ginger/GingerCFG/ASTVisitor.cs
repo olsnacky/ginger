@@ -20,11 +20,6 @@ namespace GingerCFG
             get { return _cfg; }
         }
 
-        //private BasicBlock currentBasicBlock
-        //{
-        //    get { return this.currentNode as BasicBlock; }
-        //}
-
         public ASTVisitor(StatementList ast)
         {
             this.linkNodes = new List<Node>();
@@ -43,9 +38,6 @@ namespace GingerCFG
             {
                 this.currentNode.add(exit);
             }
-            
-            //this.currentBasicBlock = null;
-            //this.previousNode = this._cfg;
         }
 
         public void visitAssign(Assign a)
@@ -55,32 +47,23 @@ namespace GingerCFG
 
         public void visitBinaryOperation(BinaryOperation bo)
         {
-            // do nothing
+            return;
         }
 
         public void visitBoolean(GingerParser.Boolean b)
         {
-            // do nothing
+            return;
         }
 
         public void visitBranch(Branch b)
         {
             addStatement(b);
-            //currentBasicBlock.addStatement(b);
-            // we're going to use this for the no path
-            //BasicBlock branchBlock = this.currentBasicBlock;
-
-            // if meet condition
-            //prepareForNewBasicBlock();
             visitChildren(b);
-
-            // if don't meet condition
-            //prepareForNewBasicBlock();
         }
 
         public void visitCompare(Compare c)
         {
-            // do nothing
+            return;
         }
 
         public void visitDeclaration(Declaration d)
@@ -90,17 +73,17 @@ namespace GingerCFG
 
         public void visitIdentifier(Identifier i)
         {
-            // do nothing
+            return;
         }
 
         public void visitInteger(Integer i)
         {
-            // do nothing
+            return;
         }
 
-        public void visitLiteral(Literal l)
+        public void visitLiteral<T>(Literal<T> l)
         {
-            // do nothing
+            return;
         }
 
         public void visitStatementList(StatementList sl)

@@ -1,0 +1,6 @@
+﻿int george_HELLO
+george_HELLO = 20
+bool _kim
+bool geoff
+
+_kim = geoff

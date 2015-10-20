@@ -19,7 +19,7 @@ namespace GingerParser
             [GingerToken.LessThan] = new Precedence(0, false)
         };
 
-        public struct Precedence
+        private struct Precedence
         {
             public int precedence;
             public bool rightAssociated;
@@ -162,7 +162,7 @@ namespace GingerParser
                 }
                 else
                 {
-                    n = new Literal(new string(scanner.tokenValue));
+                    n = new Literal<Integer>(new Integer(new string(scanner.tokenValue)));
                 }
             }
             else if (currentScannerToken == GingerToken.OpenPrecedent)

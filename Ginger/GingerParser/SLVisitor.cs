@@ -19,7 +19,8 @@ namespace GingerParser
         void visitInteger(Integer i);
         void visitBoolean(Boolean b);
         void visitIdentifier(Identifier i);
-        void visitLiteral(Literal l);
+        //void visitLiteral(Literal l);
+        void visitLiteral<T>(Literal<T> literal);
     }
 
     public class ScopeVisitor : SLVisitor
@@ -86,6 +87,20 @@ namespace GingerParser
         public void visitAssign(Assign a)
         {
             visitChildren(a);
+            
+            if (a.expression.GetType() == typeof(Literal<Integer>))
+            {
+                if (a.identifier.declaration.type.GetType() != ((Literal<Integer>)a.expression).value.GetType())
+                {
+                    throw new TypeException();
+                }
+            }
+            else if (a.expression.GetType() == typeof(Identifier))
+            {
+                if (a.identifier.declaration.type.GetType() != ((Identifier)a.expression).declaration.type.GetType()) {
+                    throw new TypeException();
+                }
+            }
         }
 
         public void visitInteger(Integer i)
@@ -98,7 +113,7 @@ namespace GingerParser
             return;
         }
 
-        public void visitLiteral(Literal l)
+        public void visitLiteral<T>(Literal<T> l)
         {
             return;
         }
@@ -109,6 +124,14 @@ namespace GingerParser
             {
                 n.accept(this);
             }
+        }
+    }
+
+    public class TypeException : Exception
+    {
+        public TypeException() : base()
+        {
+
         }
     }
 }

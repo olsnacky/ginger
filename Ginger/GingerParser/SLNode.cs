@@ -117,7 +117,14 @@ namespace GingerParser
 
     public class Declaration : SLNodeCollection
     {
+        private const int TYPE_INDEX = 0;
         private const int IDENTIFIER_INDEX = 1;
+
+        public Node type
+        {
+            get { return this.get(TYPE_INDEX); }
+        }
+
         public Identifier identifier
         {
             get { return (Identifier)this.get(IDENTIFIER_INDEX); }
@@ -137,6 +144,19 @@ namespace GingerParser
 
     public class Assign : SLNodeCollection
     {
+        private const int IDENTIFIER_INDEX = 0;
+        private const int EXPRESSION_INDEX = 1;
+
+        public Identifier identifier
+        {
+            get { return (Identifier)this.get(IDENTIFIER_INDEX); }
+        }
+
+        public Node expression
+        {
+            get { return this.get(EXPRESSION_INDEX); }
+        }
+
         public Assign(Identifier identifier, Node expression)
         {
             this.add(identifier);
@@ -151,6 +171,13 @@ namespace GingerParser
 
     public class Integer : Node
     {
+        string _value;
+
+        public Integer(string value) : base()
+        {
+            this._value = value;
+        }
+
         public Integer() : base()
         {
 
@@ -224,11 +251,16 @@ namespace GingerParser
         }
     }
 
-    public class Literal : Node
+    public class Literal<T> : Node
     {
-        string _value;
+        T _value;
 
-        public Literal(string value) : base() {
+        public T value
+        {
+            get { return _value; }
+        }
+
+        public Literal(T value) : base() {
             this._value = value;
         }
 
