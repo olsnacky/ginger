@@ -63,6 +63,9 @@
     <None Include="Data\NestedIfWithStatements.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="Data\while.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\NestedIfNoStatements.gngr">

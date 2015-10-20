@@ -106,7 +106,7 @@ namespace GingerCFG
 
                 for (int i = 0; i < sl.Count(); i++)
                 {
-                    // this statement list has been broken
+                    // if this statement list has been broken
                     // create a new basic block and link it
                     if (this.currentNode != slbb)
                     {
@@ -115,15 +115,29 @@ namespace GingerCFG
                         // if there are more statements to come
                         CFGBasicBlock bb = new CFGBasicBlock();
 
-                        // we've just exited out of some kinf of branch, make this ne wblock as child of it
+                        // we've just exited out of some kind of branch, make this new block a child of it
                         this.currentNode.add(bb);
                         // now make this new block a child of the original statement list
                         slbb.add(bb);
                         // now the new block becomes the representative statement list
                         slbb = bb;
+
                         this.currentNode = bb;
+
                         // why does this work?????
                         clearLinkNodes();
+                    }
+
+                    // handle the next statement
+                    Node nextStatement = sl.get(i);
+
+                    if (nextStatement.GetType() == typeof(While))
+                    {
+                        // a while statement needs a basic block of its own
+                        CFGBasicBlock bb = new CFGBasicBlock();
+                        this.currentNode.add(bb);
+                        slbb = bb;
+                        this.currentNode = slbb;
                     }
 
                     sl.get(i).accept(this);
@@ -138,8 +152,16 @@ namespace GingerCFG
 
         public void visitWhile(While w)
         {
+            // assume the header is the current node
+            CFGBasicBlock whileHeader = (CFGBasicBlock)this.currentNode;
+
             addStatement(w);
             visitChildren(w);
+
+            // exiting the statement list
+            // we have to link whatever is the current basic block
+            // back to the head basic block for this while
+            this.currentNode.add(whileHeader);
         }
 
         private void linkParentNodes()
