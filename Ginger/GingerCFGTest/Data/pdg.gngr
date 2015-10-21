@@ -1,0 +1,23 @@
+﻿int x
+int y
+
+x = 7
+y = x
+
+if x < y {
+	int j
+	j = 4
+
+	while j < x {
+		j = j + 1
+	}
+
+	y = j
+
+	if y < x {
+		y = x
+	}
+}
+
+int z
+z = x

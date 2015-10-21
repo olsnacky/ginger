@@ -37,11 +37,16 @@ namespace GingerCFG
 
     public class CFGBasicBlock : NodeCollection
     {
-        private StatementList statementList;
+        private StatementList _statementList;
+
+        public StatementList statementList
+        {
+            get { return _statementList; }
+        }
 
         public CFGBasicBlock()
         {
-            statementList = new StatementList(); 
+            _statementList = new StatementList(); 
         }
 
         public override void accept(NodeVisitor v)
@@ -51,7 +56,7 @@ namespace GingerCFG
 
         public void addStatement(Node statement)
         {
-            statementList.add(statement);
+            _statementList.add(statement);
         }
     }
 }
