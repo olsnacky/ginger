@@ -43,12 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GingerParser.cs" />
-    <Compile Include="SLNode.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="AST\GingerParser.cs" />
+    <Compile Include="AST\SLNode.cs" />
+    <Compile Include="AST\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scope.cs" />
-    <Compile Include="SLVisitor.cs" />
+    <Compile Include="Scope\Scope.cs" />
+    <Compile Include="AST\SLVisitor.cs" />
+    <Compile Include="Scope\SLNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -66,6 +67,9 @@
       <Project>{eb3a5012-f35e-437a-8ae1-d8bc292d7391}</Project>
       <Name>Ginger</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CFG\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

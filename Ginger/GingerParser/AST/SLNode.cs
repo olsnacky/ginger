@@ -11,11 +11,6 @@ namespace GingerParser
 {
     public abstract class SLNodeCollection : NodeCollection
     {
-        //public SLNodeCollection() : base()
-        //{
-
-        //}
-
         public override void add(Node n)
         {
             n.parents.Clear();
@@ -24,16 +19,8 @@ namespace GingerParser
         }
     }
 
-    public class StatementList : SLNodeCollection
+    public partial class StatementList : SLNodeCollection
     {
-        private Scope _scope;
-
-        public Scope scope
-        {
-            get { return _scope; }
-            set { _scope = value; }
-        }
-
         public StatementList() : base()
         {
             
@@ -202,17 +189,9 @@ namespace GingerParser
         }
     }
 
-    public class Identifier : Node
+    public partial class Identifier : Node
     {
-        private Declaration _declaration;
         private string _name;
-
-        // the original declaration for this identifier
-        public Declaration declaration
-        {
-            get { return _declaration; }
-            set { _declaration = value; }
-        }
 
         public string name
         {
