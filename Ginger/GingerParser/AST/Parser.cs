@@ -77,7 +77,7 @@ namespace GingerParser
                 GingerToken controlToken = currentScannerToken;
 
                 nextScannerToken();
-                Compare condition = (Compare)parseExpression();
+                InequalityOperation condition = (InequalityOperation)parseExpression();
 
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
@@ -96,7 +96,7 @@ namespace GingerParser
                 }
                 else
                 {
-                    nc = new Branch(condition, sl);
+                    nc = new If(condition, sl);
                 }
             }
             // statement = type, identifier
@@ -213,7 +213,7 @@ namespace GingerParser
                 }
                 else if (Grammar.isConditionOperator(op))
                 {
-                    lhs = new Compare(op, lhs, rhs);
+                    lhs = new InequalityOperation(op, lhs, rhs);
                 }
                 else
                 {

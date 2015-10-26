@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GingerParser
+﻿namespace GingerParser
 {
     public partial class StatementList
     {
-        private Scope _scope;
+        private Scope.Scope _scope;
 
-        public Scope scope
+        public Scope.Scope scope
         {
             get { return _scope; }
             set { _scope = value; }

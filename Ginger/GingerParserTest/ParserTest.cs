@@ -4,6 +4,8 @@ using GingerParser;
 using System.IO;
 using System.Collections.Generic;
 using GingerUtil;
+using GingerParser.Scope;
+using GingerParser.CFG;
 
 namespace GingerParserTest
 {
@@ -32,12 +34,12 @@ namespace GingerParserTest
             add(b);
         }
 
-        public void visitBranch(Branch b)
+        public void visitBranch(If b)
         {
             visitCollection(b);
         }
 
-        public void visitCompare(Compare c)
+        public void visitInequalityOperation(InequalityOperation c)
         {
             visitCollection(c);
         }
@@ -100,7 +102,7 @@ namespace GingerParserTest
         {
             const int COUNT = 31;
             List<Node> nodes = new List<Node>();
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\parser.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\parser.gngr"));
             parser.parse();
             TestVisitor tv = new TestVisitor(parser.ast);
 
@@ -139,10 +141,10 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 10:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Branch), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(If), $"{i}");
                         break;
                     case 11:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Compare), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
                         break;
                     case 12:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
@@ -157,7 +159,7 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(While), $"{i}");
                         break;
                     case 16:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Compare), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
                         break;
                     case 17:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
@@ -213,7 +215,7 @@ namespace GingerParserTest
         {
             const int COUNT = 13;
             List<Node> nodes = new List<Node>();
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\precedence.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\precedence.gngr"));
             parser.parse();
             TestVisitor tv = new TestVisitor(parser.ast);
 
@@ -225,10 +227,10 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
                         break;
                     case 1:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Branch), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(If), $"{i}");
                         break;
                     case 2:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Compare), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
                         break;
                     case 3:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
@@ -271,7 +273,7 @@ namespace GingerParserTest
         public void SimpleScope()
         {
             const int COUNT = 29;
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\scope.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\scope.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
             TestVisitor tv = new TestVisitor(parser.ast);
@@ -348,7 +350,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ScopeException))]
         public void DoubleDeclaration()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\DoubleDeclaration.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\DoubleDeclaration.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
@@ -366,7 +368,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void NotOpenStatement()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\NotOpenStatement.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\NotOpenStatement.gngr"));
             parser.parse();
         }
 
@@ -374,7 +376,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void NoIdentifierAfterType()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\IdentifierDoesNotFollowType.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\IdentifierDoesNotFollowType.gngr"));
             parser.parse();
         }
 
@@ -382,7 +384,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void NoExpressionAfterAssignment()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\ExpressionDoesNotFollowAssignment.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionDoesNotFollowAssignment.gngr"));
             parser.parse();
         }
 
@@ -390,7 +392,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void NotAStatement()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\ExpressionInsteadOfStatement.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionInsteadOfStatement.gngr"));
             parser.parse();
         }
 
@@ -398,7 +400,7 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void ExpressionNotClosed()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\ExpressionNotClosed.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotClosed.gngr"));
             parser.parse();
         }
 
@@ -406,14 +408,14 @@ namespace GingerParserTest
         [ExpectedException(typeof(ParseException))]
         public void ExpressionNotFound()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\ExpressionNotFound.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotFound.gngr"));
             parser.parse();
         }
 
         [TestMethod]
         public void TypeChecking()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\type.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\type.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
@@ -422,18 +424,118 @@ namespace GingerParserTest
         [ExpectedException(typeof(TypeException))]
         public void AssignBoolVarToIntVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AssignBoolVarToIntVar.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBoolVarToIntVar.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(TypeException))]
         public void AssignIntLiteralToBoolVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AssignIntLiteralToBoolVar.gngr"));
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignIntLiteralToBoolVar.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        public void BlockSurroundedIf() {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\BlockSurroundedIf.gngr"));
+            parser.parse();
+            CFGVisitor sv = new CFGVisitor(parser.ast);
+
+            Statement ass1 = (Statement)parser.ast.entry;
+            Assert.IsTrue(ass1.cfgSuccessors.Count == 1, "1");
+
+            Statement ass2 = ass1.cfgSuccessors[0];
+            Assert.IsTrue(ass2.cfgSuccessors.Count == 1, "2");
+
+            Statement if1 = ass2.cfgSuccessors[0];
+            Assert.IsTrue(if1.cfgSuccessors.Count == 2, "3");
+
+            Statement ass4 = if1.cfgSuccessors[0];
+            Assert.IsTrue(ass4.cfgSuccessors.Count == 1, "4");
+
+            Statement if2 = ass4.cfgSuccessors[0];
+            Assert.IsTrue(if2.cfgSuccessors.Count == 2, "5");
+
+            Statement ass5 = if2.cfgSuccessors[0];
+            Assert.IsTrue(ass5.cfgSuccessors.Count == 1, "6");
+
+            Statement ass6 = ass5.cfgSuccessors[0];
+            Assert.IsTrue(ass6.cfgSuccessors.Count == 1, "7");
+            Assert.AreEqual(ass6, if2.cfgSuccessors[1], "8");
+
+            Statement ass7 = ass6.cfgSuccessors[0];
+            Assert.IsTrue(ass7.cfgSuccessors.Count == 0, "9");
+            Assert.AreEqual(ass7, if1.cfgSuccessors[1], "10");
+        }
+
+        [TestMethod]
+        public void CFG()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\cfg.gngr"));
+            parser.parse();
+            CFGVisitor sv = new CFGVisitor(parser.ast);
+
+            Statement ass1 = (Statement)parser.ast.entry;
+            Statement if1 = ass1.cfgSuccessors[0];
+            Statement ass2 = if1.cfgSuccessors[0];
+            Statement while1 = ass2.cfgSuccessors[0];
+            Assert.AreEqual(while1, if1.cfgSuccessors[1]);
+            Statement ass3 = while1.cfgSuccessors[0];
+            Assert.AreEqual(while1, ass3.cfgSuccessors[0]);
+        }
+
+        [TestMethod]
+        public void NestedIfNoStatements()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfNoStatements.gngr"));
+            parser.parse();
+            CFGVisitor sv = new CFGVisitor(parser.ast);
+
+            Statement ass1 = (Statement)parser.ast.entry;
+            Statement ass2 = ass1.cfgSuccessors[0];
+            Statement if1 = ass2.cfgSuccessors[0];
+            Statement if2 = if1.cfgSuccessors[0];
+            Statement ass3 = if2.cfgSuccessors[0];
+        }
+
+        [TestMethod]
+        public void NestedIfWithStatements()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfWithStatements.gngr"));
+            parser.parse();
+            CFGVisitor sv = new CFGVisitor(parser.ast);
+
+            Statement ass1 = (Statement)parser.ast.entry;
+            Statement ass2 = ass1.cfgSuccessors[0];
+            Statement if1 = ass2.cfgSuccessors[0];
+            Statement if2 = if1.cfgSuccessors[0];
+            Statement ass3 = if2.cfgSuccessors[0];
+            Statement ass4 = ass3.cfgSuccessors[0];
+            Assert.AreEqual(ass4, if2.cfgSuccessors[1]);
+            Statement ass5 = ass4.cfgSuccessors[0];
+            Assert.AreEqual(ass5, if1.cfgSuccessors[1]);
+        }
+
+        [TestMethod]
+        public void While()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\while.gngr"));
+            parser.parse();
+            CFGVisitor sv = new CFGVisitor(parser.ast);
+
+            Statement ass1 = (Statement)parser.ast.entry;
+            Statement if1 = ass1.cfgSuccessors[0];
+            Statement ass2 = if1.cfgSuccessors[0];
+            Statement while1 = ass2.cfgSuccessors[0];
+            Statement ass3 = while1.cfgSuccessors[0];
+            Assert.AreEqual(while1, ass3.cfgSuccessors[0]);
+            Statement ass4 = ass3.cfgSuccessors[1];
+            Assert.AreEqual(ass4, while1.cfgSuccessors[1]);
+            Statement ass5 = ass4.cfgSuccessors[0];
+            Assert.AreEqual(ass5, if1.cfgSuccessors[1]);
         }
     }
 }

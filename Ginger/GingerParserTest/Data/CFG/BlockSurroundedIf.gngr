@@ -1,0 +1,19 @@
+﻿int x
+int y
+x = 1
+y = 2
+
+if x < 0 {
+  x = x + 1
+
+  if y < 0 {
+    int z
+    z = 1
+  }
+
+  int w
+  w = 2
+}
+
+int c
+c = 4

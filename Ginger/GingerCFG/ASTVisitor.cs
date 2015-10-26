@@ -55,13 +55,13 @@ namespace GingerCFG
             return;
         }
 
-        public void visitBranch(Branch b)
+        public void visitBranch(If b)
         {
             addStatement(b);
             visitChildren(b);
         }
 
-        public void visitCompare(Compare c)
+        public void visitInequalityOperation(InequalityOperation c)
         {
             return;
         }

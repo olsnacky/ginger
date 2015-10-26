@@ -1,0 +1,11 @@
+﻿int x
+x = 2
+
+if x < 4 {
+	int y
+	y = 4 + x
+}
+
+while x < y {
+	x = (x + 1)
+}

@@ -54,7 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\parser.gngr">
+    <EmbeddedResource Include="Data\AST\parser.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -69,62 +69,86 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\NotOpenStatement.gngr">
+    <EmbeddedResource Include="Data\AST\NotOpenStatement.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\IdentifierDoesNotFollowType.gngr">
+    <EmbeddedResource Include="Data\AST\IdentifierDoesNotFollowType.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionDoesNotFollowAssignment.gngr">
+    <EmbeddedResource Include="Data\AST\ExpressionDoesNotFollowAssignment.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionInsteadOfStatement.gngr">
+    <EmbeddedResource Include="Data\AST\ExpressionInsteadOfStatement.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionNotClosed.gngr">
+    <EmbeddedResource Include="Data\AST\ExpressionNotClosed.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ExpressionNotFound.gngr">
+    <EmbeddedResource Include="Data\AST\ExpressionNotFound.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\precedence.gngr">
+    <EmbeddedResource Include="Data\AST\precedence.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\DoubleDeclaration.gngr">
+    <EmbeddedResource Include="Data\Scope\DoubleDeclaration.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\scope.gngr">
+    <EmbeddedResource Include="Data\Scope\scope.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\type.gngr">
+    <EmbeddedResource Include="Data\Scope\type.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\AssignBoolVarToIntVar.gngr">
+    <Content Include="Data\Scope\AssignBoolVarToIntVar.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\AssignIntLiteralToBoolVar.gngr">
+    <EmbeddedResource Include="Data\Scope\AssignIntLiteralToBoolVar.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Data\CFG\BlockSurroundedIf.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\CFG\cfg.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\CFG\NestedIfNoStatements.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\CFG\NestedIfWithStatements.gngr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="Data\CFG\while.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
