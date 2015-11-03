@@ -322,7 +322,15 @@ namespace GingerParser
         }
     }
 
-    public class Integer : Node
+    public class Type : Node
+    {
+        public override void accept(NodeVisitor v)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public partial class Integer : Node
     {
         string _value;
 
@@ -379,7 +387,7 @@ namespace GingerParser
         }
     }
 
-    public class Boolean : Node
+    public partial class Boolean : Node
     {
         public Boolean() : base()
         {
