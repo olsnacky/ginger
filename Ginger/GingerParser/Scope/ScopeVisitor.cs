@@ -72,19 +72,8 @@ namespace GingerParser.Scope
         {
             visitChildren(a);
 
-            if (a.expression.GetType() == typeof(Literal<Integer>))
-            {
-                if (a.identifier.declaration.type.GetType() != ((Literal<Integer>)a.expression).value.GetType())
-                {
-                    throw new TypeException();
-                }
-            }
-            else if (a.expression.GetType() == typeof(Identifier))
-            {
-                if (a.identifier.declaration.type.GetType() != ((Identifier)a.expression).declaration.type.GetType())
-                {
-                    throw new TypeException();
-                }
+            if (!(a.identifier.canAssign((Typeable)a.expression))) {
+                throw new TypeException();
             }
         }
 
@@ -98,11 +87,6 @@ namespace GingerParser.Scope
             return;
         }
 
-        public void visitLiteral<T>(Literal<T> l)
-        {
-            return;
-        }
-
         private void visitChildren(NodeCollection nc)
         {
             foreach (Node n in nc)
@@ -110,13 +94,10 @@ namespace GingerParser.Scope
                 n.accept(this);
             }
         }
-    }
 
-    public class TypeException : Exception
-    {
-        public TypeException() : base()
+        public void visitLiteral<T>(Literal<T> l) where T : Typeable
         {
-
+            return;
         }
     }
 }

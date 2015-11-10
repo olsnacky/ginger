@@ -19,6 +19,6 @@ namespace GingerParser
         void visitInteger(Integer i);
         void visitBoolean(Boolean b);
         void visitIdentifier(Identifier i);
-        void visitLiteral<T>(Literal<T> literal);
+        void visitLiteral<T>(Literal<T> l) where T : Typeable;
     }
 }

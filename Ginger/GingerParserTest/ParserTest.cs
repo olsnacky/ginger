@@ -59,11 +59,6 @@ namespace GingerParserTest
             add(i);
         }
 
-        public void visitLiteral<T>(Literal<T> l)
-        {
-            add(l);
-        }
-
         public void visitStatementList(StatementList sl)
         {
             visitCollection(sl);
@@ -91,6 +86,11 @@ namespace GingerParserTest
         private void add(Node n)
         {
             visitedNodes.Add(n);
+        }
+
+        public void visitLiteral<T>(Literal<T> l) where T : Typeable
+        {
+            add(l);
         }
     }
 
@@ -434,6 +434,40 @@ namespace GingerParserTest
         public void AssignIntLiteralToBoolVar()
         {
             Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignIntLiteralToBoolVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        public void AssignBinaryOpToIntVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToIntVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        public void AssignInequalityToBoolVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToBoolVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(TypeException))]
+        public void AssignBinaryOpToBoolVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToBoolVar.gngr"));
+            parser.parse();
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(TypeException))]
+        public void AssignInequalityToIntVar()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToIntVar.gngr"));
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }

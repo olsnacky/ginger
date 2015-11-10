@@ -59,19 +59,8 @@ namespace GingerParser.CFG
             return;
         }
 
-        public void visitLiteral<T>(Literal<T> literal)
-        {
-            return;
-        }
-
         public void visitStatementList(StatementList sl)
         {
-            // we've just entered into a branch of some kind, store the header for later linking
-            //while (_previousStatements.Count > 0)
-            //{
-            //    _historicalStatements.Push(_previousStatements.Pop());
-            //}
-
             foreach (Node statement in sl)
             {
                 if (statement is Statement)
@@ -113,6 +102,11 @@ namespace GingerParser.CFG
         {
             Statement previousStatement = statements.Peek();
             previousStatement.cfgSuccessors.Add(s);
+        }
+
+        public void visitLiteral<T>(Literal<T> l) where T : Typeable
+        {
+            return;
         }
     }
 }

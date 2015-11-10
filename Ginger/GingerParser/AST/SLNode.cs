@@ -94,7 +94,7 @@ namespace GingerParser
         }
     }
 
-    public abstract class Operation : SLNodeCollection
+    public abstract partial class Operation : SLNodeCollection
     {
         private const int LHS_INDEX = 0;
         private const int RHS_INDEX = 1;
@@ -157,7 +157,7 @@ namespace GingerParser
         }
     }
 
-    public class InequalityOperation : Operation
+    public partial class InequalityOperation : Operation
     {
         public InequalityOperation(GingerToken inequalityOp, Node lhs, Node rhs) : base(inequalityOp, lhs, rhs)
         {
@@ -170,7 +170,7 @@ namespace GingerParser
         }
     }
 
-    public class BinaryOperation : Operation
+    public partial class BinaryOperation : Operation
     {
         public BinaryOperation(GingerToken binaryOp, Node lhs, Node rhs) : base(binaryOp, lhs, rhs)
         {
@@ -468,7 +468,7 @@ namespace GingerParser
         }
     }
 
-    public class Literal<T> : Node
+    public partial class Literal<T> : Node
     {
         T _value;
 
