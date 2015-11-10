@@ -163,6 +163,7 @@
     <EmbeddedResource Include="Data\Scope\AssignInequalityToIntVar.gngr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="Data\DDG\ddg.gngr" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

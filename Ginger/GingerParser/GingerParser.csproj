@@ -48,6 +48,8 @@
     <Compile Include="AST\Parser.cs" />
     <Compile Include="CFG\CFGVisitor.cs" />
     <Compile Include="CFG\SLNode.cs" />
+    <Compile Include="DDG\DDGVisitor.cs" />
+    <Compile Include="DDG\SLNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scope\Scope.cs" />
     <Compile Include="AST\SLVisitor.cs" />

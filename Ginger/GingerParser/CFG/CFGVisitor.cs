@@ -84,9 +84,6 @@ namespace GingerParser.CFG
 
             // add the while header as a successor to the final statement in the body
             linkPastStatementWithoutConsuming(_previousStatements, w);
-
-            // assuming the link on top of the historical stack is the while
-            //_previousStatements.Push(_historicalStatements.Pop());
         }
 
         private void linkPastStatements(Queue<Statement> statements, Statement s)
