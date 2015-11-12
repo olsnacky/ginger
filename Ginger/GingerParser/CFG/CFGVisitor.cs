@@ -91,14 +91,14 @@ namespace GingerParser.CFG
             while (statements.Count > 0)
             {
                 Statement previousStatement = statements.Dequeue();
-                previousStatement.cfgSuccessors.Add(s);
+                previousStatement.addSuccessor(s);
             }
         }
 
         private void linkPastStatementWithoutConsuming(Queue<Statement> statements, Statement s)
         {
             Statement previousStatement = statements.Peek();
-            previousStatement.cfgSuccessors.Add(s);
+            previousStatement.addSuccessor(s);
         }
 
         public void visitLiteral<T>(Literal<T> l) where T : Typeable

@@ -4,7 +4,7 @@ int y
 x = 5
 y = x + 1
 
-if (y < x) {
+if y < x {
 	int x
 	int z
 
@@ -12,12 +12,12 @@ if (y < x) {
 	z = x
 }
 
-if (y < x) {
-	while (x < y + 8) {
+if y < x {
+	while x < y + 8 {
 		int y
 		y = x
 
-		if (y < x) {
+		if y < x {
 			int b
 			b = x
 		}

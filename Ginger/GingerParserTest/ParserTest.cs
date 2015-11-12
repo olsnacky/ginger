@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using GingerUtil;
 using GingerParser.Scope;
 using GingerParser.CFG;
+using GingerParser.DDG;
 
 namespace GingerParserTest
 {
@@ -570,6 +571,83 @@ namespace GingerParserTest
             Assert.AreEqual(ass4, while1.cfgSuccessors[1]);
             Statement ass5 = ass4.cfgSuccessors[0];
             Assert.AreEqual(ass5, if1.cfgSuccessors[1]);
+        }
+
+        [TestMethod]
+        public void DDG()
+        {
+            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\DDG\ddg.gngr"));
+            parser.parse();
+            CFGVisitor cfgv = new CFGVisitor(parser.ast);
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            DDGVisitor ddgv = new DDGVisitor(parser.ast);
+
+            Assign ass1 = (Assign)parser.ast.entry; // x = 5
+            Assign ass2 = (Assign)ass1.cfgSuccessors[0]; // y = x + 1
+            Statement if1 = (Statement)ass2.cfgSuccessors[0]; // if y < x
+            Assign ass3 = (Assign)if1.cfgSuccessors[0]; // x = 5
+            Assign ass4 = (Assign)ass3.cfgSuccessors[0]; // z = x
+            Statement if2 = (Statement)if1.cfgSuccessors[1]; // if y < x
+            Statement while1 = (Statement)if2.cfgSuccessors[0]; // while x < y + 8
+            Assign ass5 = (Assign)while1.cfgSuccessors[0]; // y = x
+            Statement if3 = (Statement)ass5.cfgSuccessors[0]; // if y < x
+            Assign ass6 = (Assign)if3.cfgSuccessors[0]; // b = x
+            Assign ass7 = (Assign)if3.cfgSuccessors[1]; // x = y
+            Assign ass8 = (Assign)while1.cfgSuccessors[1]; // j = y + x
+            Assign ass9 = (Assign)ass8.cfgSuccessors[0]; // x = 9 + 10
+            Assign ass10 = (Assign)ass9.cfgSuccessors[0]; // x = x + y
+
+            // ass 1
+            Assert.IsTrue(ass1.dataDependencies.Count == 8, "1");
+            Assert.IsTrue(ass1.dataDependencies.Contains(ass8), "2");
+            Assert.IsTrue(ass1.dataDependencies.Contains(if2), "3");
+            Assert.IsTrue(ass1.dataDependencies.Contains(ass2), "4");
+            Assert.IsTrue(ass1.dataDependencies.Contains(if1), "5");
+            Assert.IsTrue(ass1.dataDependencies.Contains(while1), "6");
+            Assert.IsTrue(ass1.dataDependencies.Contains(ass5), "7");
+            Assert.IsTrue(ass1.dataDependencies.Contains(if3), "8");
+            Assert.IsTrue(ass1.dataDependencies.Contains(ass6), "9");
+
+            // ass 2
+            Assert.IsTrue(ass2.dataDependencies.Count == 5, "10");
+            Assert.IsTrue(ass2.dataDependencies.Contains(ass8), "11");
+            Assert.IsTrue(ass2.dataDependencies.Contains(if2), "12");
+            Assert.IsTrue(ass2.dataDependencies.Contains(if1), "13");
+            Assert.IsTrue(ass2.dataDependencies.Contains(while1), "14");
+            Assert.IsTrue(ass2.dataDependencies.Contains(ass10), "15");
+
+            // ass 3
+            Assert.IsTrue(ass3.dataDependencies.Count == 1, "16");
+            Assert.IsTrue(ass3.dataDependencies.Contains(ass4), "17");
+
+            // ass 4
+            Assert.IsTrue(ass4.dataDependencies.Count == 0, "18");
+
+            // ass 5
+            Assert.IsTrue(ass5.dataDependencies.Count == 2, "19");
+            Assert.IsTrue(ass5.dataDependencies.Contains(if3), "20");
+            Assert.IsTrue(ass5.dataDependencies.Contains(ass7), "21");
+
+            // ass 6
+            Assert.IsTrue(ass6.dataDependencies.Count == 0, "22");
+
+            // ass 7
+            Assert.IsTrue(ass7.dataDependencies.Count == 5, "23");
+            Assert.IsTrue(ass7.dataDependencies.Contains(while1), "24");
+            Assert.IsTrue(ass7.dataDependencies.Contains(ass5), "25");
+            Assert.IsTrue(ass7.dataDependencies.Contains(if3), "26");
+            Assert.IsTrue(ass7.dataDependencies.Contains(ass6), "27");
+            Assert.IsTrue(ass7.dataDependencies.Contains(ass8), "28");
+
+            // ass 8
+            Assert.IsTrue(ass8.dataDependencies.Count == 0, "29");
+
+            // ass 9
+            Assert.IsTrue(ass9.dataDependencies.Count == 1, "30");
+            Assert.IsTrue(ass9.dataDependencies.Contains(ass10), "31");
+
+            // ass 10
+            Assert.IsTrue(ass10.dataDependencies.Count == 0, "32");
         }
     }
 }

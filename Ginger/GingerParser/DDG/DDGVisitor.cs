@@ -7,10 +7,15 @@ using System.Threading.Tasks;
 
 namespace GingerParser.DDG
 {
-    class DDGVisitor : SLVisitor
+    public class DDGVisitor : SLVisitor
     {
         Scope.Scope _currentScope;
         Statement _currentStatement;
+
+        public DDGVisitor(StatementList ast)
+        {
+            ast.accept(this);
+        }
 
         public void visitAssign(Assign a)
         {
@@ -43,7 +48,12 @@ namespace GingerParser.DDG
 
         public void visitIdentifier(Identifier i)
         {
-            HashSet<Assign> assignments = _currentStatement.findAssignment(i);
+            HashSet<Assign> assignments = new HashSet<Assign>();
+                
+            foreach (Statement predecessor in _currentStatement.cfgPredecessors) {
+                assignments.UnionWith(predecessor.findAssignment(i, new HashSet<Statement>()));
+            }   
+                
             foreach (Assign assignment in assignments)
             {
                 assignment.dataDependencies.Add(_currentStatement);

@@ -122,39 +122,39 @@ namespace GingerParser
             this.add(rhs);
         }
 
-        public override bool Equals(object obj)
-        {
-            Operation op2 = obj as Operation;
-            if (op2 == null)
-            {
-                return false;
-            }
+        //public override bool Equals(object obj)
+        //{
+        //    Operation op2 = obj as Operation;
+        //    if (op2 == null)
+        //    {
+        //        return false;
+        //    }
 
-            return this.op == op2.op && this.lhs == op2.lhs && this.rhs == op2.rhs;
-        }
+        //    return this.op == op2.op && this.lhs == op2.lhs && this.rhs == op2.rhs;
+        //}
 
-        public static bool operator ==(Operation binOp1, Operation binOp2)
-        {
-            return binOp1.Equals(binOp2);
-        }
+        //public static bool operator ==(Operation binOp1, Operation binOp2)
+        //{
+        //    return binOp1.Equals(binOp2);
+        //}
 
-        public static bool operator !=(Operation binOp1, Operation binOp2)
-        {
-            return !binOp1.Equals(binOp2);
-        }
+        //public static bool operator !=(Operation binOp1, Operation binOp2)
+        //{
+        //    return !binOp1.Equals(binOp2);
+        //}
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                const int HASH_MULTIPLIER = 23;
-                int hash = 17;
-                hash = hash * HASH_MULTIPLIER + op.GetHashCode();
-                hash = hash * HASH_MULTIPLIER + lhs.GetHashCode();
-                hash = hash * HASH_MULTIPLIER + rhs.GetHashCode();
-                return hash;
-            }
-        }
+        //public override int GetHashCode()
+        //{
+        //    unchecked
+        //    {
+        //        const int HASH_MULTIPLIER = 23;
+        //        int hash = 17;
+        //        hash = hash * HASH_MULTIPLIER + op.GetHashCode();
+        //        hash = hash * HASH_MULTIPLIER + lhs.GetHashCode();
+        //        hash = hash * HASH_MULTIPLIER + rhs.GetHashCode();
+        //        return hash;
+        //    }
+        //}
     }
 
     public partial class InequalityOperation : Operation
@@ -215,50 +215,50 @@ namespace GingerParser
             ((SLVisitor)v).visitDeclaration(this);
         }
 
-        public override bool Equals(object obj)
-        {
-            Declaration dec2 = obj as Declaration;
-            if (dec2 == null)
-            {
-                return false;
-            }
+        //public override bool Equals(object obj)
+        //{
+        //    Declaration dec2 = obj as Declaration;
+        //    if (dec2 == null)
+        //    {
+        //        return false;
+        //    }
 
-            // declaration part of scope partial
-            return this.type == dec2.type && this.identifier == dec2.identifier && this.scope == dec2.scope;
-        }
+        //    // declaration part of scope partial
+        //    return this.type == dec2.type && this.identifier == dec2.identifier && this.scope == dec2.scope;
+        //}
 
-        public static bool operator ==(Declaration dec1, Declaration dec2)
-        {
-            if (System.Object.ReferenceEquals(dec1, dec2))
-            {
-                return true;
-            }
+        //public static bool operator ==(Declaration dec1, Declaration dec2)
+        //{
+        //    if (System.Object.ReferenceEquals(dec1, dec2))
+        //    {
+        //        return true;
+        //    }
 
-            if (((object)dec1 == null) || ((object)dec2 == null))
-            {
-                return false;
-            }
+        //    if (((object)dec1 == null) || ((object)dec2 == null))
+        //    {
+        //        return false;
+        //    }
 
-            return dec1.Equals(dec2);
-        }
+        //    return dec1.Equals(dec2);
+        //}
 
-        public static bool operator !=(Declaration dec1, Declaration dec2)
-        {
-            return !(dec1 == dec2);
-        }
+        //public static bool operator !=(Declaration dec1, Declaration dec2)
+        //{
+        //    return !(dec1 == dec2);
+        //}
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                const int HASH_MULTIPLIER = 23;
-                int hash = 17;
-                hash = hash * HASH_MULTIPLIER + type.GetHashCode();
-                hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
-                hash = hash * HASH_MULTIPLIER + scope.GetHashCode();
-                return hash;
-            }
-        }
+        //public override int GetHashCode()
+        //{
+        //    unchecked
+        //    {
+        //        const int HASH_MULTIPLIER = 23;
+        //        int hash = 17;
+        //        hash = hash * HASH_MULTIPLIER + type.GetHashCode();
+        //        hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
+        //        hash = hash * HASH_MULTIPLIER + scope.GetHashCode();
+        //        return hash;
+        //    }
+        //}
 
     }
 
@@ -288,38 +288,48 @@ namespace GingerParser
             ((SLVisitor)v).visitAssign(this);
         }
 
-        public override bool Equals(object obj)
-        {
-            Assign assign2 = obj as Assign;
-            if (assign2 == null)
-            {
-                return false;
-            }
+        //public override bool Equals(object obj)
+        //{
+        //    Assign assign2 = obj as Assign;
+        //    if (assign2 == null)
+        //    {
+        //        return false;
+        //    }
 
-            return this.identifier == assign2.identifier && this.expression == assign2.expression;
-        }
+        //    return this.identifier == assign2.identifier && this.expression == assign2.expression;
+        //}
 
-        public static bool operator ==(Assign assign1, Assign assign2)
-        {
-            return assign1.Equals(assign2);
-        }
+        //public static bool operator ==(Assign assign1, Assign assign2)
+        //{
+        //    if (System.Object.ReferenceEquals(assign1, assign2))
+        //    {
+        //        return true;
+        //    }
 
-        public static bool operator !=(Assign assign1, Assign assign2)
-        {
-            return !assign1.Equals(assign2);
-        }
+        //    if (((object)assign1 == null) || ((object)assign2 == null))
+        //    {
+        //        return false;
+        //    }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                const int HASH_MULTIPLIER = 23;
-                int hash = 17;
-                hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
-                hash = hash * HASH_MULTIPLIER + expression.GetHashCode();
-                return hash;
-            }
-        }
+        //    return assign1.Equals(assign2);
+        //}
+
+        //public static bool operator !=(Assign assign1, Assign assign2)
+        //{
+        //    return !assign1.Equals(assign2);
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    unchecked
+        //    {
+        //        const int HASH_MULTIPLIER = 23;
+        //        int hash = 17;
+        //        hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
+        //        hash = hash * HASH_MULTIPLIER + expression.GetHashCode();
+        //        return hash;
+        //    }
+        //}
     }
 
     public class Type : Node
@@ -381,7 +391,12 @@ namespace GingerParser
             {
                 const int HASH_MULTIPLIER = 23;
                 int hash = 17;
-                hash = hash * HASH_MULTIPLIER + value.GetHashCode();
+
+                if (value != null)
+                {
+                    hash = hash * HASH_MULTIPLIER + value.GetHashCode();
+                }
+                
                 return hash;
             }
         }
@@ -456,7 +471,7 @@ namespace GingerParser
             {
                 const int HASH_MULTIPLIER = 23;
                 int hash = 17;
-                hash = hash * HASH_MULTIPLIER + _name.GetHashCode();
+               // hash = hash * HASH_MULTIPLIER + _name.GetHashCode();
 
                 if (_declaration != null)
                 {

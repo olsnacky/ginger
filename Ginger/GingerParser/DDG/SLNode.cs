@@ -19,7 +19,7 @@ namespace GingerParser
 
     public partial class Statement
     {
-        public HashSet<Assign> findAssignment(Identifier i)
+        public HashSet<Assign> findAssignment(Identifier i, HashSet<Statement> visitedNodes)
         {
             HashSet<Assign> assignStatements = new HashSet<Assign>();
 
@@ -32,7 +32,11 @@ namespace GingerParser
             {
                 foreach (Statement predecessor in this.cfgPredecessors)
                 {
-                    assignStatements.UnionWith(predecessor.findAssignment(i));
+                    if (!(visitedNodes.Contains(predecessor)))
+                    {
+                        visitedNodes.Add(predecessor);
+                        assignStatements.UnionWith(predecessor.findAssignment(i, visitedNodes));
+                    }
                 }
 
                 return assignStatements;
