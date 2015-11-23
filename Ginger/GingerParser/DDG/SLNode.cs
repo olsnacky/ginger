@@ -43,14 +43,14 @@ namespace GingerParser
             }
             else
             {
-                throw new AccessException();
+                throw new AccessException(i.row, i.col, "This value has not been initialised.");
             }
         }
     }
 
-    public class AccessException : Exception
+    public class AccessException : ParseException
     {
-        public AccessException() : base()
+        public AccessException(int row, int col, string reason) : base(row, col, reason, ExceptionLevel.ERROR)
         {
 
         }

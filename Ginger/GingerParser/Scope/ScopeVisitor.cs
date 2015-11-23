@@ -73,7 +73,7 @@ namespace GingerParser.Scope
             visitChildren(a);
 
             if (!(a.identifier.canAssign((Typeable)a.expression))) {
-                throw new TypeException();
+                throw new TypeException(a.identifier.row, a.identifier.col, "This value cannot be assigned.");
             }
         }
 

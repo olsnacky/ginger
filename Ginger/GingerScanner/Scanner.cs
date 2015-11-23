@@ -7,13 +7,25 @@ using Ginger;
 
 namespace GingerScanner
 {
-    public class Scanner : System.IO.StreamReader
+    public class Scanner : System.IO.StringReader
     {
         private const char EOF = '\0';
         private const int NO_MORE_CHAR = -1;
         private char currentChar;
         private List<char> semanticValue;
-        private int charCount;
+
+        private int _col;
+        private int _row;
+
+        public int col
+        {
+            get { return _col; }
+        }
+
+        public int row
+        {
+            get { return _row; }
+        }
 
         public char[] tokenValue
         {
@@ -23,9 +35,10 @@ namespace GingerScanner
             }
         }
 
-        public Scanner(string filename) : base(filename)
+        public Scanner(string source) : base(source)
         {
-            charCount = 0;
+            _col = 0;
+            _row = 0;
             clearSemanticValue();
             nextChar();
         }
@@ -149,7 +162,18 @@ namespace GingerScanner
             }
 
             currentChar = c;
-            charCount++;
+
+            // if this is a new line, or a carriage return not followed by  a newline (the new line will
+            // be picked up as the next value)
+            if (currentChar == '\n' || (currentChar == '\r' && !(Convert.ToChar(this.Peek()) == '\n')))
+            {
+                _col = 0;
+                _row++;
+            }
+            else
+            {
+                _col++;
+            }
         }
 
         private void clearSemanticValue()

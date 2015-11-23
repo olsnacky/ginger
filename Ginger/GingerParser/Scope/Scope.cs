@@ -32,7 +32,7 @@ namespace GingerParser.Scope
         {
             // an identifier cannot be declared more than once in the same scope
             if (locals.ContainsKey(declaration.identifier)) {
-                throw new ScopeException();
+                throw new ScopeException(declaration.identifier.row, declaration.identifier.col, "An identifier cannot be used twice within the same scope.");
             }
 
             locals.Add(declaration.identifier, declaration);
@@ -55,7 +55,7 @@ namespace GingerParser.Scope
             }
             else
             {
-                throw new ScopeException();
+                throw new ScopeException(identifier.row, identifier.col, "This identifier has not been declared.");
             }
         }
 
@@ -71,9 +71,9 @@ namespace GingerParser.Scope
         }
     }
 
-    public class ScopeException : Exception
+    public class ScopeException : ParseException
     {
-        public ScopeException() : base()
+        public ScopeException(int row, int col, string reason) : base(row, col, reason, ExceptionLevel.ERROR)
         {
 
         }

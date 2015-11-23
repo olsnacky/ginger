@@ -27,6 +27,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scanner", "Scanner", "{8C97
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Parser", "Parser", "{2D249647-40FA-4FDF-A3D4-14C00336FE4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{04632BB2-3F33-4450-95CE-D17CBC1C0E85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Tests", "WebApi.Tests\WebApi.Tests.csproj", "{B6A841FC-BB37-4EE1-85AF-8F3C81C8468B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublishScripts", "PublishScripts", "{C2EA0CA5-101D-4C26-B4E3-F6298054523B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{A21C9DB2-CD45-4A10-A7B6-593CE9CFFBE0}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\Scripts\Deploy-AzureResourceGroup.ps1 = PublishScripts\Scripts\Deploy-AzureResourceGroup.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{047ED7F5-9916-48D0-A06F-0295E09AA839}"
+	ProjectSection(SolutionItems) = preProject
+		PublishScripts\Templates\WebApi.json = PublishScripts\Templates\WebApi.json
+		PublishScripts\Templates\WebApi.param.dev.json = PublishScripts\Templates\WebApi.param.dev.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +78,14 @@ Global
 		{591A803A-60F9-4625-B214-09E2B6E4DC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{591A803A-60F9-4625-B214-09E2B6E4DC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{591A803A-60F9-4625-B214-09E2B6E4DC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04632BB2-3F33-4450-95CE-D17CBC1C0E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04632BB2-3F33-4450-95CE-D17CBC1C0E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04632BB2-3F33-4450-95CE-D17CBC1C0E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04632BB2-3F33-4450-95CE-D17CBC1C0E85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6A841FC-BB37-4EE1-85AF-8F3C81C8468B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A841FC-BB37-4EE1-85AF-8F3C81C8468B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6A841FC-BB37-4EE1-85AF-8F3C81C8468B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A841FC-BB37-4EE1-85AF-8F3C81C8468B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +95,7 @@ Global
 		{EFB9AE11-EF03-4D6A-8E6E-F9B1E6D25612} = {8C97F1F7-CCF0-466F-8E92-B1F54D754A02}
 		{63C5428C-7821-4B7E-A4DE-85D0672051DC} = {2D249647-40FA-4FDF-A3D4-14C00336FE4B}
 		{408EBAFA-14DB-45AC-A2B2-93015273FEFB} = {2D249647-40FA-4FDF-A3D4-14C00336FE4B}
+		{A21C9DB2-CD45-4A10-A7B6-593CE9CFFBE0} = {C2EA0CA5-101D-4C26-B4E3-F6298054523B}
+		{047ED7F5-9916-48D0-A06F-0295E09AA839} = {C2EA0CA5-101D-4C26-B4E3-F6298054523B}
 	EndGlobalSection
 EndGlobal

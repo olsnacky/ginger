@@ -87,7 +87,7 @@ namespace GingerParser
                 }
                 else
                 {
-                    throw new ParseException();
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenStatementList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
 
                 if (controlToken == GingerToken.While)
@@ -105,28 +105,28 @@ namespace GingerParser
                 Node type;
                 if (currentScannerToken == GingerToken.Int)
                 {
-                    type = new Integer();
+                    type = new Integer(scanner.row, scanner.col);
                 }
                 else
                 {
-                    type = new Boolean();
+                    type = new Boolean(scanner.row, scanner.col);
                 }
 
 
                 nextScannerToken();
                 if (currentScannerToken != GingerToken.Identifier)
                 {
-                    throw new ParseException();
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
                 else
                 {
-                    nc = new Declaration(type, new Identifier(new string(scanner.tokenValue)));
+                    nc = new Declaration(type, new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
                 }
             }
             // statement = identifier, "=", expression
             else if (currentScannerToken == GingerToken.Identifier)
             {
-                Identifier identifier = new Identifier(new string(scanner.tokenValue));
+                Identifier identifier = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.Assignment)
                 {
@@ -135,12 +135,12 @@ namespace GingerParser
                 }
                 else
                 {
-                    throw new ParseException();
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Assignment.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
             }
             else
             {
-                throw new ParseException();
+                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.If.ToString()}', '{GingerToken.While.ToString()}', '{GingerToken.Int.ToString()}', '{GingerToken.Bool.ToString()}', or '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
             }
 
             return nc;
@@ -158,11 +158,11 @@ namespace GingerParser
             {
                 if (currentScannerToken == GingerToken.Identifier)
                 {
-                    n = new Identifier(new string(scanner.tokenValue));
+                    n = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
                 }
                 else
                 {
-                    n = new Literal<Integer>(new Integer(new string(scanner.tokenValue)));
+                    n = new Literal<Integer>(new Integer(scanner.row, scanner.col, new string(scanner.tokenValue)));
                 }
             }
             else if (currentScannerToken == GingerToken.OpenPrecedent)
@@ -173,12 +173,12 @@ namespace GingerParser
                 nextScannerToken();
                 if (currentScannerToken != GingerToken.ClosePrecedent)
                 {
-                    throw new ParseException();
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.ClosePrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
             }
             else
             {
-                throw new ParseException();
+                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', '{GingerToken.IntegerLiteral.ToString()}', or '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
             }
 
             return n;
@@ -217,7 +217,7 @@ namespace GingerParser
                 }
                 else
                 {
-                    throw new ParseException();
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Addition.ToString()}', or '{GingerToken.LessThan.ToString()}',  found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
             }
 
@@ -240,11 +240,26 @@ namespace GingerParser
         }
     }
 
+    public enum ExceptionLevel
+    {
+        INFO = 0,
+        WARNING = 1,
+        ERROR = 2
+    }
+
     public class ParseException : Exception
     {
-        public ParseException() : base()
-        {
+        int row;
+        int column;
+        string reason;
+        ExceptionLevel level;
 
+        public ParseException(int row, int column, string reason, ExceptionLevel level) : base()
+        {
+            this.row = row;
+            this.column = column;
+            this.reason = reason;
+            this.level = level;
         }
     }
 }

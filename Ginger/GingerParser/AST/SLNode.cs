@@ -9,8 +9,37 @@ using GingerUtil;
 
 namespace GingerParser
 {
-    public abstract class SLNodeCollection : NodeCollection
+    public interface ISourcePosition
     {
+        int row
+        {
+            get;
+        }
+
+        int col
+        {
+            get;
+        }
+    }
+
+    public abstract class SLNodeCollection : NodeCollection, ISourcePosition
+    {
+        public virtual int col
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public virtual int row
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override void add(Node n)
         {
             n.parents.Clear();
@@ -121,44 +150,25 @@ namespace GingerParser
             this.add(lhs);
             this.add(rhs);
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    Operation op2 = obj as Operation;
-        //    if (op2 == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    return this.op == op2.op && this.lhs == op2.lhs && this.rhs == op2.rhs;
-        //}
-
-        //public static bool operator ==(Operation binOp1, Operation binOp2)
-        //{
-        //    return binOp1.Equals(binOp2);
-        //}
-
-        //public static bool operator !=(Operation binOp1, Operation binOp2)
-        //{
-        //    return !binOp1.Equals(binOp2);
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    unchecked
-        //    {
-        //        const int HASH_MULTIPLIER = 23;
-        //        int hash = 17;
-        //        hash = hash * HASH_MULTIPLIER + op.GetHashCode();
-        //        hash = hash * HASH_MULTIPLIER + lhs.GetHashCode();
-        //        hash = hash * HASH_MULTIPLIER + rhs.GetHashCode();
-        //        return hash;
-        //    }
-        //}
     }
 
     public partial class InequalityOperation : Operation
     {
+        public override int row
+        {
+            get
+            {
+                return ((ISourcePosition)lhs).row;
+            }
+        }
+
+        public override int col
+        {
+            get
+            {
+                return ((ISourcePosition)lhs).col;
+            }
+        }
         public InequalityOperation(GingerToken inequalityOp, Node lhs, Node rhs) : base(inequalityOp, lhs, rhs)
         {
             return;
@@ -189,6 +199,22 @@ namespace GingerParser
         private const int IDENTIFIER_INDEX = 1;
         private const int STATEMENT_LIST_INDEX = 0;
 
+        public override int row
+        {
+            get
+            {
+                return ((ISourcePosition)type).row;
+            }
+        }
+
+        public override int col
+        {
+            get
+            {
+                return ((ISourcePosition)type).col;
+            }
+        }
+
         public Node type
         {
             get { return this.get(TYPE_INDEX); }
@@ -214,52 +240,6 @@ namespace GingerParser
         {
             ((SLVisitor)v).visitDeclaration(this);
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    Declaration dec2 = obj as Declaration;
-        //    if (dec2 == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    // declaration part of scope partial
-        //    return this.type == dec2.type && this.identifier == dec2.identifier && this.scope == dec2.scope;
-        //}
-
-        //public static bool operator ==(Declaration dec1, Declaration dec2)
-        //{
-        //    if (System.Object.ReferenceEquals(dec1, dec2))
-        //    {
-        //        return true;
-        //    }
-
-        //    if (((object)dec1 == null) || ((object)dec2 == null))
-        //    {
-        //        return false;
-        //    }
-
-        //    return dec1.Equals(dec2);
-        //}
-
-        //public static bool operator !=(Declaration dec1, Declaration dec2)
-        //{
-        //    return !(dec1 == dec2);
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    unchecked
-        //    {
-        //        const int HASH_MULTIPLIER = 23;
-        //        int hash = 17;
-        //        hash = hash * HASH_MULTIPLIER + type.GetHashCode();
-        //        hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
-        //        hash = hash * HASH_MULTIPLIER + scope.GetHashCode();
-        //        return hash;
-        //    }
-        //}
-
     }
 
     public partial class Assign : Statement
@@ -287,76 +267,79 @@ namespace GingerParser
         {
             ((SLVisitor)v).visitAssign(this);
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    Assign assign2 = obj as Assign;
-        //    if (assign2 == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    return this.identifier == assign2.identifier && this.expression == assign2.expression;
-        //}
-
-        //public static bool operator ==(Assign assign1, Assign assign2)
-        //{
-        //    if (System.Object.ReferenceEquals(assign1, assign2))
-        //    {
-        //        return true;
-        //    }
-
-        //    if (((object)assign1 == null) || ((object)assign2 == null))
-        //    {
-        //        return false;
-        //    }
-
-        //    return assign1.Equals(assign2);
-        //}
-
-        //public static bool operator !=(Assign assign1, Assign assign2)
-        //{
-        //    return !assign1.Equals(assign2);
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    unchecked
-        //    {
-        //        const int HASH_MULTIPLIER = 23;
-        //        int hash = 17;
-        //        hash = hash * HASH_MULTIPLIER + identifier.GetHashCode();
-        //        hash = hash * HASH_MULTIPLIER + expression.GetHashCode();
-        //        return hash;
-        //    }
-        //}
     }
 
-    public class Type : Node
+    public class Type : Node, ISourcePosition
     {
+        private int _row;
+        private int _col;
+
+        public Type(int row, int col) : base()
+        {
+            this._row = row;
+            this._col = col;
+        }
+
+        public int col
+        {
+            get
+            {
+                return _col;
+            }
+        }
+
+        public int row
+        {
+            get
+            {
+                return _row;
+            }
+        }
+
         public override void accept(NodeVisitor v)
         {
             throw new NotImplementedException();
         }
     }
 
-    public partial class Integer : Node
+    public partial class Integer : Node, ISourcePosition
     {
-        string _value;
+        private string _value;
+        private int _row;
+        private int _col;
 
         public string value
         {
             get { return _value; }
         }
 
-        public Integer(string value) : base()
+        public int row
         {
+            get
+            {
+                return _row;
+            }
+        }
+
+        public int col
+        {
+            get
+            {
+                return _col;
+            }
+        }
+
+        public Integer(int row, int col, string value) : base()
+        {
+            this._row = row;
+            this._col = col;
             this._value = value;
         }
 
-        public Integer() : base()
+        public Integer(int row, int col) : base()
         {
-            return;
+            this._row = row;
+            this._col = col;
         }
 
         public override void accept(NodeVisitor v)
@@ -402,11 +385,31 @@ namespace GingerParser
         }
     }
 
-    public partial class Boolean : Node
+    public partial class Boolean : Node, ISourcePosition
     {
-        public Boolean() : base()
+        private int _row;
+        private int _col;
+
+        public int row
         {
-            return;
+            get
+            {
+                return _row;
+            }
+        }
+
+        public int col
+        {
+            get
+            {
+                return _col;
+            }
+        }
+
+        public Boolean(int row, int col) : base()
+        {
+            this._row = row;
+            this._col = col;
         }
 
         public override void accept(NodeVisitor v)
@@ -415,16 +418,36 @@ namespace GingerParser
         }
     }
 
-    public partial class Identifier : Node
+    public partial class Identifier : Node, ISourcePosition
     {
         private string _name;
+        private int _row;
+        private int _col;
 
         public string name
         {
             get { return _name; }
         }
 
-        public Identifier(string name) : base() {
+        public int row
+        {
+            get
+            {
+                return _row;
+            }
+        }
+
+        public int col
+        {
+            get
+            {
+                return _col;
+            }
+        }
+
+        public Identifier(int row, int col, string name) : base() {
+            this._row = row;
+            this._col = col;
             this._name = name;
         }
 
@@ -483,13 +506,29 @@ namespace GingerParser
         }
     }
 
-    public partial class Literal<T> : Node
+    public partial class Literal<T> : Node, ISourcePosition
     {
         T _value;
 
         public T value
         {
             get { return _value; }
+        }
+
+        public int row
+        {
+            get
+            {
+                return ((ISourcePosition)value).row;
+            }
+        }
+
+        public int col
+        {
+            get
+            {
+                return ((ISourcePosition)value).col;
+            }
         }
 
         public Literal(T value) : base() {

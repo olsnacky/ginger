@@ -48,7 +48,7 @@ namespace GingerParser
                 return typeof(Boolean);
             }
 
-            throw new TypeException();
+            throw new TypeException(((ISourcePosition)this.lhs).row, ((ISourcePosition)this.lhs).col, "This value cannot be compared.");
         }
     }
 
@@ -61,7 +61,7 @@ namespace GingerParser
                 return ((Typeable)this.lhs).evaluateType();
             }
 
-            throw new TypeException();
+            throw new TypeException(((ISourcePosition)this.lhs).row, ((ISourcePosition)this.lhs).col, "This value cannot be assigned." );
         }
     }
 
@@ -146,9 +146,9 @@ namespace GingerParser
         }
     }
 
-    public class TypeException : Exception
+    public class TypeException : ParseException
     {
-        public TypeException() : base()
+        public TypeException(int row, int col, string reason) : base(row, col, reason, ExceptionLevel.ERROR)
         {
 
         }

@@ -280,9 +280,9 @@ namespace GingerParserTest
             TestVisitor tv = new TestVisitor(parser.ast);
 
             // empty declaration to fool compiler
-            Declaration george = new Declaration(new Integer(), new Identifier("geoerge1Test"));
-            Declaration kim = new Declaration(new Integer(), new Identifier("kim1Test"));
-            Declaration subKim = new Declaration(new Integer(), new Identifier("kim2Test"));
+            Declaration george = new Declaration(new Integer(0, 0), new Identifier(0, 0, "geoerge1Test"));
+            Declaration kim = new Declaration(new Integer(0, 0), new Identifier(0, 0, "kim1Test"));
+            Declaration subKim = new Declaration(new Integer(0, 0), new Identifier(0, 0, "kim2Test"));
 
             for (int i = 0; i < COUNT; i++)
             {
@@ -361,7 +361,7 @@ namespace GingerParserTest
         public void IdentifierNotInScope()
         {
             Scope scope = new Scope();
-            Identifier ident = new Identifier("david");
+            Identifier ident = new Identifier(0, 0, "david");
             scope.find(ident);
         }
 
