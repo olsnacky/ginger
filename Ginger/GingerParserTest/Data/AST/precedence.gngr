@@ -1,3 +1,0 @@
-﻿if bob + 5 < george + 6 {
-	bob = george
-}
