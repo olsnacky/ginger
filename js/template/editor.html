@@ -37,18 +37,9 @@
           
 
             <div class="mdl-card__actions mdl-card--border">
-                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.DECLARATION_IDX)">
-                    Declaration
+                <button class="mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect" ng-click="examples.setSelected($index)" ng-repeat="example in examples.list">
+                    {{example.name}}
                 </button>
-                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.ASSIGNMENT_IDX)">
-                    Assignment
-                </button>
-                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.CONTROL_IDX)">
-                    Control
-                </button>
-                <!--<button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.EXPRESSIONS_IDX)">
-                    Expressions
-                </button>-->
             </div>
         </div>
     </div>

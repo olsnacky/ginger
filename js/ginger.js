@@ -52,10 +52,6 @@
             {
                 name: 'Control',
                 source: 'int x\nint y\n\nx = 0\ny = 2\n\nif x < y {\n\tx = y + 1\n}\n\nwhile y < (x + 10) {\n\ty = y + 1\n}'
-            },
-            {
-                name: 'Expressions',
-                source: ''
             }
         ];
     });
