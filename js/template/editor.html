@@ -3,15 +3,53 @@
         width: 100%;
     }
     
+    .example-card > .mdl-card__title {
+        background-color: #5C6BC0;
+        color: #fff;
+    }
+    
+    .example-card.mdl-card {
+        width: 100%;
+    }
+    
     #editor {
-        height: 500px;
+        height: 512px;
+    }
+    
+    #example {
+        height: 256px;
     }
 </style>
 
 <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--12-col">
+    <div class="mdl-cell mdl-cell--8-col">
         <div class="editor-card mdl-card mdl-shadow--2dp">
             <div id="editor"></div>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--4-col">
+        <div class="example-card mdl-card mdl-shadow--2dp" ng-controller="ExampleController as examples">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">{{examples.selected().name}}</h2>
+            </div>
+
+                    <div id="example">{{examples.selected().source}}</div>
+          
+
+            <div class="mdl-card__actions mdl-card--border">
+                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.DECLARATION_IDX)">
+                    Declaration
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.ASSIGNMENT_IDX)">
+                    Assignment
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.CONTROL_IDX)">
+                    Control
+                </button>
+                <!--<button class="mdl-button mdl-js-button mdl-button--accent" ng-click="examples.setSelected(examples.EXPRESSIONS_IDX)">
+                    Expressions
+                </button>-->
+            </div>
         </div>
     </div>
 </div>

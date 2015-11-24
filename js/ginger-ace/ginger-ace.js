@@ -40,8 +40,16 @@ window.onresize = function (event) {
 resizeAce();
 
 function callback() {
+    window.ace = ace;
     var editor = ace.edit("editor");
+    
     editor.setTheme("ace/theme/chrome");
     editor.getSession().setMode("ace/mode/ginger");
+    
+    var example = ace.edit("example")
+    example.setTheme("ace/theme/solarized_light");
+    example.getSession().setMode("ace/mode/ginger");
+    example.setReadOnly(true)
+    
     resizeAce()
 }
