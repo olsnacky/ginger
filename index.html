@@ -1,40 +1,68 @@
 ﻿<!DOCTYPE html>
 <html ng-app="ginger">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Ginger</title>
+  <title>Ginger</title>
 
-    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.amber-indigo.min.css">
-    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
-    <script src="bower_components/angular-gist-embed/dist/angular-gist-embed.min.js"></script>
-    <script src="bower_components/jquery/jquery.min.js"></script>
-    <script src="js/angular-loadscript.js"></script>
-    <script src="js/ginger.js"></script>
-    <script src="http://requirejs.org/docs/release/2.1.22/minified/require.js"></script>
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.amber-indigo.min.css">
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
+  <script src="bower_components/angular-gist-embed/dist/angular-gist-embed.min.js"></script>
+  <script src="bower_components/jquery/jquery.min.js"></script>
+  <script src="js/angular-loadscript.js"></script>
+  <script src="js/ginger.js"></script>
+  <script src="http://requirejs.org/docs/release/2.1.22/minified/require.js"></script>
 </head>
-<body>
 
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
-        <div class="mdl-layout__drawer">
-            <span class="mdl-layout-title">Ginger</span>
-            <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" ng-href="#/">Editor</a>
-                <!--<a class="mdl-navigation__link" ng-href="#/lexicon">Lexicon</a>-->
-                <!--<a class="mdl-navigation__link" ng-href="#/grammar">Grammar</a>-->
-            </nav>
-        </div>
-        <main class="mdl-layout__content">
-            <div class="page-content">
-                
-                    <div ng-view></div>
-            </div>
-        </main>
+<body>
+  <!-- Always shows a header, even in smaller screens. -->
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <!-- Title -->
+        <span class="mdl-layout-title">Ginger</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+        <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation mdl-layout--large-screen-only">
+          <a class="mdl-navigation__link" ng-href="#/">Playground</a>
+        </nav>
+      </div>
+    </header>
+    <div class="mdl-layout__drawer">
+      <span class="mdl-layout-title">Ginger</span>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" ng-href="#/">Playground</a>
+        <a class="mdl-navigation__link" href="https://github.com/noilly/ginger/blob/master/lexicon.ebnf" target="_blank">Lexicon</a>
+        <a class="mdl-navigation__link" href="https://github.com/noilly/ginger/blob/master/grammar.ebnf" target="_blank">Grammar</a>
+      </nav>
     </div>
+    <main class="mdl-layout__content">
+      <div class="page-content">
+        <div ng-view></div>
+      </div>
+    </main>
+    <footer class="mdl-mini-footer">
+      <div class="mdl-mini-footer__left-section">
+        <div class="mdl-logo">Ginger</div>
+        <ul class="mdl-mini-footer__link-list">
+          <li><a href="https://github.com/noilly/ginger" target="_blank">Github</a></li>
+          <li><a ng-href="#/story">Ginger's Story</a></li>
+          <li><a ng-href="#/story/name">Why "Ginger"?</a></li>
+        </ul>
+      </div>
+      <div class="mdl-mini-footer__right-section">
+        <ul class="mdl-mini-footer__link-list">
+          <li>&copy; <a href="http://www.davidpoxon.com" target="_blank">David Poxon</a> 2015</li>
+        </ul>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>

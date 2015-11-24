@@ -11768,6 +11768,7 @@ oop.inherits(JavaScriptWorker, Mirror);
     };
 
     this.onUpdate = function() {
+      console.log('ja update')
         var value = this.doc.getValue();
         value = value.replace(/^#!.*\n/, "\n");
         if (!value)

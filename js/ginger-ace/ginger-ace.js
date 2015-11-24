@@ -22,8 +22,12 @@ function resizeAce() {
     var editor = document.querySelector('#editor');
     var doc = editor.parentNode.ownerDocument;
     var window = doc.defaultView || doc.parentWindow;
+    var main = document.querySelector('main')
     
-    editor.parentNode.style.height = window.innerHeight - 32 + "px";
+    // we set a timeout to handle an issue in material design
+    // where the 'main' element size is not set when this is triggered
+
+    editor.parentNode.style.height = main.offsetHeight - 32 + "px";
     editor.style.height = editor.parentNode.style.height;
 };
 
@@ -34,7 +38,6 @@ window.onresize = function (event) {
 
 //set initially
 resizeAce();
-
 
 function callback() {
     var editor = ace.edit("editor");

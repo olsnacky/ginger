@@ -1,0 +1,23 @@
+{
+  "name": "ginger-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://noilly@github.com/noilly/ginger.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noilly/ginger/issues"
+  },
+  "homepage": "https://github.com/noilly/ginger#readme",
+  "devDependencies": {
+    "live-server": "^0.8.2"
+  }
+}

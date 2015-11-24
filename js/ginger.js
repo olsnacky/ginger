@@ -12,7 +12,13 @@
         .when('/grammar', {
             templateUrl: 'js/template/grammar.html'
         })
+        .when('/story', {
+            templateUrl: 'js/template/story.html'
+        })
+        .when('/story/name', {
+            templateUrl: 'js/template/name.html'
+        })
     .otherwise({
         redirectTo: '/'
     })
-})
+});
