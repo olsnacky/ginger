@@ -35,6 +35,12 @@ namespace GingerParser
         private GingerToken currentScannerToken;
         private GingerToken? spiedScannerToken;
         private StatementList statementList;
+        private List<ParseException> _errors;
+
+        public List<ParseException> errors
+        {
+            get { return _errors; }
+        }
 
         public StatementList ast
         {
@@ -46,6 +52,7 @@ namespace GingerParser
 
         public Parser(string source)
         {
+            _errors = new List<ParseException>();
             scanner = new Scanner(source);
         }
 
@@ -60,9 +67,22 @@ namespace GingerParser
             StatementList sl = new StatementList();
             do
             {
-                sl.add(parseStatement());
+                try
+                {
+                    sl.add(parseStatement());
+                }
+                catch (ParseException pe)
+                {
+                    _errors.Add(pe);
+                }
+                
                 nextScannerToken();
-            } while (currentScannerToken != endToken);
+
+                if (currentScannerToken != endToken && currentScannerToken == GingerToken.EndOfFile)
+                {
+                    _errors.Add(new ParseException(scanner.row, scanner.col, $"Expected '{endToken.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR));
+                }
+            } while (currentScannerToken != endToken && currentScannerToken != GingerToken.EndOfFile);
 
             return sl;
         }
@@ -77,8 +97,17 @@ namespace GingerParser
                 GingerToken controlToken = currentScannerToken;
 
                 nextScannerToken();
-                InequalityOperation condition = (InequalityOperation)parseExpression();
 
+                InequalityOperation condition;
+                try
+                {
+                   condition = (InequalityOperation)parseExpression();
+                }
+                catch (InvalidCastException ice)
+                {
+                    throw new ParseException(scanner.row, scanner.col, ice.Message, ExceptionLevel.ERROR);
+                }
+                
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
                 {
@@ -249,17 +278,37 @@ namespace GingerParser
 
     public class ParseException : Exception
     {
-        int row;
-        int column;
-        string reason;
-        ExceptionLevel level;
+        private int _row;
+        private int _column;
+        private string _reason;
+        private ExceptionLevel _level;
+
+        public int row
+        {
+            get { return _row; }
+        }
+
+        public int column
+        {
+            get { return _column; }
+        }
+
+        public string reason
+        {
+            get { return _reason; }
+        }
+
+        public ExceptionLevel level
+        {
+            get { return _level; }
+        }
 
         public ParseException(int row, int column, string reason, ExceptionLevel level) : base()
         {
-            this.row = row;
-            this.column = column;
-            this.reason = reason;
-            this.level = level;
+            this._row = row;
+            this._column = column;
+            this._reason = reason;
+            this._level = level;
         }
     }
 }

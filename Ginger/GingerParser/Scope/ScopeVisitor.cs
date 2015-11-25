@@ -9,10 +9,17 @@ namespace GingerParser.Scope
 {
     public class ScopeVisitor : SLVisitor
     {
+        private List<ParseException> _errors;
         private Scope currentScope;
+
+        public List<ParseException> errors
+        {
+            get { return _errors; }
+        }
 
         public ScopeVisitor(StatementList ast)
         {
+            _errors = new List<ParseException>();
             ast.accept(this);
         }
 
@@ -91,7 +98,14 @@ namespace GingerParser.Scope
         {
             foreach (Node n in nc)
             {
-                n.accept(this);
+                try
+                {
+                    n.accept(this);
+                }
+                catch (ParseException pe)
+                {
+                    _errors.Add(pe);
+                }
             }
         }
 

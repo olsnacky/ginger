@@ -12,7 +12,9 @@ namespace GingerScannerTest
         [TestMethod]
         public void TestSimple()
         {
-            Scanner gs = new Scanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
+
+            Scanner gs = new Scanner(reader.ReadToEnd());
             Assert.AreEqual(GingerToken.Int, gs.next(), "int 1");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 1");
             Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 1");
@@ -52,7 +54,9 @@ namespace GingerScannerTest
         [TestMethod]
         public void TestSpy()
         {
-            Scanner gs = new Scanner(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\test.gngr"));
+
+            Scanner gs = new Scanner(reader.ReadToEnd());
             Assert.AreEqual(GingerToken.Int, gs.next(), "int 1");
             Assert.AreEqual(GingerToken.Identifier, gs.spy(), "ident 1/1");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 2/1");

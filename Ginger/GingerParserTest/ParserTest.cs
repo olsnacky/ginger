@@ -103,7 +103,9 @@ namespace GingerParserTest
         {
             const int COUNT = 31;
             List<Node> nodes = new List<Node>();
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\parser.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\parser.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             TestVisitor tv = new TestVisitor(parser.ast);
 
@@ -216,7 +218,9 @@ namespace GingerParserTest
         {
             const int COUNT = 13;
             List<Node> nodes = new List<Node>();
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\precedence.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\precedence.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             TestVisitor tv = new TestVisitor(parser.ast);
 
@@ -274,7 +278,9 @@ namespace GingerParserTest
         public void SimpleScope()
         {
             const int COUNT = 29;
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\scope.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\scope.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
             TestVisitor tv = new TestVisitor(parser.ast);
@@ -348,12 +354,15 @@ namespace GingerParserTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ScopeException))]
         public void DoubleDeclaration()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\DoubleDeclaration.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\DoubleDeclaration.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+
+            Assert.IsInstanceOfType(sv.errors[0], typeof(ScopeException));
         }
 
         [TestMethod]
@@ -366,83 +375,127 @@ namespace GingerParserTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
         public void NotOpenStatement()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\NotOpenStatement.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\NotOpenStatement.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
         public void NoIdentifierAfterType()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\IdentifierDoesNotFollowType.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\IdentifierDoesNotFollowType.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
+        public void NoCloseToStatementListAtEnd()
+        {
+            Parser parser = new Parser("int x x = 1 int y y = 0 if y < x {x = x + 1 ");
+
+            parser.parse();
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
+        }
+
+        [TestMethod]
+        public void UseOfIdentifierInFirstStatement()
+        {
+            Parser parser = new Parser("int x int y if y < x { int z }");
+            parser.parse();
+
+            CFGVisitor cfgv = new CFGVisitor(parser.ast);
+            ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            DDGVisitor ddgv = new DDGVisitor(parser.ast);
+
+            Assert.IsInstanceOfType(ddgv.errors[0], typeof(AccessException));
+        }
+
+        [TestMethod]
         public void NoExpressionAfterAssignment()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionDoesNotFollowAssignment.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionDoesNotFollowAssignment.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
         public void NotAStatement()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionInsteadOfStatement.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionInsteadOfStatement.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
         public void ExpressionNotClosed()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotClosed.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotClosed.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseException))]
         public void ExpressionNotFound()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotFound.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\ExpressionNotFound.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
+
+            Assert.IsInstanceOfType(parser.errors[0], typeof(ParseException));
         }
 
         [TestMethod]
         public void TypeChecking()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\type.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\type.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(TypeException))]
         public void AssignBoolVarToIntVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBoolVarToIntVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBoolVarToIntVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            Assert.IsInstanceOfType(sv.errors[0], typeof(TypeException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(TypeException))]
         public void AssignIntLiteralToBoolVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignIntLiteralToBoolVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignIntLiteralToBoolVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            Assert.IsInstanceOfType(sv.errors[0], typeof(TypeException));
         }
 
         [TestMethod]
         public void AssignBinaryOpToIntVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToIntVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToIntVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
@@ -450,32 +503,39 @@ namespace GingerParserTest
         [TestMethod]
         public void AssignInequalityToBoolVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToBoolVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToBoolVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(TypeException))]
         public void AssignBinaryOpToBoolVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToBoolVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignBinaryOpToBoolVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+
+            Assert.IsInstanceOfType(sv.errors[0], typeof(TypeException));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(TypeException))]
         public void AssignInequalityToIntVar()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToIntVar.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Scope\AssignInequalityToIntVar.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
             parser.parse();
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+
+            Assert.IsInstanceOfType(sv.errors[0], typeof(TypeException));
         }
 
         [TestMethod]
         public void BlockSurroundedIf() {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\BlockSurroundedIf.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\BlockSurroundedIf.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor sv = new CFGVisitor(parser.ast);
 
@@ -509,7 +569,9 @@ namespace GingerParserTest
         [TestMethod]
         public void CFG()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\cfg.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\cfg.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor sv = new CFGVisitor(parser.ast);
 
@@ -525,7 +587,9 @@ namespace GingerParserTest
         [TestMethod]
         public void NestedIfNoStatements()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfNoStatements.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfNoStatements.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor sv = new CFGVisitor(parser.ast);
 
@@ -539,7 +603,9 @@ namespace GingerParserTest
         [TestMethod]
         public void NestedIfWithStatements()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfWithStatements.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\NestedIfWithStatements.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor sv = new CFGVisitor(parser.ast);
 
@@ -557,7 +623,9 @@ namespace GingerParserTest
         [TestMethod]
         public void While()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\while.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\CFG\while.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor sv = new CFGVisitor(parser.ast);
 
@@ -576,7 +644,9 @@ namespace GingerParserTest
         [TestMethod]
         public void DDG()
         {
-            Parser parser = new Parser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\DDG\ddg.gngr"));
+            StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\DDG\ddg.gngr"));
+            Parser parser = new Parser(reader.ReadToEnd());
+
             parser.parse();
             CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);

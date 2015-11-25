@@ -11,9 +11,16 @@ namespace GingerParser.DDG
     {
         Scope.Scope _currentScope;
         Statement _currentStatement;
+        List<ParseException> _errors;
+
+        public List<ParseException> errors
+        {
+            get { return _errors; }
+        }
 
         public DDGVisitor(StatementList ast)
         {
+            _errors = new List<ParseException>();
             ast.accept(this);
         }
 
@@ -50,9 +57,18 @@ namespace GingerParser.DDG
         {
             HashSet<Assign> assignments = new HashSet<Assign>();
                 
-            foreach (Statement predecessor in _currentStatement.cfgPredecessors) {
-                assignments.UnionWith(predecessor.findAssignment(i, new HashSet<Statement>()));
-            }   
+            if (_currentStatement.cfgPredecessors.Count > 0)
+            {
+                foreach (Statement predecessor in _currentStatement.cfgPredecessors)
+                {
+                    assignments.UnionWith(predecessor.findAssignment(i, new HashSet<Statement>()));
+                }
+            }
+            else
+            {
+                throw new AccessException(i.row, i.col, "This value has not been initialised.");
+            }
+              
                 
             foreach (Assign assignment in assignments)
             {
@@ -83,7 +99,16 @@ namespace GingerParser.DDG
                 if (statement is Statement)
                 {
                     _currentScope = sl.scope;
-                    statement.accept(this);
+
+                    try
+                    {
+                        statement.accept(this);
+                    }
+                    catch (ParseException pe)
+                    {
+                        _errors.Add(pe);
+                    }
+                    
                 }
             }
         }

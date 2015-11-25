@@ -10,10 +10,12 @@ namespace GingerParser.CFG
     public class CFGVisitor : SLVisitor
     {
         Queue<Statement> _previousStatements;
+        List<ParseException> _errors;
 
         public CFGVisitor(StatementList ast)
         {
             _previousStatements = new Queue<Statement>();
+            _errors = new List<ParseException>();
             ast.accept(this);
         }
 
