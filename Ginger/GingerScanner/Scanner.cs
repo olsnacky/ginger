@@ -85,6 +85,10 @@ namespace GingerScanner
                 {
                     return GingerToken.While;
                 }
+                else if (tokenValue.SequenceEqual(Lexicon.BOOLEAN_TRUE) || tokenValue.SequenceEqual(Lexicon.BOOLEAN_FALSE))
+                {
+                    return GingerToken.BooleanLiteral;
+                }
                 else if (tokenValue.SequenceEqual(Lexicon.INT))
                 {
                     return GingerToken.Int;
@@ -128,15 +132,30 @@ namespace GingerScanner
                 nextChar();
                 return GingerToken.Addition;
             }
+            else if (currentChar == Lexicon.SUBTRACTION)
+            {
+                nextChar();
+                return GingerToken.Subtraction;
+            }
             else if (currentChar == Lexicon.LESS_THAN)
             {
                 nextChar();
                 return GingerToken.LessThan;
             }
+            else if (currentChar == Lexicon.GREATER_THAN)
+            {
+                nextChar();
+                return GingerToken.GreaterThan;
+            }
             else if (currentChar == Lexicon.ASSIGNMENT)
             {
                 nextChar();
                 return GingerToken.Assignment;
+            }
+            else if (currentChar == Lexicon.SECURITY_ASSIGNMENT)
+            {
+                nextChar();
+                return GingerToken.SecurityAssignment;
             }
             else if (currentChar == EOF)
             {

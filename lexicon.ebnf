@@ -10,12 +10,15 @@ alphabetic-character = lower-alphabetic-character | upper-alphabetic-character ;
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 integer = [-](digit | digit, {digit}) ;
 
+(* valid booleans *)
+booleans = "true" | "false" ;
+
 (* valid variable names *)
 identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
 
 (* valid operations *)
-binary-operator = "+" ;
-condition-operator = "<" ;
+binary-operator = "+" | "-";
+condition-operator = "<" | ">";
 
 (* assignment symbol *)
 assignment = "=" ;
@@ -35,3 +38,6 @@ while = "while" ;
 (* types *)
 int = "int"
 bool = "bool"
+
+(* ifc *)
+security-assignment = ":" ;

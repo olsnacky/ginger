@@ -11,6 +11,7 @@ namespace GingerTest
     public class LexiconTest
     {
         private char ASSIGNMENT = '=';
+        private char SECURITY_ASSIGNMENT = ':';
         private char OPEN_PRECEDENT = '(';
         private char CLOSE_PRECEDENT = ')';
         private char OPEN_STATEMENT = '{';
@@ -20,16 +21,20 @@ namespace GingerTest
         private char[] UPPER_ALPHA = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
         private char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         private char ADDITION = '+';
+        private char SUBTRACTION = '-';
         private char LESS_THAN = '<';
+        private char GREATER_THAN = '>';
         private char END_OF_LINE = ';';
         private char[] INT = { 'i', 'n', 't' };
         private char[] BOOL = { 'b', 'o', 'o', 'l' };
+        private char[] BOOLEAN_TRUE = { 't', 'r', 'u', 'e' };
+        private char[] BOOLEAN_FALSE = { 'f', 'a', 'l', 's', 'e' };
         private char UNDERSCORE = '_';
         private char NEGATE = '-';
 
         private char[] IF = { 'i', 'f' };
         private char[] WHILE = { 'w', 'h', 'i', 'l', 'e' };
-
+        
         private char EMPTY = '\0';
         private char PERIOD = '.';
         private char UNKNOWN = '@';
@@ -61,12 +66,15 @@ namespace GingerTest
             tempc.AddRange(UPPER_ALPHA);
             tempc.AddRange(DIGITS);
             tempc.Add(ASSIGNMENT);
+            tempc.Add(SECURITY_ASSIGNMENT);
             tempc.Add(OPEN_PRECEDENT);
             tempc.Add(CLOSE_PRECEDENT);
             tempc.Add(WHITESPACE);
             tempc.Add(END_OF_LINE);
             tempc.Add(ADDITION);
+            tempc.Add(SUBTRACTION);
             tempc.Add(LESS_THAN);
+            tempc.Add(GREATER_THAN);
             tempc.Add(EMPTY);
             tempc.Add(UNKNOWN);
             tempc.Add(PERIOD);
@@ -91,6 +99,8 @@ namespace GingerTest
             tempca.Add(WHILE);
             tempca.Add(INTEGER);
             tempca.Add(NEGATIVE_INTEGER);
+            tempca.Add(BOOLEAN_FALSE);
+            tempca.Add(BOOLEAN_TRUE);
             return tempca.ToArray();
         }
 
@@ -119,6 +129,12 @@ namespace GingerTest
         }
 
         [TestMethod]
+        public void HasSecurityAssignment()
+        {
+            Assert.AreEqual(Lexicon.SECURITY_ASSIGNMENT, SECURITY_ASSIGNMENT);
+        }
+
+        [TestMethod]
         public void HasOpenPrecedent()
         {
             Assert.AreEqual(Lexicon.OPEN_PRECEDENT, OPEN_PRECEDENT);
@@ -143,6 +159,18 @@ namespace GingerTest
         }
 
         [TestMethod]
+        public void HasBooleanTrue()
+        {
+            CollectionAssert.AreEqual(Lexicon.BOOLEAN_TRUE, BOOLEAN_TRUE);
+        }
+
+        [TestMethod]
+        public void hasBooleanFalse()
+        {
+            CollectionAssert.AreEqual(Lexicon.BOOLEAN_FALSE, BOOLEAN_FALSE);
+        }
+
+        [TestMethod]
         public void HasEndOfLine()
         {
             Assert.AreEqual(Lexicon.END_OF_LINE, END_OF_LINE);
@@ -152,6 +180,18 @@ namespace GingerTest
         public void HasAddition()
         {
             Assert.AreEqual(Lexicon.ADDITION, ADDITION);
+        }
+
+        [TestMethod]
+        public void HasSubtraction()
+        {
+            Assert.AreEqual(Lexicon.SUBTRACTION, SUBTRACTION);
+        }
+
+        [TestMethod]
+        public void HasGreaterThan()
+        {
+            Assert.AreEqual(Lexicon.GREATER_THAN, GREATER_THAN);
         }
 
         [TestMethod]

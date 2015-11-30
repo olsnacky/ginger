@@ -16,7 +16,9 @@ namespace GingerParser
         private Dictionary<GingerToken, Precedence> OPERATOR_PRECEDENCE = new Dictionary<GingerToken, Precedence>
         {
             [GingerToken.Addition] = new Precedence(1, false),
-            [GingerToken.LessThan] = new Precedence(0, false)
+            [GingerToken.Subtraction] = new Precedence(1, false),
+            [GingerToken.LessThan] = new Precedence(0, false),
+            [GingerToken.GreaterThan] = new Precedence(0, false)
         };
 
         private struct Precedence

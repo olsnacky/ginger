@@ -14,13 +14,17 @@ namespace Ginger
         If,
         While,
         IntegerLiteral,
+        BooleanLiteral,
         Assignment,
+        SecurityAssignment,
         OpenPrecedent,
         ClosePrecedent,
         OpenStatementList,
         CloseStatementList,
         LessThan,
+        GreaterThan,
         Addition,
+        Subtraction,
         Bool,
         Int,
         Unknown,
@@ -45,29 +49,34 @@ namespace Ginger
 
         public static bool isBinaryOperator(GingerToken token)
         {
-            return token == GingerToken.Addition;
+            return token == GingerToken.Addition || token == GingerToken.Subtraction;
         }
 
         public static bool isConditionOperator(GingerToken token)
         {
-            return token == GingerToken.LessThan;
+            return token == GingerToken.LessThan || token == GingerToken.GreaterThan;
         }
     }
 
     public static class Lexicon
     {
         public static char ASSIGNMENT = '=';
+        public static char SECURITY_ASSIGNMENT = ':';
         public static char OPEN_PRECEDENT = '(';
         public static char CLOSE_PRECEDENT = ')';
         public static char[] IF = { 'i', 'f' };
         public static char[] WHILE = { 'w', 'h', 'i', 'l', 'e' };
         public static char END_OF_LINE = ';';
         public static char ADDITION = '+';
+        public static char SUBTRACTION = '-';
         public static char LESS_THAN = '<';
+        public static char GREATER_THAN = '>';
         public static char OPEN_STATEMENT_LIST = '{';
         public static char CLOSE_STATEMENT_LIST = '}';
         public static char[] INT = { 'i', 'n', 't' };
         public static char[] BOOL = { 'b', 'o', 'o', 'l' };
+        public static char[] BOOLEAN_TRUE = { 't', 'r', 'u', 'e' };
+        public static char[] BOOLEAN_FALSE = { 'f', 'a', 'l', 's', 'e' };
         public static char ZERO = '0';
 
         private static char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
