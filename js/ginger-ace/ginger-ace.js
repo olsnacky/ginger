@@ -37,7 +37,9 @@ window.onresize = function (event) {
 }
 
 //set initially
-resizeAce();
+document.querySelector('.mdl-layout').addEventListener('mdl-componentupgraded', function() {
+  resizeAce();
+});
 
 function callback() {
     window.ace = ace;
