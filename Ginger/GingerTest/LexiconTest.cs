@@ -30,7 +30,7 @@ namespace GingerTest
         private char[] BOOLEAN_TRUE = { 't', 'r', 'u', 'e' };
         private char[] BOOLEAN_FALSE = { 'f', 'a', 'l', 's', 'e' };
         private char UNDERSCORE = '_';
-        private char NEGATE = '-';
+        //private char NEGATE = '-';
 
         private char[] IF = { 'i', 'f' };
         private char[] WHILE = { 'w', 'h', 'i', 'l', 'e' };
@@ -81,7 +81,7 @@ namespace GingerTest
             tempc.Add(OPEN_STATEMENT);
             tempc.Add(CLOSE_STATEMENT);
             tempc.Add(UNDERSCORE);
-            tempc.Add(NEGATE);
+            //tempc.Add(NEGATE);
             return tempc.ToArray();
         }
 
@@ -259,16 +259,16 @@ namespace GingerTest
         [TestMethod]
         public void StartIntegerChar()
         {
-            char[] allowed = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', NEGATE };
+            char[] allowed = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             foreach (char c in testChars)
             {
                 if (allowed.Contains(c))
                 {
-                    Assert.IsTrue(Lexicon.isStartIntegerChar(c), $"{c}");
+                    Assert.IsTrue(Lexicon.isStartNumberChar(c), $"{c}");
                 }
                 else
                 {
-                    Assert.IsFalse(Lexicon.isStartIntegerChar(c), $"{c}");
+                    Assert.IsFalse(Lexicon.isStartNumberChar(c), $"{c}");
                 }
             }
         }

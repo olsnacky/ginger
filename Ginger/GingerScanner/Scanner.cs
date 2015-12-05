@@ -59,7 +59,7 @@ namespace GingerScanner
                 nextChar();
             }
 
-            if (Lexicon.isStartIntegerChar(currentChar))
+            if (Lexicon.isStartNumberChar(currentChar))
             {
                 do
                 {
@@ -67,7 +67,7 @@ namespace GingerScanner
                     nextChar();
                 } while (Lexicon.isDigit(currentChar));
 
-                return GingerToken.IntegerLiteral;
+                return GingerToken.Number;
             }
             else if (Lexicon.isStartKeywordOrIdentifierChar(currentChar))
             {
@@ -182,7 +182,7 @@ namespace GingerScanner
 
             currentChar = c;
 
-            // if this is a new line, or a carriage return not followed by  a newline (the new line will
+            // if this is a new line, or a carriage return not followed by a newline (the new line will
             // be picked up as the next value)
             if (currentChar == '\n' || (currentChar == '\r' && !(Convert.ToChar(this.Peek()) == '\n')))
             {

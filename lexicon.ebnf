@@ -8,16 +8,17 @@ alphabetic-character = lower-alphabetic-character | upper-alphabetic-character ;
 
 (* valid numbers *)
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-integer = [-](digit | digit, {digit}) ;
+number = (digit | digit, {digit}) ;
 
 (* valid booleans *)
-booleans = "true" | "false" ;
+boolean-literal = "true" | "false" ;
 
 (* valid variable names *)
 identifier = [(alphabetic-character | underscore)], { (alphabetic-character | digit | underscore) } ;
 
 (* valid operations *)
-binary-operator = "+" | "-";
+subtraction-operator = "-"
+binary-operator = "+" | subtraction-operator;
 condition-operator = "<" | ">";
 
 (* assignment symbol *)
@@ -40,4 +41,3 @@ int = "int"
 bool = "bool"
 
 (* ifc *)
-security-assignment = ":" ;

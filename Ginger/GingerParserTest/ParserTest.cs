@@ -101,13 +101,14 @@ namespace GingerParserTest
         [TestMethod]
         public void Simple()
         {
-            const int COUNT = 31;
+            const int COUNT = 48;
             List<Node> nodes = new List<Node>();
             StreamReader reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\AST\parser.gngr"));
             Parser parser = new Parser(reader.ReadToEnd());
 
             parser.parse();
             TestVisitor tv = new TestVisitor(parser.ast);
+            Assert.IsTrue(COUNT == tv.visitedNodes.Count, $"Expected {COUNT} nodes, found {tv.visitedNodes.Count}");
 
             for (int i = 0; i < COUNT; i++)
             {
@@ -144,67 +145,118 @@ namespace GingerParserTest
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 10:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(If), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
                         break;
                     case 11:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 12:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<GingerParser.Boolean>), $"{i}");
                         break;
                     case 13:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(If), $"{i}");
                         break;
                     case 14:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
-                        break;
-                    case 15:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(While), $"{i}");
-                        break;
-                    case 16:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
                         break;
-                    case 17:
+                    case 15:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
-                    case 18:
+                    case 16:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
-                    case 19:
+                    case 17:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
                         break;
+                    case 18:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(While), $"{i}");
+                        break;
+                    case 19:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(InequalityOperation), $"{i}");
+                        break;
                     case 20:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
                         break;
                     case 21:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 22:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
                         break;
                     case 23:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
                         break;
                     case 24:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
-                        break;
-                    case 25:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Declaration), $"{i}");
-                        break;
-                    case 26:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Integer), $"{i}");
-                        break;
-                    case 27:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
+                    case 25:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
+                        break;
+                    case 26:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 27:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
+                        break;
                     case 28:
-                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(If), $"{i}");
                         break;
                     case 29:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
                         break;
                     case 30:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(StatementList), $"{i}");
+                        break;
+                    case 31:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        break;
+                    case 32:
                         Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 33:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(BinaryOperation), $"{i}");
+                        break;
+                    case 34:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 35:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<Integer>), $"{i}");
+                        break;
+                    case 36:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Declaration), $"{i}");
+                        break;
+                    case 37:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Integer), $"{i}");
+                        break;
+                    case 38:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 39:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        break;
+                    case 40:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 41:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 42:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Declaration), $"{i}");
+                        break;
+                    case 43:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(GingerParser.Boolean), $"{i}");
+                        break;
+                    case 44:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 45:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Assign), $"{i}");
+                        break;
+                    case 46:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Identifier), $"{i}");
+                        break;
+                    case 47:
+                        Assert.IsInstanceOfType(tv.visitedNodes[i], typeof(Literal<GingerParser.Boolean>), $"{i}");
                         break;
                     default:
                         Assert.Fail();

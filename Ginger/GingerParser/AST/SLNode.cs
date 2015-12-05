@@ -74,9 +74,9 @@ namespace GingerParser
         private const int CONDITION_INDEX = 0;
         private const int BODY_INDEX = 1;
 
-        public InequalityOperation condition
+        public Node condition
         {
-            get { return (InequalityOperation)this.get(CONDITION_INDEX); }
+            get { return this.get(CONDITION_INDEX); }
         }
 
         public StatementList body
@@ -84,7 +84,7 @@ namespace GingerParser
             get { return (StatementList)this.get(BODY_INDEX); }
         }
 
-        public While(InequalityOperation condition, StatementList body) : base()
+        public While(Node condition, StatementList body) : base()
         {
             this.add(condition);
             this.add(body);
@@ -101,9 +101,9 @@ namespace GingerParser
         private const int CONDITION_INDEX = 0;
         private const int BODY_INDEX = 1;
 
-        public InequalityOperation condition
+        public Node condition
         {
-            get { return (InequalityOperation)this.get(CONDITION_INDEX); }
+            get { return this.get(CONDITION_INDEX); }
         }
 
         public StatementList body
@@ -111,7 +111,7 @@ namespace GingerParser
             get { return (StatementList)this.get(BODY_INDEX); }
         }
 
-        public If(InequalityOperation condition, StatementList body) : base()
+        public If(Node condition, StatementList body) : base()
         {
             this.add(condition);
             this.add(body);
@@ -387,6 +387,7 @@ namespace GingerParser
 
     public partial class Boolean : Node, ISourcePosition
     {
+        private string _value;
         private int _row;
         private int _col;
 
@@ -410,6 +411,13 @@ namespace GingerParser
         {
             this._row = row;
             this._col = col;
+        }
+
+        public Boolean(int row, int col, string value) : base()
+        {
+            this._row = row;
+            this._col = col;
+            this._value = value;
         }
 
         public override void accept(NodeVisitor v)

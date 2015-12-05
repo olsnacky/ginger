@@ -100,16 +100,8 @@ namespace GingerParser
 
                 nextScannerToken();
 
-                InequalityOperation condition;
-                try
-                {
-                   condition = (InequalityOperation)parseExpression();
-                }
-                catch (InvalidCastException ice)
-                {
-                    throw new ParseException(scanner.row, scanner.col, ice.Message, ExceptionLevel.ERROR);
-                }
-                
+                Node conditionExpression = parseExpression();
+
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.OpenStatementList)
                 {
@@ -123,11 +115,11 @@ namespace GingerParser
 
                 if (controlToken == GingerToken.While)
                 {
-                    nc = new While(condition, sl);
+                    nc = new While(conditionExpression, sl);
                 }
                 else
                 {
-                    nc = new If(condition, sl);
+                    nc = new If(conditionExpression, sl);
                 }
             }
             // statement = type, identifier
@@ -185,7 +177,7 @@ namespace GingerParser
         private Node parseTerminalExpression()
         {
             Node n;
-            if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.IntegerLiteral)
+            if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.Number || currentScannerToken == GingerToken.BooleanLiteral || currentScannerToken == GingerToken.Subtraction)
             {
                 if (currentScannerToken == GingerToken.Identifier)
                 {
@@ -193,7 +185,28 @@ namespace GingerParser
                 }
                 else
                 {
-                    n = new Literal<Integer>(new Integer(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                    if (currentScannerToken == GingerToken.Subtraction)
+                    {
+                        spyScannerToken();
+                        if (spiedScannerToken.GetValueOrDefault() == GingerToken.Number)
+                        {
+                            nextScannerToken();
+                            string value = Lexicon.SUBTRACTION + new string(scanner.tokenValue);
+                            n = new Literal<Integer>(new Integer(scanner.row, scanner.col, value));
+                        }
+                        else
+                        {
+                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Number.ToString()}', found '{spiedScannerToken.GetValueOrDefault().ToString()}'", ExceptionLevel.ERROR);
+                        }
+                    }
+                    else if (currentScannerToken == GingerToken.Number)
+                    {
+                        n = new Literal<Integer>(new Integer(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                    }
+                    else
+                    {
+                        n = new Literal<Boolean>(new Boolean(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                    }
                 }
             }
             else if (currentScannerToken == GingerToken.OpenPrecedent)
@@ -209,7 +222,7 @@ namespace GingerParser
             }
             else
             {
-                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', '{GingerToken.IntegerLiteral.ToString()}', or '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', '{GingerToken.Number.ToString()}', or '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
             }
 
             return n;

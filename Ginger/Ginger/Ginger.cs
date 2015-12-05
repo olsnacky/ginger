@@ -13,7 +13,7 @@ namespace Ginger
         Identifier,
         If,
         While,
-        IntegerLiteral,
+        Number,
         BooleanLiteral,
         Assignment,
         SecurityAssignment,
@@ -85,7 +85,7 @@ namespace Ginger
 
         public static bool isWhiteSpace(char c)
         {
-            // TODO: imeplement own method
+            // TODO: implement own method
             return Char.IsWhiteSpace(c);
         }
 
@@ -94,9 +94,9 @@ namespace Ginger
             return DIGITS.Contains(c);
         }
 
-        public static bool isStartIntegerChar(char c)
+        public static bool isStartNumberChar(char c)
         {
-            return isDigit(c) || c == '-';
+            return isDigit(c);
         }
 
         public static bool isStartKeywordOrIdentifierChar(char c)
