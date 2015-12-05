@@ -125,7 +125,7 @@ ace.define('ace/mode/ginger_highlight_rules', ["require", "exports", "module"], 
                 },
                 {
                     token: "keyword.operator",
-                    regex: "\\+|<|="
+                    regex: "\\+|<|=|-|>"
                 },
                 {
                     token : "paren.lparen",

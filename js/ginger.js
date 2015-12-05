@@ -47,11 +47,11 @@
             },
             {
                 name: 'Assignment',
-                source: 'int x\nx = 1'
+                source: 'int x\nx = 1\n\nbool y\ny = true\ny = false'
             },
             {
                 name: 'Control',
-                source: 'int x\nint y\n\nx = 0\ny = 2\n\nif x < y {\n\tx = y + 1\n}\n\nwhile y < (x + 10) {\n\ty = y + 1\n}'
+                source: 'int x\nint y\n\nx = 0\ny = 2\n\nif true {\n\tx = y + 1\n}\n\nwhile y < (x + 10) {\n\ty = y + 1\n}'
             }
         ];
     });
