@@ -19,6 +19,20 @@
     #example {
         height: 256px;
     }
+    
+    .example-card {
+        margin-top: 10px;
+    }
+    
+    .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+    
+    .link {
+        stroke: #999;
+        stroke-opacity: .6;
+    }
 </style>
 
 <div class="mdl-grid">
@@ -28,21 +42,31 @@
         </div>
     </div>
     <div class="mdl-cell mdl-cell--4-col">
-        <div class="example-card mdl-card mdl-shadow--2dp" ng-controller="ExampleController as examples">
-            <div class="mdl-card__title">
-                <h2 class="mdl-card__title-text">{{examples.selected().name}}</h2>
+        <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+            <div class="mdl-tabs__tab-bar">
+                <a href="#graph-panel" class="mdl-tabs__tab is-active">Graph</a>
+                <a href="#example-panel" class="mdl-tabs__tab">Examples</a>
             </div>
+            <div class="mdl-tabs__panel is-active" id="graph-panel">
 
+            </div>
+            <div class="mdl-tabs__panel" id="example-panel">
+                <div class="example-card mdl-card mdl-shadow--2dp" ng-controller="ExampleController as examples">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">{{examples.selected().name}}</h2>
+                    </div>
                     <div id="example">{{examples.selected().source}}</div>
-          
-
-            <div class="mdl-card__actions mdl-card--border">
-                <button class="mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect" ng-click="examples.setSelected($index)" ng-repeat="example in examples.list">
-                    {{example.name}}
-                </button>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <button class="mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect" ng-click="examples.setSelected($index)"
+                        ng-repeat="example in examples.list">
+                            {{example.name}}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript-lazy" src="js/ginger-ace/ginger-ace.js"></script>
+<!--<script type="text/javascript-lazy" src="js/graph.js"></script>-->
