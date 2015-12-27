@@ -34,7 +34,6 @@ namespace WebApi.Controllers
 
         public IHttpActionResult Post([FromBody]string source)
         {
-            Debug.WriteLine(source);
             if (source == null) {
                 return BadRequest();
             }
