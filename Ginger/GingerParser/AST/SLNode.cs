@@ -22,6 +22,14 @@ namespace GingerParser
         }
     }
 
+    public interface ILiteral
+    {
+        string value
+        {
+            get;
+        }
+    }
+
     public abstract class SLNodeCollection : NodeCollection, ISourcePosition
     {
         public virtual int col
@@ -302,7 +310,7 @@ namespace GingerParser
         }
     }
 
-    public partial class Integer : Node, ISourcePosition
+    public partial class Integer : Node, ISourcePosition, ILiteral
     {
         private string _value;
         private int _row;
@@ -385,7 +393,7 @@ namespace GingerParser
         }
     }
 
-    public partial class Boolean : Node, ISourcePosition
+    public partial class Boolean : Node, ISourcePosition, ILiteral
     {
         private string _value;
         private int _row;
@@ -404,6 +412,14 @@ namespace GingerParser
             get
             {
                 return _col;
+            }
+        }
+
+        public string value
+        {
+            get
+            {
+                return _value;
             }
         }
 

@@ -208,6 +208,10 @@
       <Project>{591A803A-60F9-4625-B214-09E2B6E4DC8D}</Project>
       <Name>GingerUtil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Ginger\Ginger.csproj">
+      <Project>{EB3A5012-F35E-437A-8AE1-D8BC292D7391}</Project>
+      <Name>Ginger</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
