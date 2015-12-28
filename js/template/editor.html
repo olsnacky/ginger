@@ -24,14 +24,20 @@
         margin-top: 10px;
     }
     
-    .node {
-        stroke: #fff;
+    .node circle {
+        fill: #fff;
+        stroke: steelblue;
         stroke-width: 1.5px;
     }
     
+    .node {
+        font: 10px sans-serif;
+    }
+    
     .link {
-        stroke: #999;
-        stroke-opacity: .6;
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
     }
 </style>
 
@@ -41,7 +47,7 @@
             <div id="editor"></div>
         </div>
     </div>
-    <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-cell mdl-cell--4-col" id="right-col">
         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
             <div class="mdl-tabs__tab-bar">
                 <a href="#graph-panel" class="mdl-tabs__tab is-active">Graph</a>
@@ -68,5 +74,4 @@
     </div>
 </div>
 
-<script type="text/javascript-lazy" src="js/ginger-ace/ginger-ace.js"></script>
-<!--<script type="text/javascript-lazy" src="js/graph.js"></script>-->
+<script type="text/javascript-lazy" src="js/editor.js"></script>

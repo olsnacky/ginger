@@ -54,4 +54,15 @@
                 source: 'int x\nint y\n\nx = 0\ny = 2\n\nif true {\n\tx = y + 1\n}\n\nwhile y < (x + 10) {\n\ty = y + 1\n}'
             }
         ];
-    });
+    })
+    // .controller('EditorCtrl', function($scope) {
+    //       $scope.shouldShowGraph = true;
+          
+    //       $scope.showGraph = function() {
+    //           $scope.shouldShowGraph = true;
+    //       }
+          
+    //       $scope.showExamples = function() {
+    //           $scope.shouldShowGraph = false;
+    //       }
+    // });
