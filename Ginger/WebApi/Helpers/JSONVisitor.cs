@@ -360,11 +360,19 @@ namespace WebApi.Helpers
             {
                 nt = NodeType.High;
                 label = n.label;
+                if (n.adjacencyList.Count == 0 && n.parents.Count == 0)
+                {
+                    return null;
+                }
             }
             else if (n.type == DFGNodeType.Low)
             {
                 nt = NodeType.Low;
                 label = n.label;
+                if (n.adjacencyList.Count == 0 && n.parents.Count == 0)
+                {
+                    return null;
+                }
             }
             else
             {
