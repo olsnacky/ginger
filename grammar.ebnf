@@ -1,10 +1,20 @@
 (* expressions *)
-expression = identifier | expression, binary-operator, expression | literal | open-precedent, expression, closed-precedent | expression, condition-operator, expression ;
+expression = identifier | expression, binary-operator, expression | literal | open-precedent, expression, close-precedent | expression, condition-operator, expression ;
 
 (* statements *)
-statement = (if | while), expression, open-statement-list, statement-list, closed-statement-list |  type, identifier | identifier, assignment, expression ;
-statement-list = [statement, [statement-list]] ;
+statement = (if | while), expression, statement-list | variable | identifier, assignment, expression ;
+statement = statement | return [expression] | function-declaration | component-delcaration ;
+
+statement-list-body = [statement, [statement-list-body]] ;
+statement-list = open-statement-list, statement-list-body, close-statement-list ;
 
 (* literal *)
 literal = integer-literal | boolean-literal ;
 integer-literal = [subtraction-operator], number ;
+
+(* declaration *)
+variable = type, identifier ;
+variable-list = [variable, [list-separator, variable-list]] ;
+function-declaration = function, identifier, open-precedent, variable-list, close-precedent, returns, type, statement-list ;
+
+component-declaration = component, identifier, statement-list ;

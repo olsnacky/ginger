@@ -1,0 +1,13 @@
+var high
+var low
+
+high = 1
+low = 0
+
+def read(lbl) {
+	return lbl
+}
+
+def write(lbl, val) {
+	lbl := val
+}

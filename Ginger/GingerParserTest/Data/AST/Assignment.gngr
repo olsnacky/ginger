@@ -1,0 +1,12 @@
+﻿var george
+var paddington
+
+def foo(var x) {
+    return x
+}
+
+george := 20
+paddington := george
+george := paddington + 1
+paddington := paddington + 1 + george + 2
+george := foo(paddington)

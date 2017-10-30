@@ -26,18 +26,29 @@ assignment = "=" ;
 
 (* defining precedence *)
 open-precedent = "(" ;
-closed-precedent = ")" ;
+close-precedent = ")" ;
 
 (* defining statement lists *)
 open-statement-list = "{" ;
-closed-statement-list = "}" ;
+close-statement-list = "}" ;
 
 (* statement keywords *)
 if = "if" ;
 while = "while" ;
 
 (* types *)
-int = "int"
-bool = "bool"
+int = "int" ;
+bool = "bool" ;
+type = int | bool ;
 
-(* ifc *)
+(* declaration keywords *)
+function = "func" ;
+component = "comp" ;
+returns = "->" ;
+
+(* function keywords *)
+return = "return" ;
+
+(* misc *)
+list-separator = "," ;
+import = "import" ;

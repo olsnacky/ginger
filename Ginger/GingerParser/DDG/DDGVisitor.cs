@@ -41,14 +41,14 @@ namespace GingerParser.DDG
             return;
         }
 
-        public void visitBranch(If b)
-        {
-            _currentStatement = b;
-            b.condition.accept(this);
-            b.body.accept(this);
-        }
+        //public void visitBranch(If b)
+        //{
+        //    _currentStatement = b;
+        //    b.condition.accept(this);
+        //    b.body.accept(this);
+        //}
 
-        public void visitDeclaration(Declaration d)
+        public void visitVariable(Variable d)
         {
             return;
         }
@@ -76,11 +76,11 @@ namespace GingerParser.DDG
             }
         }
 
-        public void visitInequalityOperation(InequalityOperation c)
-        {
-            c.lhs.accept(this);
-            c.rhs.accept(this);
-        }
+        //public void visitInequalityOperation(InequalityOperation c)
+        //{
+        //    c.lhs.accept(this);
+        //    c.rhs.accept(this);
+        //}
 
         public void visitInteger(Integer i)
         {
@@ -113,11 +113,69 @@ namespace GingerParser.DDG
             }
         }
 
-        public void visitWhile(While w)
+        //public void visitWhile(While w)
+        //{
+        //    _currentStatement = w;
+        //    w.condition.accept(this);
+        //    w.body.accept(this);
+        //}
+
+        public void visitReturn(Return r)
         {
-            _currentStatement = w;
-            w.condition.accept(this);
-            w.body.accept(this);
+            return;
+        }
+
+        public void visitFunction(Function f)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitVariableList(VarList vl)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public void visitVoid(Void v)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitComponent(Component c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitContract(Contract c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitImplementation(Implementation i)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public void visitExpressionList(ExpressionList el)
+        {
+            foreach (Node n in el)
+            {
+                n.accept(this);
+            }
+        }
+
+        public void visitInvocation(Invocation i)
+        {
+            i.expressionList.accept(this);
+        }
+
+        public void visitSource(Source s)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitSink(Sink s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

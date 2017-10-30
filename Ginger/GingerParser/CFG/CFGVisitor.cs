@@ -11,6 +11,12 @@ namespace GingerParser.CFG
     {
         Queue<Statement> _previousStatements;
         List<ParseException> _errors;
+        Dictionary<Identifier, StatementList> _functions;
+
+        public Dictionary<Identifier, StatementList> functions
+        {
+            get { return _functions; }
+        }
 
         public CFGVisitor(StatementList ast)
         {
@@ -34,19 +40,14 @@ namespace GingerParser.CFG
             return;
         }
 
-        public void visitBranch(If b)
-        {
-            linkPastStatements(_previousStatements, b);
-            _previousStatements.Enqueue(b);
-            b.body.accept(this);
-        }
+        //public void visitBranch(If b)
+        //{
+        //    linkPastStatements(_previousStatements, b);
+        //    _previousStatements.Enqueue(b);
+        //    b.body.accept(this);
+        //}
 
-        public void visitInequalityOperation(InequalityOperation c)
-        {
-            return;
-        }
-
-        public void visitDeclaration(Declaration d)
+        public void visitVariable(Variable d)
         {
             return;
         }
@@ -63,30 +64,21 @@ namespace GingerParser.CFG
 
         public void visitStatementList(StatementList sl)
         {
-            foreach (Node statement in sl)
+            foreach (Node n in sl)
             {
-                if (statement is Statement)
-                {
-                    if (sl.entry == null)
-                    {
-                        sl.entry = statement;
-                    }
-
-                    statement.accept(this); // link multiple previous statements here
-                    _previousStatements.Enqueue((Statement)statement);
-                }
+                n.accept(this);
             }
         }
 
-        public void visitWhile(While w)
-        {
-            linkPastStatements(_previousStatements, w);
-            _previousStatements.Enqueue(w);
-            w.body.accept(this);
+        //public void visitWhile(While w)
+        //{
+        //    linkPastStatements(_previousStatements, w);
+        //    _previousStatements.Enqueue(w);
+        //    w.body.accept(this);
 
-            // add the while header as a successor to the final statement in the body
-            linkPastStatementWithoutConsuming(_previousStatements, w);
-        }
+        //    // add the while header as a successor to the final statement in the body
+        //    linkPastStatementWithoutConsuming(_previousStatements, w);
+        //}
 
         private void linkPastStatements(Queue<Statement> statements, Statement s)
         {
@@ -107,5 +99,61 @@ namespace GingerParser.CFG
         {
             return;
         }
+
+        public void visitReturn(Return r)
+        {
+            return;
+        }
+
+        public void visitFunction(Function f)
+        {
+            f.body.accept(this);
+            _functions.Add(f.name.identifier, f.body);
+        }
+
+        public void visitVariableList(VarList vl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitExpressionList(ExpressionList el)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitInvocation(Invocation i)
+        {
+            
+        }
+
+        public void visitSource(Source s)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitSink(Sink s)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public void visitVoid(Void v)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitComponent(Component c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitContract(Contract c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitImplementation(Implementation i)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

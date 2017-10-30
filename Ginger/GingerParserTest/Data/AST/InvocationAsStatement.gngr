@@ -1,0 +1,9 @@
+﻿def foo(ref var x, var y) {
+    x := y
+}
+
+var this
+var that
+that := 1
+
+foo(this, that)

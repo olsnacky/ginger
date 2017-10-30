@@ -1,4 +1,5 @@
 ﻿using GingerParser;
+using GingerParser.DFG;
 using GingerUtil;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -12,11 +13,15 @@ namespace WebApi.Helpers
 {
     enum EdgeRelation
     {
-        AST
+        // AST
+        AST,
+        // DFG
+        Direct
     }
 
     enum NodeType
     {
+        // AST
         StatementList,
         Declaration,
         Integer,
@@ -27,7 +32,15 @@ namespace WebApi.Helpers
         While,
         InequalityOperation,
         BinaryOperation,
-        Boolean
+        Boolean,
+        Function,
+        VariableList,
+        Return,
+        Invocation,
+        // DFG
+        High,
+        Low,
+        Subexpression
     }
 
     struct JsonGraph
@@ -68,11 +81,12 @@ namespace WebApi.Helpers
 
         public void add(GraphNode node)
         {
-            if (_nodes == null) {
+            if (_nodes == null)
+            {
                 _nodes = new List<GraphNode>();
             }
 
-            _nodes.Add(node);   
+            _nodes.Add(node);
         }
 
         public void add(GraphEdge edge)
@@ -83,6 +97,23 @@ namespace WebApi.Helpers
             }
 
             _edges.Add(edge);
+        }
+
+        public GraphNode? findNode(string id)
+        {
+            if (_nodes == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                return _nodes.Where(n => n.id.Equals(id)).First();
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 
@@ -171,6 +202,7 @@ namespace WebApi.Helpers
         private NodeType _type;
         private string _label;
         private List<MetaData> _metadata;
+        private string _groupId;
 
         public string id
         {
@@ -179,6 +211,8 @@ namespace WebApi.Helpers
                 return _id;
             }
         }
+
+        public string groupId => _groupId;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public NodeType type
@@ -205,12 +239,22 @@ namespace WebApi.Helpers
             }
         }
 
-        public GraphNode(string id, NodeType type, string label)
+        public GraphNode(string id, NodeType type, string label, string groupId = null)
         {
             this._metadata = new List<MetaData>();
             this._id = id;
             this._type = type;
             this._label = label;
+
+            if (groupId == null)
+            {
+                _groupId = new Guid().ToString();
+            }
+            else
+            {
+                _groupId = groupId;
+            }
+
         }
 
         public void add(MetaData metadata)
@@ -226,16 +270,131 @@ namespace WebApi.Helpers
 
     struct MetaData
     {
-        
+
     }
 
-    class JSONVisitor : SLVisitor
+    class DfgJsonConverter
+    {
+        private DFG _dfg;
+        private Graph _graph;
+
+        public JsonGraph graph
+        {
+            get
+            {
+                JsonGraph g = new JsonGraph();
+                g.graph = _graph;
+                return g;
+            }
+        }
+
+        public DfgJsonConverter(DFG dfg)
+        {
+            _dfg = dfg;
+            _graph = new Graph();
+            processNodes();
+        }
+
+        private void processNodes()
+        {
+            foreach (DFGNode n in _dfg.nodes)
+            {
+                GraphNode? source = processNode(n);
+
+                if (source != null)
+                {
+                    foreach (DFGNode an in n.adjacencyList)
+                    {
+                        GraphNode? target = processNode(an);
+                        if (target != null)
+                        {
+                            GraphEdge ge = new GraphEdge(source.Value, target.Value, EdgeRelation.Direct, "", true);
+                            _graph.add(ge);
+                        }
+                    }
+                }
+            }
+        }
+
+        private GraphNode? processNode(DFGNode n)
+        {
+            GraphNode? gn;
+            NodeType nt;
+            string label;
+            if (n.type == DFGNodeType.Subexpression)
+            {
+                //if 
+                //gn = _graph.findNode(n.variable.identifier.name);
+                //if (gn == null)
+                //{
+                //    gn = new GraphNode(n.variable.identifier.name, NodeType.Subexpression, n.variable.identifier.name, n.subGraphId.ToString());
+                //    _graph.add(gn.Value);
+                //}
+                //nodeIdentifier = n.variable.identifier.name;
+                nt = NodeType.Subexpression;
+                label = n.variable.identifier.name;
+            }
+            else if (n.type == DFGNodeType.Return)
+            {
+                //gn = _graph.findNode(n.id.ToString());
+                //if (gn == null)
+                //{
+                //    gn = new GraphNode(n.id.ToString(), NodeType.Return, n.label, n.subGraphId.ToString());
+                //    _graph.add(gn.Value);
+                //}
+                nt = NodeType.Return;
+                label = n.label;
+                if (n.adjacencyList.Count == 0)
+                {
+                    return null;
+                }
+            }
+            else if (n.type == DFGNodeType.Invocation)
+            {
+                //gn = new GraphNode(n.id.ToString(), NodeType.Invocation, n.label, n.subGraphId.ToString());
+                //_graph.add(gn.Value);
+                nt = NodeType.Invocation;
+                label = n.label;
+            }
+            else if (n.type == DFGNodeType.High)
+            {
+                nt = NodeType.High;
+                label = n.label;
+            }
+            else if (n.type == DFGNodeType.Low)
+            {
+                nt = NodeType.Low;
+                label = n.label;
+            }
+            else
+            {
+                throw new ArgumentException();
+            }
+
+            gn = _graph.findNode(n.id.ToString());
+            if (gn == null)
+            {
+                gn = new GraphNode(n.id.ToString(), nt, label, n.subGraphId.ToString());
+                _graph.add(gn.Value);
+            }
+
+
+            return gn.Value;
+        }
+
+        private string getNewId()
+        {
+            return Guid.NewGuid().ToString();
+        }
+    }
+
+    class AstJsonVisitor : SLVisitor
     {
         private const string DEFAULT_ID = "-1";
         private Graph _graph;
         private Stack<GraphNode> _nodeStack;
 
-        public JSONVisitor(StatementList graph)
+        public AstJsonVisitor(StatementList graph)
         {
             _nodeStack = new Stack<GraphNode>();
             _graph = new Graph();
@@ -271,23 +430,23 @@ namespace WebApi.Helpers
             visitChildren(binaryOp, bo);
         }
 
-        public void visitBoolean(GingerParser.Boolean b)
-        {
-            GraphNode boolean = new GraphNode(getNewId(), NodeType.Boolean, "Boolean");
-            _graph.add(boolean);
-            addASTEdge(boolean, "");
-        }
+        //public void visitBoolean(GingerParser.Boolean b)
+        //{
+        //    GraphNode boolean = new GraphNode(getNewId(), NodeType.Boolean, "Boolean");
+        //    _graph.add(boolean);
+        //    addASTEdge(boolean, "");
+        //}
 
-        public void visitBranch(If b)
-        {
-            GraphNode branch = new GraphNode(getNewId(), NodeType.Branch, "If");
-            _graph.add(branch);
-            addASTEdge(branch, "");
+        //public void visitBranch(If b)
+        //{
+        //    GraphNode branch = new GraphNode(getNewId(), NodeType.Branch, "If");
+        //    _graph.add(branch);
+        //    addASTEdge(branch, "");
 
-            visitChildren(branch, b);
-        }
+        //    visitChildren(branch, b);
+        //}
 
-        public void visitDeclaration(Declaration d)
+        public void visitVariable(Variable d)
         {
             GraphNode declaration = new GraphNode(getNewId(), NodeType.Declaration, "Declaration");
             _graph.add(declaration);
@@ -303,15 +462,15 @@ namespace WebApi.Helpers
             addASTEdge(identifier, "");
         }
 
-        public void visitInequalityOperation(InequalityOperation c)
-        {
-            string operation = c.op == Ginger.GingerToken.LessThan ? "<" : ">";
-            GraphNode inequalityOp = new GraphNode(getNewId(), NodeType.InequalityOperation, $"Inequality Operation ({operation})");
-            _graph.add(inequalityOp);
-            addASTEdge(inequalityOp, "");
+        //public void visitInequalityOperation(InequalityOperation c)
+        //{
+        //    string operation = c.op == Ginger.GingerToken.LessThan ? "<" : ">";
+        //    GraphNode inequalityOp = new GraphNode(getNewId(), NodeType.InequalityOperation, $"Inequality Operation ({operation})");
+        //    _graph.add(inequalityOp);
+        //    addASTEdge(inequalityOp, "");
 
-            visitChildren(inequalityOp, c);
-        }
+        //    visitChildren(inequalityOp, c);
+        //}
 
         public void visitInteger(Integer i)
         {
@@ -340,14 +499,14 @@ namespace WebApi.Helpers
             visitChildren(statementList, sl);
         }
 
-        public void visitWhile(While w)
-        {
-            GraphNode whileNode = new GraphNode(getNewId(), NodeType.While, "While");
-            _graph.add(whileNode);
-            addASTEdge(whileNode, "");
+        //public void visitWhile(While w)
+        //{
+        //    GraphNode whileNode = new GraphNode(getNewId(), NodeType.While, "While");
+        //    _graph.add(whileNode);
+        //    addASTEdge(whileNode, "");
 
-            visitChildren(whileNode, w);
-        }
+        //    visitChildren(whileNode, w);
+        //}
 
         private void visitChildren(GraphNode gn, NodeCollection nc)
         {
@@ -368,6 +527,87 @@ namespace WebApi.Helpers
         {
             GraphEdge edge = new GraphEdge(_nodeStack.Peek(), node, EdgeRelation.AST, label, false);
             _graph.add(edge);
+        }
+
+        public void visitReturn(Return r)
+        {
+            GraphNode ret = new GraphNode(getNewId(), NodeType.Return, "Return");
+            _graph.add(ret);
+            addASTEdge(ret, "");
+
+            visitChildren(ret, r);
+        }
+
+        public void visitFunction(Function f)
+        {
+            GraphNode function = new GraphNode(getNewId(), NodeType.Function, "Function");
+            _graph.add(function);
+            addASTEdge(function, "");
+
+            visitChildren(function, f);
+        }
+
+        public void visitVariableList(VarList vl)
+        {
+            GraphNode varList = new GraphNode(getNewId(), NodeType.VariableList, "Variable List");
+            _graph.add(varList);
+            addASTEdge(varList, "");
+
+            visitChildren(varList, vl);
+        }
+
+        //public void visitComponent(Component c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitContract(Contract c)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitImplementation(Implementation i)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public void visitVoid(GingerParser.Void v)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public void visitExpressionList(ExpressionList el)
+        {
+            GraphNode exprList = new GraphNode(getNewId(), NodeType.VariableList, "Expression List");
+            _graph.add(exprList);
+            addASTEdge(exprList, "");
+
+            visitChildren(exprList, el);
+        }
+
+        public void visitInvocation(GingerParser.Invocation i)
+        {
+            GraphNode invocation = new GraphNode(getNewId(), NodeType.VariableList, "Invocation");
+            _graph.add(invocation);
+            addASTEdge(invocation, "");
+
+            visitChildren(invocation, i);
+        }
+
+        public void visitSink(Sink s)
+        {
+            GraphNode sink = new GraphNode(getNewId(), NodeType.VariableList, $"Sink: {s.securityLevel.ToString()}");
+            _graph.add(sink);
+            addASTEdge(sink, "");
+
+            visitChildren(sink, s);
+        }
+
+        public void visitSource(Source s)
+        {
+            GraphNode source = new GraphNode(getNewId(), NodeType.VariableList, $"Source: {s.securityLevel.ToString()}");
+            _graph.add(source);
+            addASTEdge(source, "");
         }
     }
 }

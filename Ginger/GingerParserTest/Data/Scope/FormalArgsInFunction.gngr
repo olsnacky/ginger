@@ -1,0 +1,6 @@
+﻿var lbl
+lbl := 1
+
+def foo(var lbl) {
+	return lbl
+}

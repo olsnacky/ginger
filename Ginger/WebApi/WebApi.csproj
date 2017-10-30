@@ -164,12 +164,16 @@
     <Folder Include="Content\" />
     <Folder Include="fonts\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\DFG\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\GraphController.cs" />
+    <Compile Include="Controllers\ASTController.cs" />
+    <Compile Include="Controllers\DFGController.cs" />
     <Compile Include="Controllers\LintController.cs" />
+    <Compile Include="Controllers\NIController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -182,6 +186,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\ginger - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ginger.pubxml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

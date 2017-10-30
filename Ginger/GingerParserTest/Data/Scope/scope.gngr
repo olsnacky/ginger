@@ -1,10 +1,12 @@
 ﻿int george
 int kim
+bool a
 
 george = 1
 kim = george + 6
+a = true
 
-if george < kim {
+if a {
 	int kim
 	kim = 4
 	george = kim

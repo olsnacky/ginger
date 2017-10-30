@@ -69,6 +69,22 @@ namespace GingerScanner
 
                 return GingerToken.Number;
             }
+            else if (Lexicon.isStartAssignmentChar(currentChar))
+            {
+                nextChar();
+                if (currentChar == Lexicon.ASSIGNMENT[1])
+                {
+                    nextChar();
+                    return GingerToken.Assignment;
+                }
+                else {
+                    GingerToken spied = spy();
+                    if (spied == GingerToken.Annotation)
+                    {
+                        return GingerToken.OpenAnnotation;
+                    }
+                }
+            }
             else if (Lexicon.isStartKeywordOrIdentifierChar(currentChar))
             {
                 do
@@ -77,25 +93,73 @@ namespace GingerScanner
                     nextChar();
                 } while (Lexicon.isKeywordOrIdentifierChar(currentChar));
 
-                if (tokenValue.SequenceEqual(Lexicon.IF))
+                //if (tokenValue.SequenceEqual(Lexicon.IF))
+                //{
+                //    return GingerToken.If;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.BOOLEAN_TRUE) || tokenValue.SequenceEqual(Lexicon.BOOLEAN_FALSE))
+                //{
+                //    return GingerToken.BooleanLiteral;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.INT))
+                //{
+                //    return GingerToken.Int;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.BOOL))
+                //{
+                //    return GingerToken.Bool;
+                //}
+                if (tokenValue.SequenceEqual(Lexicon.FUNCTION))
                 {
-                    return GingerToken.If;
+                    return GingerToken.Function;
                 }
-                else if (tokenValue.SequenceEqual(Lexicon.WHILE))
+                //else if (tokenValue.SequenceEqual(Lexicon.COMPONENT))
+                //{
+                //    return GingerToken.Component;
+                //}
+                else if (tokenValue.SequenceEqual(Lexicon.RETURN))
                 {
-                    return GingerToken.While;
+                    return GingerToken.Return;
                 }
-                else if (tokenValue.SequenceEqual(Lexicon.BOOLEAN_TRUE) || tokenValue.SequenceEqual(Lexicon.BOOLEAN_FALSE))
+                //else if (tokenValue.SequenceEqual(Lexicon.VOID))
+                //{
+                //    return GingerToken.Void;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.AS))
+                //{
+                //    return GingerToken.As;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.CONTRACT))
+                //{
+                //    return GingerToken.Contract;
+                //}
+                //else if (tokenValue.SequenceEqual(Lexicon.IMPLEMENTATION))
+                //{
+                //    return GingerToken.Implementation;
+                //}
+                else if (tokenValue.SequenceEqual(Lexicon.VAR_DECLARATION))
                 {
-                    return GingerToken.BooleanLiteral;
+                    return GingerToken.Var;
                 }
-                else if (tokenValue.SequenceEqual(Lexicon.INT))
+                //else if(tokenValue.SequenceEqual(Lexicon.REF))
+                //{
+                //    return GingerToken.Ref;
+                //}
+                else if(tokenValue.SequenceEqual(Lexicon.SEC_LVL_HIGH))
                 {
-                    return GingerToken.Int;
+                    return GingerToken.High;
                 }
-                else if (tokenValue.SequenceEqual(Lexicon.BOOL))
+                else if (tokenValue.SequenceEqual(Lexicon.SEC_LVL_LOW))
                 {
-                    return GingerToken.Bool;
+                    return GingerToken.Low;
+                }
+                else if (tokenValue.SequenceEqual(Lexicon.SYS_READ))
+                {
+                    return GingerToken.Source;
+                }
+                else if (tokenValue.SequenceEqual(Lexicon.SYS_WRITE))
+                {
+                    return GingerToken.Sink;
                 }
                 else
                 {
@@ -122,45 +186,50 @@ namespace GingerScanner
                 nextChar();
                 return GingerToken.CloseStatementList;
             }
-            else if (currentChar == Lexicon.END_OF_LINE)
+            else if (currentChar == Lexicon.ANNOTATION)
             {
                 nextChar();
-                return GingerToken.EndOfLine;
+                return GingerToken.Annotation;
             }
+            //else if (currentChar == Lexicon.END_OF_LINE)
+            //{
+            //    nextChar();
+            //    return GingerToken.EndOfLine;
+            //}
             else if (currentChar == Lexicon.ADDITION)
             {
                 nextChar();
                 return GingerToken.Addition;
             }
-            else if (currentChar == Lexicon.SUBTRACTION)
-            {
-                nextChar();
-                return GingerToken.Subtraction;
-            }
-            else if (currentChar == Lexicon.LESS_THAN)
-            {
-                nextChar();
-                return GingerToken.LessThan;
-            }
-            else if (currentChar == Lexicon.GREATER_THAN)
-            {
-                nextChar();
-                return GingerToken.GreaterThan;
-            }
-            else if (currentChar == Lexicon.ASSIGNMENT)
-            {
-                nextChar();
-                return GingerToken.Assignment;
-            }
-            else if (currentChar == Lexicon.SECURITY_ASSIGNMENT)
-            {
-                nextChar();
-                return GingerToken.SecurityAssignment;
-            }
+            //else if (currentChar == Lexicon.SUBTRACTION)
+            //{
+            //    nextChar();
+            //    return GingerToken.Subtraction;
+            //}
+            //else if (currentChar == Lexicon.LESS_THAN)
+            //{
+            //    nextChar();
+            //    return GingerToken.LessThan;
+            //}
+            //else if (currentChar == Lexicon.GREATER_THAN)
+            //{
+            //    nextChar();
+            //    return GingerToken.GreaterThan;
+            //}
+            //else if (currentChar == Lexicon.SECURITY_ASSIGNMENT)
+            //{
+            //    nextChar();
+            //    return GingerToken.SecurityAssignment;
+            //}
             else if (currentChar == EOF)
             {
                 nextChar();
                 return GingerToken.EndOfFile;
+            }
+            else if (currentChar == Lexicon.LIST_SEPARATOR)
+            {
+                nextChar();
+                return GingerToken.ListSeparator;
             }
 
             nextChar();

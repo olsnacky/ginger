@@ -1,33 +1,12 @@
-﻿int x
-int y
+﻿var x
+var y
 
-x = 5
-y = x + 1
-
-if y < x {
-	int x
-	int z
-
-	x = 5
-	z = x
+def foo(x) {
+	return x + 1
 }
 
-if y < x {
-	while x < y + 8 {
-		int y
-		y = x
+x := 5
+y := x + 1
 
-		if y < x {
-			int b
-			b = x
-		}
-
-		x = y
-	}
-
-	int j
-	j = y + x
-}
-
-x = 9 + 10
-x = x + y
+x := 9 + 10
+x := foo(x) + y

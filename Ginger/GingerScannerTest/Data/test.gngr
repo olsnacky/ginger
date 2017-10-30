@@ -1,18 +1,11 @@
-﻿int george_HELLO
-george_HELLO = 20
-bool _kim
+﻿var george
+george := 20
+var kim
 
-_kim = true
-if george_HELLO < 30 {
-	while george_HELLO > 25 {
-		george_HELLO = (george_HELLO + 1)
-    }
-
-	george_HELLO = george_HELLO - 1
+def foo(var x) {
+	return x
 }
 
-int paddington
-paddington = -30
+kim := foo(george + 1) + read(): @low
 
-bool gngr
-gngr = false
+write(kim): @high

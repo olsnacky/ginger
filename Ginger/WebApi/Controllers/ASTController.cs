@@ -13,8 +13,8 @@ using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
-    [EnableCors(origins: "http://127.0.0.1:8080, http://gngr.io, http://www.gngr.io, http://noilly.github.io", headers: "*", methods: "*")]
-    public class GraphController : ApiController
+    [EnableCors(origins: "http://localhost:4200, http://gngr.io, http://www.gngr.io, http://noilly.github.io", headers: "*", methods: "*")]
+    public class ASTController : ApiController
     {
         public IHttpActionResult Post([FromBody]string source)
         {
@@ -25,10 +25,10 @@ namespace WebApi.Controllers
 
             Parser parser = new Parser(source);
             parser.parse();
-            CFGVisitor cfgv = new CFGVisitor(parser.ast);
+            //CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
-            DDGVisitor ddgv = new DDGVisitor(parser.ast);
-            JSONVisitor jsonv = new JSONVisitor(parser.ast);
+            //DDGVisitor ddgv = new DDGVisitor(parser.ast);
+            AstJsonVisitor jsonv = new AstJsonVisitor(parser.ast);
 
             return Ok(jsonv.graph);
         }

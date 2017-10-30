@@ -1,0 +1,7 @@
+﻿var kim
+kim := read(): @low
+write(kim): @high
+
+var bob
+bob := read()
+write(bob)

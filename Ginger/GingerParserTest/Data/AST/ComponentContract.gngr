@@ -1,0 +1,7 @@
+﻿comp Foo as contract {
+	
+}
+
+comp Foo as implementation {
+	
+}

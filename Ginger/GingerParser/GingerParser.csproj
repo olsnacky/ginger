@@ -53,6 +53,8 @@
     <Compile Include="CFG\SLNode.cs" />
     <Compile Include="DDG\DDGVisitor.cs" />
     <Compile Include="DDG\SLNode.cs" />
+    <Compile Include="DFG\DFG.cs" />
+    <Compile Include="DFG\DFGVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scope\Scope.cs" />
     <Compile Include="AST\SLVisitor.cs" />
@@ -76,7 +78,6 @@
       <Name>Ginger</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,8 +10,8 @@ namespace GingerTest
     [TestClass]
     public class LexiconTest
     {
-        private char ASSIGNMENT = '=';
-        private char SECURITY_ASSIGNMENT = ':';
+        private char[] ASSIGNMENT = { ':', '=' };
+        //private char SECURITY_ASSIGNMENT = ':';
         private char OPEN_PRECEDENT = '(';
         private char CLOSE_PRECEDENT = ')';
         private char OPEN_STATEMENT = '{';
@@ -21,20 +21,20 @@ namespace GingerTest
         private char[] UPPER_ALPHA = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
         private char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         private char ADDITION = '+';
-        private char SUBTRACTION = '-';
-        private char LESS_THAN = '<';
-        private char GREATER_THAN = '>';
-        private char END_OF_LINE = ';';
         private char[] INT = { 'i', 'n', 't' };
         private char[] BOOL = { 'b', 'o', 'o', 'l' };
         private char[] BOOLEAN_TRUE = { 't', 'r', 'u', 'e' };
         private char[] BOOLEAN_FALSE = { 'f', 'a', 'l', 's', 'e' };
-        private char UNDERSCORE = '_';
-        //private char NEGATE = '-';
+        private char[] VOID = { 'v', 'o', 'i', 'd' };
+        private char[] CONTRACT = { 'c', 'o', 'n', 't', 'r', 'a', 'c', 't' };
+        private char[] IMPLEMENTATION = { 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 'a', 't', 'i', 'o', 'n' };
 
+        private char[] AS = { 'a', 's' };
         private char[] IF = { 'i', 'f' };
-        private char[] WHILE = { 'w', 'h', 'i', 'l', 'e' };
-        
+        private char[] FUNCTION = { 'd', 'e', 'f' };
+        private char[] COMPONENT = { 'c', 'o', 'm', 'p' };
+        private char[] RETURN = { 'r', 'e', 't', 'u', 'r', 'n' };
+
         private char EMPTY = '\0';
         private char PERIOD = '.';
         private char UNKNOWN = '@';
@@ -65,42 +65,42 @@ namespace GingerTest
             tempc.AddRange(LOWER_ALPHA);
             tempc.AddRange(UPPER_ALPHA);
             tempc.AddRange(DIGITS);
-            tempc.Add(ASSIGNMENT);
-            tempc.Add(SECURITY_ASSIGNMENT);
+            //tempc.Add(ASSIGNMENT);
             tempc.Add(OPEN_PRECEDENT);
             tempc.Add(CLOSE_PRECEDENT);
             tempc.Add(WHITESPACE);
-            tempc.Add(END_OF_LINE);
             tempc.Add(ADDITION);
-            tempc.Add(SUBTRACTION);
-            tempc.Add(LESS_THAN);
-            tempc.Add(GREATER_THAN);
             tempc.Add(EMPTY);
             tempc.Add(UNKNOWN);
             tempc.Add(PERIOD);
             tempc.Add(OPEN_STATEMENT);
             tempc.Add(CLOSE_STATEMENT);
-            tempc.Add(UNDERSCORE);
-            //tempc.Add(NEGATE);
             return tempc.ToArray();
         }
 
         private char[][] getTestCharArrays()
         {
             List<char[]> tempca = new List<char[]>();
+            tempca.Add(ASSIGNMENT);
             tempca.Add(BOOL);
             tempca.Add(INT);
+            tempca.Add(VOID);
+            tempca.Add(RETURN);
+            tempca.Add(FUNCTION);
+            tempca.Add(CONTRACT);
+            tempca.Add(IMPLEMENTATION);
+            tempca.Add(COMPONENT);
             tempca.Add(LOWER_ALPHA);
             tempca.Add(UPPER_ALPHA);
             tempca.Add(DIGITS);
             tempca.Add(EMPTY_CHARS);
             tempca.Add(SINGLE);
             tempca.Add(IF);
-            tempca.Add(WHILE);
             tempca.Add(INTEGER);
             tempca.Add(NEGATIVE_INTEGER);
             tempca.Add(BOOLEAN_FALSE);
             tempca.Add(BOOLEAN_TRUE);
+            tempca.Add(AS);
             return tempca.ToArray();
         }
 
@@ -125,13 +125,7 @@ namespace GingerTest
         [TestMethod]
         public void HasAssignment()
         {
-            Assert.AreEqual(Lexicon.ASSIGNMENT, ASSIGNMENT);
-        }
-
-        [TestMethod]
-        public void HasSecurityAssignment()
-        {
-            Assert.AreEqual(Lexicon.SECURITY_ASSIGNMENT, SECURITY_ASSIGNMENT);
+            CollectionAssert.AreEqual(Lexicon.ASSIGNMENT, ASSIGNMENT);
         }
 
         [TestMethod]
@@ -146,58 +140,52 @@ namespace GingerTest
             Assert.AreEqual(Lexicon.CLOSE_PRECEDENT, CLOSE_PRECEDENT);
         }
 
-        [TestMethod]
-        public void HasIf()
-        {
-            CollectionAssert.AreEqual(Lexicon.IF, IF);
-        }
+        //[TestMethod]
+        //public void HasAs()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.AS, AS);
+        //}
+
+        //[TestMethod]
+        //public void HasIf()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.IF, IF);
+        //}
 
         [TestMethod]
-        public void HasWhile()
+        public void HasFunction()
         {
-            CollectionAssert.AreEqual(Lexicon.WHILE, WHILE);
+            CollectionAssert.AreEqual(Lexicon.FUNCTION, FUNCTION);
         }
 
-        [TestMethod]
-        public void HasBooleanTrue()
-        {
-            CollectionAssert.AreEqual(Lexicon.BOOLEAN_TRUE, BOOLEAN_TRUE);
-        }
+        //[TestMethod]
+        //public void HasBooleanTrue()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.BOOLEAN_TRUE, BOOLEAN_TRUE);
+        //}
+
+        //[TestMethod]
+        //public void HasComponent()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.COMPONENT, COMPONENT);
+        //}
+
+        //[TestMethod]
+        //public void hasBooleanFalse()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.BOOLEAN_FALSE, BOOLEAN_FALSE);
+        //}
 
         [TestMethod]
-        public void hasBooleanFalse()
+        public void HasReturn()
         {
-            CollectionAssert.AreEqual(Lexicon.BOOLEAN_FALSE, BOOLEAN_FALSE);
-        }
-
-        [TestMethod]
-        public void HasEndOfLine()
-        {
-            Assert.AreEqual(Lexicon.END_OF_LINE, END_OF_LINE);
+            CollectionAssert.AreEqual(Lexicon.RETURN, RETURN);
         }
 
         [TestMethod]
         public void HasAddition()
         {
             Assert.AreEqual(Lexicon.ADDITION, ADDITION);
-        }
-
-        [TestMethod]
-        public void HasSubtraction()
-        {
-            Assert.AreEqual(Lexicon.SUBTRACTION, SUBTRACTION);
-        }
-
-        [TestMethod]
-        public void HasGreaterThan()
-        {
-            Assert.AreEqual(Lexicon.GREATER_THAN, GREATER_THAN);
-        }
-
-        [TestMethod]
-        public void HasLessThan()
-        {
-            Assert.AreEqual(Lexicon.LESS_THAN, LESS_THAN);
         }
 
         [TestMethod]
@@ -212,17 +200,36 @@ namespace GingerTest
             Assert.AreEqual(Lexicon.CLOSE_STATEMENT_LIST, CLOSE_STATEMENT);
         }
 
-        [TestMethod]
-        public void HasInt()
-        {
-            CollectionAssert.AreEqual(Lexicon.INT, INT);
-        }
+        //[TestMethod]
+        //public void HasInt()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.INT, INT);
+        //}
 
-        [TestMethod]
-        public void HasBool()
-        {
-            CollectionAssert.AreEqual(Lexicon.BOOL, BOOL);
-        }
+        //[TestMethod]
+        //public void HasBool()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.BOOL, BOOL);
+        //}
+
+
+        //[TestMethod]
+        //public void HasVoid()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.VOID, VOID);
+        //}
+
+        //[TestMethod]
+        //public void HasContract()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.CONTRACT, CONTRACT);
+        //}
+
+        //[TestMethod]
+        //public void HasImplemenation()
+        //{
+        //    CollectionAssert.AreEqual(Lexicon.IMPLEMENTATION, IMPLEMENTATION);
+        //}
 
         [TestMethod]
         public void WhiteSpace()
@@ -278,7 +285,7 @@ namespace GingerTest
         {
             foreach (char c in testChars)
             {
-                if (LOWER_ALPHA.Contains(c) || UPPER_ALPHA.Contains(c) || c == UNDERSCORE)
+                if (LOWER_ALPHA.Contains(c))
                 {
                     Assert.IsTrue(Lexicon.isStartKeywordOrIdentifierChar(c), $"{c}");
                 }
@@ -294,7 +301,7 @@ namespace GingerTest
         {
             foreach (char c in testChars)
             {
-                if (DIGITS.Contains(c) || LOWER_ALPHA.Contains(c) || UPPER_ALPHA.Contains(c) || c == UNDERSCORE)
+                if (LOWER_ALPHA.Contains(c))
                 {
                     Assert.IsTrue(Lexicon.isKeywordOrIdentifierChar(c), $"{c}");
                 }

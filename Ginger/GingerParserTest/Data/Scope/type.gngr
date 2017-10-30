@@ -1,6 +1,6 @@
-﻿int george_HELLO
-george_HELLO = 20
-bool _kim
+﻿int georgeHELLO
+georgeHELLO = 20
+bool kim
 bool geoff
 
-_kim = geoff
+kim = geoff

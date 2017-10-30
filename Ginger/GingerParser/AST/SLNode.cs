@@ -77,57 +77,196 @@ namespace GingerParser
         }
     }
 
-    public partial class While : Statement
+    public partial class Declaration : SLNodeCollection
     {
-        private const int CONDITION_INDEX = 0;
-        private const int BODY_INDEX = 1;
-
-        public Node condition
-        {
-            get { return this.get(CONDITION_INDEX); }
-        }
-
-        public StatementList body
-        {
-            get { return (StatementList)this.get(BODY_INDEX); }
-        }
-
-        public While(Node condition, StatementList body) : base()
-        {
-            this.add(condition);
-            this.add(body);
-        }
-
         public override void accept(NodeVisitor v)
         {
-            ((SLVisitor)v).visitWhile(this);
+            throw new NotImplementedException();
         }
     }
 
-    public partial class If : Statement
-    {
-        private const int CONDITION_INDEX = 0;
-        private const int BODY_INDEX = 1;
+    //public partial class While : Statement
+    //{
+    //    private const int CONDITION_INDEX = 0;
+    //    private const int BODY_INDEX = 1;
 
-        public Node condition
+    //    public Node condition
+    //    {
+    //        get { return this.get(CONDITION_INDEX); }
+    //    }
+
+    //    public StatementList body
+    //    {
+    //        get { return (StatementList)this.get(BODY_INDEX); }
+    //    }
+
+    //    public While(Node condition, StatementList body) : base()
+    //    {
+    //        this.add(condition);
+    //        this.add(body);
+    //    }
+
+    //    //public override void accept(NodeVisitor v)
+    //    //{
+    //    //    ((SLVisitor)v).visitWhile(this);
+    //    //}
+    //}
+
+    //public partial class If : Statement
+    //{
+    //    private const int CONDITION_INDEX = 0;
+    //    private const int BODY_INDEX = 1;
+
+    //    public Node condition
+    //    {
+    //        get { return this.get(CONDITION_INDEX); }
+    //    }
+
+    //    public StatementList body
+    //    {
+    //        get { return (StatementList)this.get(BODY_INDEX); }
+    //    }
+
+    //    public If(Node condition, StatementList body) : base()
+    //    {
+    //        this.add(condition);
+    //        this.add(body);
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitBranch(this);
+    //    }
+    //}
+
+    public class ExpressionList : NodeCollection
+    {
+        public override void accept(NodeVisitor v)
         {
-            get { return this.get(CONDITION_INDEX); }
+            ((SLVisitor)v).visitExpressionList(this);
         }
+    }
+
+    public class VarList : SLNodeCollection
+    {
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitVariableList(this);
+        }
+
+        public VarList()
+        {
+
+        }
+    }
+
+    public class Function : SLNodeCollection
+    {
+        //private const int TYPE_INDEX = 0;
+        private const int IDENTIFIER_INDEX = 0;
+        private const int VARIABLE_LIST_INDEX = 1;
+        private const int STATEMENT_LIST_INDEX = 2;
 
         public StatementList body
         {
-            get { return (StatementList)this.get(BODY_INDEX); }
+            get { return (StatementList)get(STATEMENT_LIST_INDEX); }
         }
 
-        public If(Node condition, StatementList body) : base()
+        public VarList formalParams
         {
-            this.add(condition);
+            get { return (VarList)get(VARIABLE_LIST_INDEX); }
+        }
+
+        public Variable name
+        {
+            get { return ((Variable)get(IDENTIFIER_INDEX)); }
+        }
+
+        public Function(Variable name, VarList variableList, StatementList body) : base()
+        {
+            //this.add(returnType);
+            this.add(name);
+            this.add(variableList);
             this.add(body);
         }
 
         public override void accept(NodeVisitor v)
         {
-            ((SLVisitor)v).visitBranch(this);
+            ((SLVisitor)v).visitFunction(this);
+        }
+    }
+
+    public partial class Invocation : SLNodeCollection
+    {
+        private const int IDENTIFIER_INDEX = 0;
+        private const int EXPRESSION_LIST_INDEX = 1;
+
+        public ExpressionList expressionList
+        {
+            get { return (ExpressionList)this.get(EXPRESSION_LIST_INDEX); }
+        }
+
+        public Identifier name
+        {
+            get { return (Identifier)this.get(IDENTIFIER_INDEX); }
+        }
+
+        public Invocation(Identifier ident, ExpressionList exprlist)
+        {
+            this.add(ident);
+            this.add(exprlist);
+        }
+
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitInvocation(this);
+        }
+    }
+
+    //public class Component : SLNodeCollection
+    //{
+    //    public Component(Identifier name, Type componentType, StatementList body)
+    //    {
+    //        this.add(name);
+    //        this.add(componentType);
+    //        this.add(body);
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitComponent(this);
+    //    }
+    //}
+
+    public class Return : Statement
+    {
+        private const int EXPRESSION_INDEX = 0;
+        public Node expression
+        {
+            get
+            {
+                try
+                {
+                    return this.get(EXPRESSION_INDEX);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        public Return(Node expression = null) : base()
+        {
+            if (expression != null)
+            {
+                this.add(expression);
+            }
+        }
+
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitReturn(this);
         }
     }
 
@@ -160,33 +299,81 @@ namespace GingerParser
         }
     }
 
-    public partial class InequalityOperation : Operation
+    public abstract class InformationEndpoint : SLNodeCollection
     {
-        public override int row
+        private GingerToken _securityLevel;
+
+        public GingerToken securityLevel
         {
-            get
-            {
-                return ((ISourcePosition)lhs).row;
-            }
+            get { return this._securityLevel; }
         }
 
-        public override int col
+        public InformationEndpoint(GingerToken securityLevel)
         {
-            get
-            {
-                return ((ISourcePosition)lhs).col;
-            }
+            this._securityLevel = securityLevel;
         }
-        public InequalityOperation(GingerToken inequalityOp, Node lhs, Node rhs) : base(inequalityOp, lhs, rhs)
+    }
+
+    public class Source : InformationEndpoint
+    {
+        public Source(GingerToken securityLevel) : base(securityLevel)
         {
-            return;
+
         }
 
         public override void accept(NodeVisitor v)
         {
-            ((SLVisitor)v).visitInequalityOperation(this);
+            ((SLVisitor)v).visitSource(this);
         }
     }
+
+    public class Sink : InformationEndpoint
+    {
+        private const int EXPR_INDEX = 0;
+
+        public Node expr
+        {
+            get { return this.get(EXPR_INDEX); }
+        }
+
+        public Sink(GingerToken securityLevel, Node expr) : base(securityLevel)
+        {
+            this.add(expr);
+        }
+
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitSink(this);
+        }
+    }
+
+    //public partial class InequalityOperation : Operation
+    //{
+    //    public override int row
+    //    {
+    //        get
+    //        {
+    //            return ((ISourcePosition)lhs).row;
+    //        }
+    //    }
+
+    //    public override int col
+    //    {
+    //        get
+    //        {
+    //            return ((ISourcePosition)lhs).col;
+    //        }
+    //    }
+    //    public InequalityOperation(GingerToken inequalityOp, Node lhs, Node rhs) : base(inequalityOp, lhs, rhs)
+    //    {
+    //        return;
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitInequalityOperation(this);
+    //    }
+    //}
 
     public partial class BinaryOperation : Operation
     {
@@ -201,52 +388,60 @@ namespace GingerParser
         }
     }
 
-    public class Declaration : SLNodeCollection
+    public class Variable : Declaration
     {
-        private const int TYPE_INDEX = 0;
-        private const int IDENTIFIER_INDEX = 1;
+        //private const int TYPE_INDEX = 0;
+        private const int IDENTIFIER_INDEX = 0;
         private const int STATEMENT_LIST_INDEX = 0;
+        //private bool _passByReference;
 
-        public override int row
-        {
-            get
-            {
-                return ((ISourcePosition)type).row;
-            }
-        }
+        //public override int row
+        //{
+        //    get
+        //    {
+        //        return ((ISourcePosition)type).row;
+        //    }
+        //}
 
-        public override int col
-        {
-            get
-            {
-                return ((ISourcePosition)type).col;
-            }
-        }
+        //public override int col
+        //{
+        //    get
+        //    {
+        //        return ((ISourcePosition)type).col;
+        //    }
+        //}
 
-        public Node type
-        {
-            get { return this.get(TYPE_INDEX); }
-        }
+        //public Node type
+        //{
+        //    get { return this.get(TYPE_INDEX); }
+        //}
 
         public Identifier identifier
         {
             get { return (Identifier)this.get(IDENTIFIER_INDEX); }
         }
 
+        //public bool passByReference
+        //{
+        //    get { return this._passByReference; }
+        //}
+
         public Scope.Scope scope
         {
             get { return ((StatementList)this.parents[STATEMENT_LIST_INDEX]).scope; }
         }
 
-        public Declaration(Node type, Identifier identifier)
+        //public Variable(Identifier identifier, bool passByReference = false)
+        public Variable(Identifier identifier)
         {
-            this.add(type);
+            //this.add(type);
             this.add(identifier);
+            //this._passByReference = passByReference;
         }
 
         public override void accept(NodeVisitor v)
         {
-            ((SLVisitor)v).visitDeclaration(this);
+            ((SLVisitor)v).visitVariable(this);
         }
     }
 
@@ -277,7 +472,7 @@ namespace GingerParser
         }
     }
 
-    public class Type : Node, ISourcePosition
+    public abstract class Type : Node, ISourcePosition
     {
         private int _row;
         private int _col;
@@ -310,44 +505,23 @@ namespace GingerParser
         }
     }
 
-    public partial class Integer : Node, ISourcePosition, ILiteral
+    public partial class Integer : Type, ILiteral
     {
         private string _value;
-        private int _row;
-        private int _col;
 
         public string value
         {
             get { return _value; }
         }
 
-        public int row
+        public Integer(int row, int col, string value) : base(row, col)
         {
-            get
-            {
-                return _row;
-            }
-        }
-
-        public int col
-        {
-            get
-            {
-                return _col;
-            }
-        }
-
-        public Integer(int row, int col, string value) : base()
-        {
-            this._row = row;
-            this._col = col;
             this._value = value;
         }
 
-        public Integer(int row, int col) : base()
+        public Integer(int row, int col) : base(row, col)
         {
-            this._row = row;
-            this._col = col;
+
         }
 
         public override void accept(NodeVisitor v)
@@ -387,60 +561,78 @@ namespace GingerParser
                 {
                     hash = hash * HASH_MULTIPLIER + value.GetHashCode();
                 }
-                
+
                 return hash;
             }
         }
     }
 
-    public partial class Boolean : Node, ISourcePosition, ILiteral
-    {
-        private string _value;
-        private int _row;
-        private int _col;
+    //public partial class Boolean : Type, ILiteral
+    //{
+    //    private string _value;
 
-        public int row
-        {
-            get
-            {
-                return _row;
-            }
-        }
+    //    public string value
+    //    {
+    //        get
+    //        {
+    //            return _value;
+    //        }
+    //    }
 
-        public int col
-        {
-            get
-            {
-                return _col;
-            }
-        }
+    //    public Boolean(int row, int col) : base(row, col)
+    //    {
 
-        public string value
-        {
-            get
-            {
-                return _value;
-            }
-        }
+    //    }
 
-        public Boolean(int row, int col) : base()
-        {
-            this._row = row;
-            this._col = col;
-        }
+    //    public Boolean(int row, int col, string value) : base(row, col)
+    //    {
+    //        this._value = value;
+    //    }
 
-        public Boolean(int row, int col, string value) : base()
-        {
-            this._row = row;
-            this._col = col;
-            this._value = value;
-        }
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitBoolean(this);
+    //    }
+    //}
 
-        public override void accept(NodeVisitor v)
-        {
-            ((SLVisitor)v).visitBoolean(this);
-        }
-    }
+    //public partial class Void : Type
+    //{
+    //    public Void(int row, int col) : base(row, col)
+    //    {
+
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitVoid(this);
+    //    }
+    //}
+
+    //public partial class Contract : Type
+    //{
+    //    public Contract(int row, int col) : base(row, col)
+    //    {
+
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitContract(this);
+    //    }
+    //}
+
+    //public partial class Implementation : Type
+    //{
+    //    public Implementation(int row, int col) : base(row, col)
+    //    {
+
+    //    }
+
+    //    public override void accept(NodeVisitor v)
+    //    {
+    //        ((SLVisitor)v).visitImplementation(this);
+    //    }
+    //}
 
     public partial class Identifier : Node, ISourcePosition
     {
@@ -469,7 +661,8 @@ namespace GingerParser
             }
         }
 
-        public Identifier(int row, int col, string name) : base() {
+        public Identifier(int row, int col, string name) : base()
+        {
             this._row = row;
             this._col = col;
             this._name = name;
@@ -518,13 +711,13 @@ namespace GingerParser
             {
                 const int HASH_MULTIPLIER = 23;
                 int hash = 17;
-               // hash = hash * HASH_MULTIPLIER + _name.GetHashCode();
+                // hash = hash * HASH_MULTIPLIER + _name.GetHashCode();
 
                 if (_declaration != null)
                 {
                     hash = hash * HASH_MULTIPLIER + _declaration.GetHashCode();
                 }
-                
+
                 return hash;
             }
         }
@@ -555,7 +748,8 @@ namespace GingerParser
             }
         }
 
-        public Literal(T value) : base() {
+        public Literal(T value) : base()
+        {
             this._value = value;
         }
 
