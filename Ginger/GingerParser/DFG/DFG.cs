@@ -129,30 +129,29 @@ namespace GingerParser.DFG
 
         public DFGNode returnNode => _return;
 
+        public DFG()
+        {
+            _initialise();
+
+            _high = new DFGNode(DFGNodeType.High, DFGNodeType.High.ToString());
+            addNode(_high);
+
+            _low = new DFGNode(DFGNodeType.Low, DFGNodeType.Low.ToString());
+            addNode(_low);
+        }
+
         public DFG(DFGNode high, DFGNode low)
+        {
+            _initialise();
+
+            _high = high;
+            _low = low;
+        }
+
+        private void _initialise()
         {
             _formalParams = new List<DFGNode>();
             _nodes = new List<DFGNode>();
-
-            if (high == null)
-            {
-                _high = new DFGNode(DFGNodeType.High, DFGNodeType.High.ToString());
-                addNode(_high);
-            }
-            else
-            {
-                _high = high;
-            }
-
-            if (low == null)
-            {
-                _low = new DFGNode(DFGNodeType.Low, DFGNodeType.Low.ToString());
-                addNode(_low);
-            }
-            else
-            {
-                _low = low;
-            }
         }
 
         public void addNode(DFGNode n)
@@ -221,6 +220,35 @@ namespace GingerParser.DFG
         {
             _return = new DFGNode(DFGNodeType.Return, "return");
             _nodes.Add(_return);
+        }
+
+        public void replaceHigh(DFGNode high)
+        {
+            _replace(high, _high);
+        }
+
+        public void replaceLow(DFGNode low)
+        {
+            _replace(low, _low);
+        }
+
+        private void _replace(DFGNode newNode, DFGNode nodeToReplace)
+        {
+            foreach (DFGNode n in nodeToReplace.adjacencyList)
+            {
+                n.parents.Remove(nodeToReplace);
+                newNode.addEdge(n);
+            }
+
+            foreach(DFGNode n in nodeToReplace.parents)
+            {
+                n.adjacencyList.Remove(nodeToReplace);
+                n.addEdge(newNode);
+            }
+
+            nodeToReplace.adjacencyList.Clear();
+            nodeToReplace.parents.Clear();
+            nodeToReplace = newNode;
         }
 
         public void addReturn(List<Identifier> sources)

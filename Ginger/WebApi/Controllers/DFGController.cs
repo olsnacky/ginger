@@ -16,7 +16,7 @@ namespace WebApi.Controllers
     [EnableCors(origins: "http://localhost:4200, http://gngr.io, http://www.gngr.io, http://noilly.github.io", headers: "*", methods: "*")]
     public class DFGController : ApiController
     {
-        public IHttpActionResult Post([FromBody]string source)
+        public IHttpActionResult Post([FromBody]string source, [FromUri]bool performClosure)
         {
             if (source == null)
             {
@@ -28,7 +28,10 @@ namespace WebApi.Controllers
             //CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
             DFGVisitor dfgv = new DFGVisitor(parser.ast);
-            dfgv.dfg.performClosure();
+            if (performClosure)
+            {
+                dfgv.dfg.performClosure();
+            }
             //DDGVisitor ddgv = new DDGVisitor(parser.ast);
             DfgJsonConverter jsonv = new DfgJsonConverter(dfgv.dfg);
 

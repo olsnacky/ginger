@@ -93,7 +93,8 @@ namespace GingerParser.DFG
             //_formalParams = formalParams;
             _sources = new List<Identifier>();
             _code = code;
-            _dfg = new DFG(high, low);
+            //_dfg = new DFG(high, low);
+            _dfg = new DFG();
             _currentComponent = currentComponent;
 
             if (di == null)
@@ -247,20 +248,22 @@ namespace GingerParser.DFG
         {
             Invocation i = di.invocation;
             DFG fdfg = _getGraph(i, di.inComponent);
-            fdfg.high = _dfg.high;
-            fdfg.low = _dfg.low;
+            //fdfg.high = _dfg.high;
+            //fdfg.low = _dfg.low;
+            fdfg.replaceHigh(_dfg.high);
+            fdfg.replaceLow(_dfg.low);
 
-            foreach (DFGNode n in fdfg.nodes)
-            {
-                if (n.parents.Contains(fdfg.high))
-                {
-                    fdfg.high.addEdge(n);
-                }
-                else if (n.parents.Contains(fdfg.low))
-                {
-                    fdfg.low.addEdge(n);
-                }
-            }
+            //foreach (DFGNode n in fdfg.nodes)
+            //{
+            //    if (n.parents.Contains(fdfg.high))
+            //    {
+            //        fdfg.high.addEdge(n);
+            //    }
+            //    else if (n.parents.Contains(fdfg.low))
+            //    {
+            //        fdfg.low.addEdge(n);
+            //    }
+            //}
 
             fdfg.resetIds();
             i.expressionList.accept(this);
