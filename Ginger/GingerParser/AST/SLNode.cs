@@ -58,14 +58,17 @@ namespace GingerParser
 
     public partial class StatementList : SLNodeCollection
     {
-        public StatementList() : base()
-        {
-            return;
-        }
-
         public override void accept(NodeVisitor v)
         {
             ((SLVisitor)v).visitStatementList(this);
+        }
+    }
+
+    public class FunctionList : SLNodeCollection
+    {
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitFunctionList(this);
         }
     }
 
@@ -160,7 +163,83 @@ namespace GingerParser
         }
     }
 
-    public class Function : SLNodeCollection
+    public partial class Component : SLNodeCollection
+    {
+        private const int VARIABLE_INDEX = 0;
+        private const int IMPORT_LIST_INDEX = 1;
+        private const int FUNCTION_LIST_INDEX = 2;
+        private GingerToken _type;
+
+        public Variable variable
+        { 
+            get
+            {
+                return (Variable)get(VARIABLE_INDEX);
+            }
+        }
+
+        public ImportList importList
+        {
+            get
+            {
+                return (ImportList)get(IMPORT_LIST_INDEX);
+            }
+        }
+
+        public FunctionList functionList
+        {
+            get
+            {
+                return (FunctionList)get(FUNCTION_LIST_INDEX);
+            }
+        }
+
+        public Function entry
+        {
+            get
+            {
+                Function result = null;
+                if (variable.identifier.name.Equals("app"))
+                {
+                    foreach (Function f in functionList)
+                    {
+                        if (f.name.identifier.name.Equals("main"))
+                        {
+                            result = f;
+                            break;
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public GingerToken type => _type;        
+
+        public Component(GingerToken type, Variable name, ImportList il, FunctionList fl) : base()
+        {
+            _type = type;
+            add(name);
+            add(il);
+            add(fl);
+        }
+
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitComponent(this);
+        }
+    }
+
+    public partial class ComponentList : SLNodeCollection
+    {
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitComponentList(this);
+        }
+    }
+
+    public class Function : Declaration
     {
         //private const int TYPE_INDEX = 0;
         private const int IDENTIFIER_INDEX = 0;
@@ -206,7 +285,7 @@ namespace GingerParser
             get { return (ExpressionList)this.get(EXPRESSION_LIST_INDEX); }
         }
 
-        public Identifier name
+        public Identifier identifier
         {
             get { return (Identifier)this.get(IDENTIFIER_INDEX); }
         }
@@ -388,6 +467,34 @@ namespace GingerParser
         }
     }
 
+    public class ImportList : SLNodeCollection
+    {
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitImportList(this);
+        }
+    }
+
+    public class Import : Declaration
+    {
+        private const int IDENTIFIER_INDEX = 0;
+
+        public Identifier identifier
+        {
+            get { return (Identifier)get(IDENTIFIER_INDEX); }
+        }
+
+        public Import(Identifier i)
+        {
+            add(i);
+        }
+
+        public override void accept(NodeVisitor v)
+        {
+            ((SLVisitor)v).visitImport(this);
+        }
+    }
+
     public class Variable : Declaration
     {
         //private const int TYPE_INDEX = 0;
@@ -428,7 +535,7 @@ namespace GingerParser
 
         public Scope.Scope scope
         {
-            get { return ((StatementList)this.parents[STATEMENT_LIST_INDEX]).scope; }
+            get { return ((Component)this.parents[STATEMENT_LIST_INDEX]).scope; }
         }
 
         //public Variable(Identifier identifier, bool passByReference = false)
@@ -634,6 +741,25 @@ namespace GingerParser
     //    }
     //}
 
+        public enum IdentifierType
+    {
+        Simple,
+        Compound
+    }
+
+    public class ImportIdentifierComparer : IEqualityComparer<Identifier>
+    {
+        public bool Equals(Identifier x, Identifier y)
+        {
+            return x.name.Equals(y.name);
+        }
+
+        public int GetHashCode(Identifier obj)
+        {
+            return obj.name.GetHashCode();
+        }
+    }
+
     public partial class Identifier : Node, ISourcePosition
     {
         private string _name;
@@ -658,6 +784,52 @@ namespace GingerParser
             get
             {
                 return _col;
+            }
+        }
+
+        public List<Identifier> parts
+        {
+            get
+            {
+                List<Identifier> result = new List<Identifier>();
+                string[] tokens = _name.Split(Lexicon.IDENT_SEPARATOR);
+                if (tokens.Length == 1)
+                {
+                    result.Add(this);
+                }
+                else if (tokens.Length > 1)
+                {
+                    foreach (string token in tokens)
+                    {
+                        result.Add(new Identifier(_row, _col, token));
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
+
+                return result;
+            }
+        }
+
+        public IdentifierType type
+        {
+            get
+            {
+                
+                if (parts.Count > 1)
+                {
+                    return IdentifierType.Compound;
+                }
+                else if (parts.Count == 1)
+                {
+                    return IdentifierType.Simple;
+                }
+                else
+                {
+                    throw new ArgumentException();
+                }
             }
         }
 

@@ -15,13 +15,14 @@ namespace GingerParser.Scope
         private List<Variable> _formalArgs;
         private bool _inFunction = false;
         private bool _inVariableList = false;
+        private bool _inImport = false;
 
         public List<ParseException> errors
         {
             get { return _errors; }
         }
 
-        public ScopeVisitor(StatementList ast)
+        public ScopeVisitor(ComponentList ast)
         {
             _errors = new List<ParseException>();
             _formalArgs = new List<Variable>();
@@ -31,15 +32,7 @@ namespace GingerParser.Scope
         public void visitStatementList(StatementList sl)
         {
             Scope parentScope = _currentScope;
-            // create and assign a new scope to the statement list
-            if (parentScope != null)
-            {
-                _currentScope = new Scope(parentScope);
-            }
-            else
-            {
-                _currentScope = new Scope();
-            }
+            _currentScope = new Scope(parentScope);
 
             sl.scope = _currentScope;
 
@@ -60,6 +53,11 @@ namespace GingerParser.Scope
         public void visitIdentifier(Identifier i)
         {
             i.declaration = _currentScope.find(i);
+            if (_inImport)
+            {
+                // add the import as a declaration
+                //i.declaration.accept(this);
+            }
         }
 
         public void visitVariable(Variable d)
@@ -204,6 +202,53 @@ namespace GingerParser.Scope
         public void visitSink(Sink s)
         {
             visitChildren(s);
+        }
+
+        public void visitComponent(Component c)
+        {
+            // add the component declaration to this scope (global scope)
+            c.variable.accept(this);
+
+            // create the component's scope
+            Scope parentScope = _currentScope;
+            _currentScope = new Scope(parentScope);
+            c.scope = _currentScope;
+
+            // build the component's scope
+            c.importList.accept(this);
+            c.functionList.accept(this);
+
+            // now that we've finished with the statement list return to the previous scope
+            _currentScope = parentScope;
+            // add the component to this scope (which should be global scope)
+            _currentScope.add(c);
+        }
+
+        public void visitComponentList(ComponentList cl)
+        {
+            // global scope
+            _currentScope = new Scope();
+            cl.scope = _currentScope;
+
+            visitChildren(cl);
+        }
+
+        public void visitFunctionList(FunctionList fl)
+        {
+            visitChildren(fl);
+        }
+
+        public void visitImport(Import i)
+        {
+            _inImport = true;
+            visitChildren(i);
+            _inImport = false;
+            _currentScope.add(i);
+        }
+
+        public void visitImportList(ImportList il)
+        {
+            visitChildren(il);
         }
     }
 }

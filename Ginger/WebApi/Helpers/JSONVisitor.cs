@@ -37,6 +37,11 @@ namespace WebApi.Helpers
         VariableList,
         Return,
         Invocation,
+        ComponentList,
+        Component,
+        FunctionList,
+        ImportList,
+        Import,
         // DFG
         High,
         Low,
@@ -348,6 +353,10 @@ namespace WebApi.Helpers
                 {
                     return null;
                 }
+                else if (n.adjacencyList.Count == 1 && n.adjacencyList[0].invocation.identifier.name.Equals("main"))
+                {
+                    return null;
+                }
             }
             else if (n.type == DFGNodeType.Invocation)
             {
@@ -355,6 +364,10 @@ namespace WebApi.Helpers
                 //_graph.add(gn.Value);
                 nt = NodeType.Invocation;
                 label = n.label;
+                if (n.label.Equals("main"))
+                {
+                    return null;
+                }
             }
             else if (n.type == DFGNodeType.High)
             {
@@ -402,7 +415,7 @@ namespace WebApi.Helpers
         private Graph _graph;
         private Stack<GraphNode> _nodeStack;
 
-        public AstJsonVisitor(StatementList graph)
+        public AstJsonVisitor(ComponentList graph)
         {
             _nodeStack = new Stack<GraphNode>();
             _graph = new Graph();
@@ -616,6 +629,50 @@ namespace WebApi.Helpers
             GraphNode source = new GraphNode(getNewId(), NodeType.VariableList, $"Source: {s.securityLevel.ToString()}");
             _graph.add(source);
             addASTEdge(source, "");
+        }
+
+        public void visitComponent(Component c)
+        {
+            GraphNode component = new GraphNode(getNewId(), NodeType.Component, "Component");
+            _graph.add(component);
+            addASTEdge(component, "");
+
+            visitChildren(component, c);
+        }
+
+        public void visitComponentList(ComponentList cl)
+        {
+            GraphNode componentList = new GraphNode(getNewId(), NodeType.ComponentList, "Component List");
+            _graph.add(componentList);
+
+            visitChildren(componentList, cl);
+        }
+
+        public void visitFunctionList(FunctionList fl)
+        {
+            GraphNode functionList = new GraphNode(getNewId(), NodeType.FunctionList, "Function List");
+            _graph.add(functionList);
+            addASTEdge(functionList, "");
+
+            visitChildren(functionList, fl);
+        }
+
+        public void visitImport(Import i)
+        {
+            GraphNode import = new GraphNode(getNewId(), NodeType.Import, "Import");
+            _graph.add(import);
+            addASTEdge(import, "");
+
+            visitChildren(import, i);
+        }
+
+        public void visitImportList(ImportList il)
+        {
+            GraphNode importList = new GraphNode(getNewId(), NodeType.ImportList, "Import List");
+            _graph.add(importList);
+            addASTEdge(importList, "");
+
+            visitChildren(importList, il);
         }
     }
 }

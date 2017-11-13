@@ -41,7 +41,7 @@ namespace GingerParser.DFG
                 }
                 else if (_type == DFGNodeType.Invocation)
                 {
-                    return _invocation.name.name;
+                    return _invocation.identifier.name;
                 }
                 else
                 {
@@ -198,6 +198,11 @@ namespace GingerParser.DFG
 
             // hook up the return node to the invocation node
             //functionGraph.returnNode.addEdge(dfgni);
+            //if (functionGraph.returnNode == null)
+            //{
+            //    functionGraph.returnNode
+            //}
+
             functionGraph.returnNode.addEdge(di.invocationNode);
 
             // hook up actual args to formal args
@@ -212,15 +217,33 @@ namespace GingerParser.DFG
             }
         }
 
+        public void addReturn()
+        {
+            _return = new DFGNode(DFGNodeType.Return, "return");
+            _nodes.Add(_return);
+        }
+
         public void addReturn(List<Identifier> sources)
         {
             _return = new DFGNode(DFGNodeType.Return, "return");
-            foreach (Identifier i in sources)
-            {
-                DFGNode source = _findNode(i);
-                source.addEdge(_return);
+            if (sources != null) {
+                foreach (Identifier i in sources)
+                {
+                    DFGNode source = _findNode(i);
+                    source.addEdge(_return);
+                }
             }
             _nodes.Add(_return);
+        }
+
+        public void performClosure()
+        {
+            bool shouldPerformClosure;
+
+            do
+            {
+                shouldPerformClosure = _performClosure();
+            } while (shouldPerformClosure);
         }
 
         public bool hasInterference()
@@ -284,7 +307,7 @@ namespace GingerParser.DFG
         private DFGNode _findNode(Identifier i)
         {
             // find non-security nodes
-            DFGNode dfgn = _nodes.Find(n => n.subGraphId == new Guid() && (n.variable != null && n.variable.identifier == i) || (n.invocation != null && n.invocation.name == i && n.invocation.invocationCount == i.invocationCount));
+            DFGNode dfgn = _nodes.Find(n => n.subGraphId == new Guid() && (n.variable != null && n.variable.identifier == i) || (n.invocation != null && n.invocation.identifier == i && n.invocation.invocationCount == i.invocationCount));
 
             // find if security node
             if (dfgn == null)
@@ -305,6 +328,39 @@ namespace GingerParser.DFG
         private void _addEdge(DFGNode source, DFGNode target)
         {
             source.addEdge(target);
+        }
+
+        private bool _performClosure()
+        {
+            bool edgesAdded = false;
+
+            // transitive closure
+            foreach (DFGNode n in _nodes)
+            {
+                List<DFGNode> nodesToAdd = new List<DFGNode>();
+                foreach (DFGNode nn in n.adjacencyList)
+                {
+                    foreach (DFGNode nnn in nn.adjacencyList)
+                    {
+                        if (!n.adjacencyList.Contains(nnn))
+                        {
+                            nodesToAdd.Add(nnn);
+                        }
+                    }
+                }
+
+                if (nodesToAdd.Count > 0)
+                {
+                    foreach (DFGNode nta in nodesToAdd)
+                    {
+                        n.adjacencyList.Add(nta);
+                    }
+
+                    edgesAdded = true;
+                }
+            }
+
+            return edgesAdded;
         }
     }
 }

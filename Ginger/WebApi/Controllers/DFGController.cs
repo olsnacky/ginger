@@ -28,6 +28,7 @@ namespace WebApi.Controllers
             //CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
             DFGVisitor dfgv = new DFGVisitor(parser.ast);
+            dfgv.dfg.performClosure();
             //DDGVisitor ddgv = new DDGVisitor(parser.ast);
             DfgJsonConverter jsonv = new DfgJsonConverter(dfgv.dfg);
 

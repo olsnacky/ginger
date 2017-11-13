@@ -177,5 +177,30 @@ namespace GingerParser.DDG
         {
             throw new NotImplementedException();
         }
+
+        public void visitComponent(Component c)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitComponentList(ComponentList cl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitFunctionList(FunctionList fl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitImport(Import i)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitImportList(ImportList il)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -17,11 +17,11 @@ namespace Ginger
         Assignment,
         OpenPrecedent,
         ClosePrecedent,
-        OpenStatementList,
-        CloseStatementList,
+        OpenList,
+        CloseList,
         Addition,
-        //Contract,
-        //Implementation,
+        Contract,
+        Implementation,
         //Bool,
         //Int,
         Unknown,
@@ -42,11 +42,13 @@ namespace Ginger
         High,
         Low,
         OpenAnnotation,
-        Annotation
+        Annotation,
+        Import,
+        IdentifierSeparator
     }
 
     public static class Grammar
-    {      
+    {
         public static bool isBinaryOperator(GingerToken token)
         {
             return token == GingerToken.Addition;
@@ -68,6 +70,11 @@ namespace Ginger
             return token == GingerToken.Source || token == GingerToken.Sink;
         }
 
+        public static bool isComponent(GingerToken token)
+        {
+            return token == GingerToken.Contract || token == GingerToken.Implementation;
+        }
+
         //public static bool isComponentType(GingerToken token)
         //{
         //    return token == GingerToken.Contract || token == GingerToken.Implementation;
@@ -86,7 +93,7 @@ namespace Ginger
         public static char CLOSE_PRECEDENT = ')';
         //public static char[] AS = { 'a', 's' };
         //public static char[] IF = { 'i', 'f' };
-        public static char[] FUNCTION = { 'd', 'e', 'f' };
+        public static char[] FUNCTION = { 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n' };
         //public static char[] COMPONENT = { 'c', 'o', 'm', 'p' };
         public static char[] RETURN = { 'r', 'e', 't', 'u', 'r', 'n' };
         public static char ADDITION = '+';
@@ -94,12 +101,13 @@ namespace Ginger
         public static char CLOSE_STATEMENT_LIST = '}';
         public static char OPEN_ANNOTATION = ':';
         public static char ANNOTATION = '@';
+        public static char IDENT_SEPARATOR = '.';
         public static char[] VAR_DECLARATION = { 'v', 'a', 'r' };
         //public static char[] INT = { 'i', 'n', 't' };
         //public static char[] VOID = { 'v', 'o', 'i', 'd' };
         //public static char[] BOOL = { 'b', 'o', 'o', 'l' };
-        //public static char[] CONTRACT = { 'c', 'o', 'n', 't', 'r', 'a', 'c', 't' };
-        //public static char[] IMPLEMENTATION = { 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 'a', 't', 'i', 'o', 'n' };
+        public static char[] CONTRACT = { 'c', 'o', 'n', 't', 'r', 'a', 'c', 't' };
+        public static char[] IMPLEMENTATION = { 'i', 'm', 'p', 'l', 'e', 'm', 'e', 'n', 't', 'a', 't', 'i', 'o', 'n' };
         //public static char[] BOOLEAN_TRUE = { 't', 'r', 'u', 'e' };
         //public static char[] BOOLEAN_FALSE = { 'f', 'a', 'l', 's', 'e' };
         //public static char ZERO = '0';
@@ -109,6 +117,7 @@ namespace Ginger
         public static char[] SEC_LVL_LOW = { 'l', 'o', 'w' };
         public static char[] SYS_READ = { 'r', 'e', 'a', 'd' };
         public static char[] SYS_WRITE = { 'w', 'r', 'i', 't', 'e' };
+        public static char[] IMPORT = { 'i', 'm', 'p', 'o', 'r', 't' };
 
         private static char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         //private static char[] UPPER_ALPHABETIC_CHAR = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };

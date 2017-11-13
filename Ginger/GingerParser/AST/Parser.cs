@@ -35,21 +35,26 @@ namespace GingerParser
         private Scanner scanner;
         private GingerToken currentScannerToken;
         private GingerToken? spiedScannerToken;
-        private StatementList statementList;
+        //private StatementList statementList;
+        private ComponentList _componentList;
         private List<ParseException> _errors;
+        //private Component _entry;
 
         public List<ParseException> errors
         {
             get { return _errors; }
         }
 
-        public StatementList ast
-        {
-            get
-            {
-                return statementList;
-            }
-        }
+        //public StatementList ast
+        //{
+        //    get
+        //    {
+        //        return statementList;
+        //    }
+        //}
+
+        public ComponentList ast => _componentList;
+        //public Component entry => _entry;
 
         public Parser(string source)
         {
@@ -60,32 +65,303 @@ namespace GingerParser
         public void parse()
         {
             nextScannerToken();
-            statementList = parseStatementList(GingerToken.EndOfFile);
+            //statementList = parseStatementList(GingerToken.EndOfFile, false);
+            _componentList = parseComponentList();
         }
 
-        private StatementList parseStatementList(GingerToken endToken)
+        private ComponentList parseComponentList()
         {
-            StatementList sl = new StatementList();
+            ComponentList cl = new ComponentList();
+
             do
             {
+                Component c = null;
+
                 try
                 {
-                    sl.add(parseStatement());
+                    c = parseComponent();
                 }
                 catch (ParseException pe)
                 {
                     _errors.Add(pe);
                 }
 
-                nextScannerToken();
-
-                if (currentScannerToken != endToken && currentScannerToken == GingerToken.EndOfFile)
+                //if (c != null)
+                //{
+                //    if (c.variable.identifier.name.Equals("app"))
+                //    {
+                //        if (_entry == null)
+                //        {
+                //            _entry = c;
+                //        }
+                //        else
+                //        {
+                //            _errors.Add(new ParseException(scanner.row, scanner.col, $"Found more than one entry component", ExceptionLevel.ERROR));
+                //        }
+                //    }
+                //}
+                if (c != null)
                 {
-                    _errors.Add(new ParseException(scanner.row, scanner.col, $"Expected '{endToken.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR));
+                    cl.add(c);
                 }
-            } while (currentScannerToken != endToken && currentScannerToken != GingerToken.EndOfFile);
+
+                nextScannerToken();
+            } while (currentScannerToken != GingerToken.EndOfFile);
+
+            //if (_entry == null)
+            //{
+            //    _errors.Add(new ParseException(0, 0, $"Did not find entry component 'app'", ExceptionLevel.ERROR));
+            //}
+
+            return cl;
+        }
+
+        private StatementList parseStatementList()
+        {
+            StatementList sl = new StatementList();
+            if (currentScannerToken != GingerToken.CloseList)
+            {
+                do
+                {
+                    try
+                    {
+                        sl.add(parseStatement());
+                    }
+                    catch (ParseException pe)
+                    {
+                        _errors.Add(pe);
+                    }
+
+                    nextScannerToken();
+                } while (currentScannerToken != GingerToken.CloseList);
+            }
 
             return sl;
+        }
+
+        private FunctionList parseFunctionList()
+        {
+            FunctionList fl = new FunctionList();
+
+            do
+            {
+                Function f = null;
+                try
+                {
+                    f = parseFunction();
+                }
+                catch (ParseException pe)
+                {
+                    _errors.Add(pe);
+                }
+
+                if (f != null)
+                {
+                    fl.add(f);
+                    //if (f.name.identifier.name.Equals("main"))
+                    //{
+                    //    if (_entry == null)
+                    //    {
+                    //        _entry = f;
+                    //    }
+                    //    else
+                    //    {
+                    //        _errors.Add(new ParseException(scanner.row, scanner.col, $"Found more than one entry point", ExceptionLevel.ERROR));
+                    //    }
+                    //}
+                }
+
+                nextScannerToken();
+            } while (currentScannerToken != GingerToken.CloseList);
+
+            return fl;
+        }
+
+        private Identifier parseIdentifier(bool compoundAllowed)
+        {
+            string name = "";
+            int row;
+            int col;
+
+            if (currentScannerToken == GingerToken.Identifier)
+            {
+                row = scanner.row;
+                col = scanner.col;
+            }
+            else
+            {
+                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            }
+
+            do
+            {
+                name += new string(scanner.tokenValue);
+
+                //nextScannerToken();
+                spyScannerToken();
+                if (spiedScannerToken == GingerToken.IdentifierSeparator)
+                {
+                    if (compoundAllowed)
+                    {
+                        nextScannerToken();
+                        name += Lexicon.IDENT_SEPARATOR;
+
+                        nextScannerToken();
+                        if (currentScannerToken != GingerToken.Identifier)
+                        {
+                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                        }
+                    }
+                    else
+                    {
+                        throw new ParseException(scanner.row, scanner.col, $"Found compound identifier, where one is not allowed", ExceptionLevel.ERROR);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            } while (currentScannerToken == GingerToken.Identifier);
+
+            return new Identifier(row, col, name);
+        }
+
+        private Function parseFunction()
+        {
+            Function f;
+            Variable name;
+            VarList formalArgsList = new VarList();
+            StatementList sl;
+
+            if (currentScannerToken == GingerToken.Function)
+            {
+                nextScannerToken();
+                if (currentScannerToken == GingerToken.Identifier)
+                {
+                    //name = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                    name = new Variable(parseIdentifier(false));
+
+                    // open-precedent
+                    nextScannerToken();
+                    if (currentScannerToken == GingerToken.OpenPrecedent)
+                    {
+                        // variable-list
+                        formalArgsList = parseVarList();
+
+                        // close-precedent
+                        if (currentScannerToken == GingerToken.ClosePrecedent)
+                        {
+                            nextScannerToken();
+                        }
+                        else
+                        {
+                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.ClosePrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                        }
+
+                        // statement list
+                        if (currentScannerToken == GingerToken.OpenList)
+                        {
+                            nextScannerToken();
+
+                            sl = parseStatementList();
+                            //nc = new Function(functionName, functionVariableList, functionReturnType, sl);
+                            f = new Function(name, formalArgsList, sl);
+                        }
+                        else
+                        {
+                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                        }
+                    }
+                    else
+                    {
+                        throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                    }
+                }
+                else
+                {
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                }
+            }
+            else
+            {
+                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Function.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            }
+
+            return f;
+        }
+
+        private ImportList parseImportList()
+        {
+            ImportList il = new ImportList();
+            while (currentScannerToken == GingerToken.Import)
+            {
+                nextScannerToken();
+                if (currentScannerToken == GingerToken.Identifier)
+                {
+                    //il.add(new Import(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue))));
+                    il.add(new Import(parseIdentifier(false)));
+                }
+                else
+                {
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                }
+
+                nextScannerToken();
+            }
+
+            return il;
+        }
+
+        private Component parseComponent()
+        {
+            Component c;
+            GingerToken type;
+            Variable name;
+            FunctionList fl;
+            ImportList il;
+
+            if (Grammar.isComponent(currentScannerToken))
+            {
+                type = currentScannerToken;
+                nextScannerToken();
+
+                if (currentScannerToken == GingerToken.Identifier)
+                {
+                    //name = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                    name = new Variable(parseIdentifier(false));
+                    nextScannerToken();
+
+                    if (currentScannerToken == GingerToken.OpenList)
+                    {
+                        nextScannerToken();
+                        il = parseImportList();
+                        if (currentScannerToken == GingerToken.Function)
+                        {
+                            fl = parseFunctionList();
+                        }
+                        else
+                        {
+                            fl = new FunctionList();
+                        }
+
+                        c = new Component(type, name, il, fl);
+                    }
+                    else
+                    {
+                        throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                    }
+                }
+                else
+                {
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                }
+            }
+            else
+            {
+                throw new ParseException(scanner.row, scanner.col, $"Expected component type, found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            }
+
+            return c;
         }
 
         private NodeCollection parseStatement()
@@ -122,7 +398,8 @@ namespace GingerParser
             // statement = identifier, assignment, expression
             else if (currentScannerToken == GingerToken.Identifier)
             {
-                Identifier identifier = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
+                //Identifier identifier = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
+                Identifier identifier = parseIdentifier(true);
                 nextScannerToken();
                 if (currentScannerToken == GingerToken.Assignment)
                 {
@@ -153,7 +430,7 @@ namespace GingerParser
             {
                 Node expression = null;
                 spyScannerToken();
-                if (spiedScannerToken.GetValueOrDefault() != GingerToken.CloseStatementList)
+                if (spiedScannerToken.GetValueOrDefault() != GingerToken.CloseList)
                 {
                     nextScannerToken();
                     expression = parseExpression();
@@ -161,71 +438,105 @@ namespace GingerParser
 
                 nc = new Return(expression);
             }
-            // statement = function-declaration = function, type, identifier, open-precedent, variable-list, close-precedent, statement-list 
-            else if (currentScannerToken == GingerToken.Function)
-            {
-                Variable functionName;
-                VarList formalArgsList = new VarList();
-                //Type functionReturnType;
-                StatementList sl;
+            // component = (cont | imp), identifdier, {, function-decs ,}
+            //else if (Grammar.isComponent(currentScannerToken))
+            //{
+            //    Component comp;
+            //    Variable componentName;
 
-                // returns
-                //nextScannerToken();
-                //if (Grammar.isFunctionType(currentScannerToken))
-                //{
-                //    functionReturnType = parseType();
-                //}
-                //else
-                //{
-                //    throw new ParseException(scanner.row, scanner.col, $"Expected type, found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
-                //}
+            //    GingerToken componentType = currentScannerToken;
+            //    nextScannerToken();
 
-                // identifier
-                nextScannerToken();
-                if (currentScannerToken == GingerToken.Identifier)
-                {
-                    functionName = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+            //    if (currentScannerToken == GingerToken.Identifier)
+            //    {
+            //        componentName = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
 
-                    // open-precedent
-                    nextScannerToken();
-                    if (currentScannerToken == GingerToken.OpenPrecedent)
-                    {
-                        // variable-list
-                        formalArgsList = parseVarList();
+            //        nextScannerToken();
+            //        if (currentScannerToken == GingerToken.OpenList)
+            //        {
 
-                        // close-precedent
-                        if (currentScannerToken == GingerToken.ClosePrecedent)
-                        {
-                            nextScannerToken();
-                        }
-                        else
-                        {
-                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.ClosePrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
-                        }
+            //        }
+            //        else
+            //        {
+            //            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //    }
 
-                        // statement list
-                        if (currentScannerToken == GingerToken.OpenStatementList)
-                        {
-                            nextScannerToken();
-                            sl = parseStatementList(GingerToken.CloseStatementList);
-                            //nc = new Function(functionName, functionVariableList, functionReturnType, sl);
-                            nc = new Function(functionName, formalArgsList, sl);
-                        }
-                        else
-                        {
-                            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenStatementList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
-                        }
-                    }
-                    else
-                    {
-                        throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
-                    }
-                }
-                else
-                {
-                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
-                }
-            }
+            //}
+            // statement = function-declaration = function, type, identifier, open-precedent, variable-list, close-precedent, statement-list
+            //else if (currentScannerToken == GingerToken.Function)
+            //{
+            //    if (inFunction)
+            //    {
+            //        throw new ParseException(scanner.row, scanner.col, "Cannot declare function in function", ExceptionLevel.ERROR);
+            //    }
+
+            //    Variable functionName;
+            //    VarList formalArgsList = new VarList();
+            //    //Type functionReturnType;
+            //    StatementList sl;
+
+            //    // returns
+            //    //nextScannerToken();
+            //    //if (Grammar.isFunctionType(currentScannerToken))
+            //    //{
+            //    //    functionReturnType = parseType();
+            //    //}
+            //    //else
+            //    //{
+            //    //    throw new ParseException(scanner.row, scanner.col, $"Expected type, found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //    //}
+
+            //    // identifier
+            //    nextScannerToken();
+            //    if (currentScannerToken == GingerToken.Identifier)
+            //    {
+            //        functionName = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+
+            //        // open-precedent
+            //        nextScannerToken();
+            //        if (currentScannerToken == GingerToken.OpenPrecedent)
+            //        {
+            //            // variable-list
+            //            formalArgsList = parseVarList();
+
+            //            // close-precedent
+            //            if (currentScannerToken == GingerToken.ClosePrecedent)
+            //            {
+            //                nextScannerToken();
+            //            }
+            //            else
+            //            {
+            //                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.ClosePrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //            }
+
+            //            // statement list
+            //            if (currentScannerToken == GingerToken.OpenList)
+            //            {
+            //                nextScannerToken();
+            //                sl = parseStatementList(GingerToken.CloseList, true);
+            //                //nc = new Function(functionName, functionVariableList, functionReturnType, sl);
+            //                nc = new Function(functionName, formalArgsList, sl);
+            //            }
+            //            else
+            //            {
+            //                throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenPrecedent.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.Identifier.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+            //    }
+            //}
             else if (currentScannerToken == GingerToken.Sink)
             {
                 nextScannerToken();
@@ -254,7 +565,7 @@ namespace GingerParser
                 }
                 else
                 {
-                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenStatementList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
+                    throw new ParseException(scanner.row, scanner.col, $"Expected '{GingerToken.OpenList.ToString()}', found '{currentScannerToken.ToString()}'", ExceptionLevel.ERROR);
                 }
             }
             // statement = component = comp, identifier, as, component-type, statement-list
@@ -444,7 +755,8 @@ namespace GingerParser
             else
             {
                 //return new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)), isReference);
-                return new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                //return new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
+                return new Variable(parseIdentifier(false));
             }
         }
 
@@ -459,7 +771,8 @@ namespace GingerParser
             //if (currentScannerToken == GingerToken.Identifier || currentScannerToken == GingerToken.Number || currentScannerToken == GingerToken.BooleanLiteral)
             if (currentScannerToken == GingerToken.Identifier)
             {
-                Identifier ident = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
+                //Identifier ident = new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue));
+                Identifier ident = parseIdentifier(true);
 
                 // let's see it this is a function call or a variable
                 spyScannerToken();

@@ -13,13 +13,17 @@ namespace GingerParser
         //void visitBoolean(Boolean b);
         void visitBinaryOperation(BinaryOperation bo);
         //void visitBranch(If b);
-        //void visitComponent(Component c);
+        void visitComponent(Component c);
+        void visitComponentList(ComponentList cl);
         //void visitContract(Contract c);
         void visitVariable(Variable d);
         void visitExpressionList(ExpressionList el);
         void visitFunction(Function f);
+        void visitFunctionList(FunctionList fl);
         void visitIdentifier(Identifier i);
         //void visitImplementation(Implementation i);
+        void visitImport(Import i);
+        void visitImportList(ImportList il);
         void visitInteger(Integer i);
         void visitInvocation(Invocation i);
         void visitLiteral<T>(Literal<T> l) where T : Typeable;

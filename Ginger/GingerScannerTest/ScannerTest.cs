@@ -28,10 +28,10 @@ namespace GingerScannerTest
             Assert.AreEqual(GingerToken.Var, gs.next(), "var 3");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 5");
             Assert.AreEqual(GingerToken.ClosePrecedent, gs.next(), "cp 1");
-            Assert.AreEqual(GingerToken.OpenStatementList, gs.next(), "osl 1");
+            Assert.AreEqual(GingerToken.OpenList, gs.next(), "osl 1");
             Assert.AreEqual(GingerToken.Return, gs.next(), "ret 1");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 14");
-            Assert.AreEqual(GingerToken.CloseStatementList, gs.next(), "csl 1");
+            Assert.AreEqual(GingerToken.CloseList, gs.next(), "csl 1");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 6");
             Assert.AreEqual(GingerToken.Assignment, gs.next(), "assign 2");
             Assert.AreEqual(GingerToken.Identifier, gs.next(), "ident 7");

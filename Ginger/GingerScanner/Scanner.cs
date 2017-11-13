@@ -161,6 +161,18 @@ namespace GingerScanner
                 {
                     return GingerToken.Sink;
                 }
+                else if (tokenValue.SequenceEqual(Lexicon.CONTRACT))
+                {
+                    return GingerToken.Contract;
+                }
+                else if (tokenValue.SequenceEqual(Lexicon.IMPLEMENTATION))
+                {
+                    return GingerToken.Implementation;
+                }
+                else if (tokenValue.SequenceEqual(Lexicon.IMPORT))
+                {
+                    return GingerToken.Import;
+                }
                 else
                 {
                     return GingerToken.Identifier;
@@ -179,12 +191,12 @@ namespace GingerScanner
             else if (currentChar == Lexicon.OPEN_STATEMENT_LIST)
             {
                 nextChar();
-                return GingerToken.OpenStatementList;
+                return GingerToken.OpenList;
             }
             else if (currentChar == Lexicon.CLOSE_STATEMENT_LIST)
             {
                 nextChar();
-                return GingerToken.CloseStatementList;
+                return GingerToken.CloseList;
             }
             else if (currentChar == Lexicon.ANNOTATION)
             {
@@ -230,6 +242,11 @@ namespace GingerScanner
             {
                 nextChar();
                 return GingerToken.ListSeparator;
+            }
+            else if (currentChar == Lexicon.IDENT_SEPARATOR)
+            {
+                nextChar();
+                return GingerToken.IdentifierSeparator;
             }
 
             nextChar();

@@ -14,7 +14,7 @@ namespace GingerParserTest
     {
         public List<Node> visitedNodes;
 
-        public TestVisitor(StatementList sl)
+        public TestVisitor(ComponentList sl)
         {
             visitedNodes = new List<Node>();
             sl.accept(this);
@@ -122,6 +122,31 @@ namespace GingerParserTest
         public void visitSink(Sink s)
         {
             visitCollection(s);
+        }
+
+        public void visitComponent(Component c)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitComponentList(ComponentList cl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitFunctionList(FunctionList fl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitImport(Import i)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void visitImportList(ImportList il)
+        {
+            throw new NotImplementedException();
         }
 
         //public void visitVoid(GingerParser.Void v)

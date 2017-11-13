@@ -21,6 +21,28 @@ namespace GingerParser
         }
     }
 
+    public partial class Component
+    {
+        private Scope.Scope _scope;
+
+        public Scope.Scope scope
+        {
+            get { return _scope; }
+            set { _scope = value; }
+        }
+    }
+
+    public partial class ComponentList
+    {
+        private Scope.Scope _scope;
+
+        public Scope.Scope scope
+        {
+            get { return _scope; }
+            set { _scope = value; }
+        }
+    }
+
     public abstract partial class Operation : Typeable
     {
         //public bool canAssign(Typeable target)
