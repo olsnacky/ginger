@@ -223,14 +223,16 @@ namespace GingerParser.DFG
             Identifier ident = i.identifier;
             if (ident.type == IdentifierType.Simple)
             {
-                return _componentFunctionGraphs[component][ident].Copy();
+                //return _componentFunctionGraphs[component][ident].Copy();
+                return _componentFunctionGraphs[component][ident];
             }
             else if (ident.type == IdentifierType.Compound)
             {
                 List<Identifier> parts = ident.parts;
                 if (parts.Count == 2)
                 {
-                    return _componentFunctionGraphs[parts[0]][parts[1]].Copy();
+                    //return _componentFunctionGraphs[parts[0]][parts[1]].Copy();
+                    return _componentFunctionGraphs[parts[0]][parts[1]];
                 }
                 else
                 {
