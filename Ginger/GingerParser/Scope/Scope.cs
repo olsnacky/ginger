@@ -99,7 +99,17 @@ namespace GingerParser.Scope
             if (_components != null)
             {
                 Scope s;
-                if (_components.TryGetValue(i.declaration, out s))
+                bool found = false;
+                try
+                {
+                    found = _components.TryGetValue(i.declaration, out s);
+                }
+                catch
+                { 
+                    throw new ScopeException(i.row, i.col, $"{i.name} is not a component");
+                }
+
+                if (found)
                 {
                     return s;
                 }
