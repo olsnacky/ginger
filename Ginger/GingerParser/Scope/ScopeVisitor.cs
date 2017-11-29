@@ -209,6 +209,12 @@ namespace GingerParser.Scope
             // add the component declaration to this scope (global scope)
             c.variable.accept(this);
 
+            // visit the extension (if any)
+            if (c.isExtension())
+            {
+                c.extends.accept(this);
+            }
+
             // create the component's scope
             Scope parentScope = _currentScope;
             _currentScope = new Scope(parentScope);

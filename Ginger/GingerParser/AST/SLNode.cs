@@ -220,7 +220,14 @@ namespace GingerParser
         {
             get
             {
-                return (Identifier)get(EXTENDS_INDEX);
+                if (children.Count == EXTENDS_INDEX + 1)
+                {
+                    return (Identifier)get(EXTENDS_INDEX);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -240,6 +247,11 @@ namespace GingerParser
         public override void accept(NodeVisitor v)
         {
             ((SLVisitor)v).visitComponent(this);
+        }
+
+        public bool isExtension()
+        {
+            return extends != null;
         }
 
         private void initialise(GingerToken type, Variable name, ImportList il, FunctionList fl)
