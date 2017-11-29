@@ -44,7 +44,8 @@ namespace Ginger
         OpenAnnotation,
         Annotation,
         Import,
-        IdentifierSeparator
+        IdentifierSeparator,
+        Extends
     }
 
     public static class Grammar
@@ -118,6 +119,7 @@ namespace Ginger
         public static char[] SYS_READ = { 'r', 'e', 'a', 'd' };
         public static char[] SYS_WRITE = { 'w', 'r', 'i', 't', 'e' };
         public static char[] IMPORT = { 'i', 'm', 'p', 'o', 'r', 't' };
+        public static char EXTENDS = ':';
 
         private static char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         //private static char[] UPPER_ALPHABETIC_CHAR = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };

@@ -319,6 +319,7 @@ namespace GingerParser
             Variable name;
             FunctionList fl;
             ImportList il;
+            Identifier extends = null;
 
             if (Grammar.isComponent(currentScannerToken))
             {
@@ -330,6 +331,13 @@ namespace GingerParser
                     //name = new Variable(new Identifier(scanner.row, scanner.col, new string(scanner.tokenValue)));
                     name = new Variable(parseIdentifier(false));
                     nextScannerToken();
+
+                    if (currentScannerToken == GingerToken.Extends)
+                    {
+                        nextScannerToken();
+                        extends = parseIdentifier(false);
+                        nextScannerToken();
+                    }
 
                     if (currentScannerToken == GingerToken.OpenList)
                     {
@@ -344,7 +352,14 @@ namespace GingerParser
                             fl = new FunctionList();
                         }
 
-                        c = new Component(type, name, il, fl);
+                        if (extends != null)
+                        {
+                            c = new Component(type, name, il, fl, extends);
+                        }
+                        else
+                        {
+                            c = new Component(type, name, il, fl);
+                        }
                     }
                     else
                     {
