@@ -83,6 +83,10 @@ namespace GingerScanner
                     {
                         return GingerToken.OpenAnnotation;
                     }
+                    else if (spied == GingerToken.Identifier)
+                    {
+                        return GingerToken.Extends;
+                    }
                 }
             }
             else if (Lexicon.isStartKeywordOrIdentifierChar(currentChar))
