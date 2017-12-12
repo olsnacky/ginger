@@ -129,6 +129,31 @@ namespace GingerParser.DFG
 
         public DFGNode returnNode => _return;
 
+        public List<DFGNode> formalParams => _formalParams;
+
+        public List<DFGNode> ins
+        {
+            get
+            {
+                List<DFGNode> inputs = formalParams.ToList();
+                inputs.Add(high);
+                inputs.Add(low);
+                return inputs;
+            }
+        }
+
+        public List<DFGNode> outs
+        {
+            get
+            {
+                List<DFGNode> outputs = new List<DFGNode>();
+                outputs.Add(returnNode);
+                outputs.Add(high);
+                outputs.Add(low);
+                return outputs;
+            }
+        }
+
         public DFG()
         {
             _initialise();

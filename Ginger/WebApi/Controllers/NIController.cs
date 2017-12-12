@@ -33,7 +33,7 @@ namespace WebApi.Controllers
             parser.parse();
             //CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
-            DFGVisitor dfgv = new DFGVisitor(parser.ast);
+            ClosureVisitor dfgv = new ClosureVisitor(parser.ast);
             //DDGVisitor ddgv = new DDGVisitor(parser.ast);
             bool result = dfgv.dfg.hasInterference();
 
