@@ -168,6 +168,7 @@ namespace GingerParser
         private const int VARIABLE_INDEX = 0;
         private const int IMPORT_LIST_INDEX = 1;
         private const int FUNCTION_LIST_INDEX = 2;
+        private const int EXTENDS_INDEX = 3;
         private GingerToken _type;
 
         public Variable variable
@@ -215,19 +216,50 @@ namespace GingerParser
             }
         }
 
+        public Identifier extends
+        {
+            get
+            {
+                if (children.Count == EXTENDS_INDEX + 1)
+                {
+                    return (Identifier)get(EXTENDS_INDEX);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public GingerToken type => _type;        
 
         public Component(GingerToken type, Variable name, ImportList il, FunctionList fl) : base()
         {
-            _type = type;
-            add(name);
-            add(il);
-            add(fl);
+            initialise(type, name, il, fl);
+        }
+
+        public Component(GingerToken type, Variable name, ImportList il, FunctionList fl, Identifier extends) : base()
+        {
+            initialise(type, name, il, fl);
+            add(extends);
         }
 
         public override void accept(NodeVisitor v)
         {
             ((SLVisitor)v).visitComponent(this);
+        }
+
+        public bool isExtension()
+        {
+            return extends != null;
+        }
+
+        private void initialise(GingerToken type, Variable name, ImportList il, FunctionList fl)
+        {
+            _type = type;
+            add(name);
+            add(il);
+            add(fl);
         }
     }
 
@@ -874,6 +906,11 @@ namespace GingerParser
 
         public static bool operator !=(Identifier ident1, Identifier ident2)
         {
+            if (ident1 == null)
+            {
+                return false;
+            }
+
             return !ident1.Equals(ident2);
         }
 

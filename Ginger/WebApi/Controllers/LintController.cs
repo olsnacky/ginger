@@ -1,6 +1,7 @@
 ﻿using GingerParser;
 using GingerParser.CFG;
 using GingerParser.DDG;
+using GingerParser.DFG;
 using GingerParser.Scope;
 using System;
 using System.Collections.Generic;
@@ -45,10 +46,18 @@ namespace WebApi.Controllers
             parser.parse();
             //CFGVisitor cfgv = new CFGVisitor(parser.ast);
             ScopeVisitor sv = new ScopeVisitor(parser.ast);
+            
             //DDGVisitor ddgv = new DDGVisitor(parser.ast);
 
             errors.AddRange(parser.errors);
             errors.AddRange(sv.errors);
+
+            if (parser.errors.Count == 0 && sv.errors.Count == 0)
+            {
+                VerificationVisitor vv = new VerificationVisitor(parser.ast);
+                vv.verifyComponents();
+                errors.AddRange(vv.errors);
+            }
             //errors.AddRange(ddgv.errors);
 
             foreach (ParseException error in errors)
