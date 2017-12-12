@@ -134,11 +134,14 @@ namespace GingerParser.DFG
             {
                 _errors.Add(pe);
             }
+
             foreach (DeferredInvocation defInv in _deferredInvocations)
             {
+                defInv.visitor.shouldReplaceNodes = true;
                 defInv.visitor.visitDeferredInvocation(defInv);
-                //_visitDeferredInvocation(defInv);
+                defInv.visitor.shouldReplaceNodes = false;
             }
+
             //program.accept(this);
             _cleanup();
         }
@@ -195,8 +198,8 @@ namespace GingerParser.DFG
         protected SLNodeCollection _code;
         //private bool _buildingExprList;
         private bool _capturingFormalParams;
-        private DFG _dfg;
-        private List<List<Identifier>> _exprList;
+        protected DFG _dfg;
+        protected List<List<Identifier>> _exprList;
         protected Dictionary<Identifier, Dictionary<Identifier, DFG>> _componentFunctionGraphs;
         private bool _isParent;
         //VarList _formalParams;
@@ -209,6 +212,7 @@ namespace GingerParser.DFG
         protected Identifier _currentComponent;
         protected ComponentList _program;
         protected List<ParseException> _errors;
+        public bool shouldReplaceNodes;
 
         public DFG dfg
         {
@@ -267,6 +271,7 @@ namespace GingerParser.DFG
             //_buildingExprList = false;
             _capturingFormalParams = false;
             _capturingComponent = false;
+            shouldReplaceNodes = false;
             //_formalParams = formalParams;
             _sources = new List<Identifier>();
             _code = code;
@@ -389,7 +394,7 @@ namespace GingerParser.DFG
             i.identifier.accept(this);
         }
 
-        private DFG _getGraph(Invocation i, Identifier component)
+        protected DFG _getGraph(Invocation i, Identifier component)
         {
             Identifier ident = i.identifier;
             if (ident.type == IdentifierType.Simple)
@@ -423,7 +428,7 @@ namespace GingerParser.DFG
             DFG fdfg = _getGraph(i, di.inComponent);
             //fdfg.high = _dfg.high;
             //fdfg.low = _dfg.low;
-            if (this.GetType() == typeof(ClosureVisitor))
+            if (shouldReplaceNodes)
             {
                 fdfg.replaceHigh(_dfg.high);
                 fdfg.replaceLow(_dfg.low);
