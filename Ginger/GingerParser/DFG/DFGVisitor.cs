@@ -24,7 +24,10 @@ namespace GingerParser.DFG
 
     public class VerificationVisitor : DFGVisitor, SLVisitor
     {
-        public VerificationVisitor(ComponentList program) : base(program)
+        //public DFGNode componentHigh;
+        //public DFGNode componentLow;
+
+        public VerificationVisitor(ComponentList program) : base(program, true)
         {
             try
             {
@@ -34,26 +37,20 @@ namespace GingerParser.DFG
             {
                 _errors.Add(pe);
             }
-            foreach (DeferredInvocation defInv in _deferredInvocations)
-            {
-                defInv.visitor.visitDeferredInvocation(defInv);
-                //_visitDeferredInvocation(defInv);
-            }
-            //program.accept(this);
-            _cleanup();
+            
         }
 
-        public VerificationVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent) : base(functionCode, formalParams, high, low, componentFunctionGraphs, deferredInvocations, currentComponent)
-        {
-            //try
-            //{
-            //    _code.accept(this);
-            //}
-            //catch (ParseException pe)
-            //{
-            //    _errors.Add(pe);
-            //}
-        }
+        //public VerificationVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent) : base(functionCode, formalParams, high, low, componentFunctionGraphs, deferredInvocations, currentComponent)
+        //{
+        //    //try
+        //    //{
+        //    //    _code.accept(this);
+        //    //}
+        //    //catch (ParseException pe)
+        //    //{
+        //    //    _errors.Add(pe);
+        //    //}
+        //}
 
         public new void visitComponentList(ComponentList cl)
         {
@@ -61,70 +58,143 @@ namespace GingerParser.DFG
 
             foreach (Component c in cl)
             {
-                c.accept(this);
-            }
-        }
-
-        public void verifyComponents()
-        {
-            foreach (Identifier i in _componentFunctionGraphs.Keys)
-            {
-                foreach (Component c in _program)
+                if (c.type == GingerToken.Implementation && c.extends != null)
                 {
-                    if (c.variable.identifier == i && c.type == GingerToken.Implementation && c.extends != null)
+                    Identifier implementationIdent = c.variable.identifier;
+                    foreach (Component cc in cl)
                     {
-                        Dictionary<Identifier, DFG> implementationFunctions = _componentFunctionGraphs[i];
-                        Dictionary<Identifier, DFG> contractFunctions = _componentFunctionGraphs[c.extends];
-
-                        foreach (KeyValuePair<Identifier, DFG> entry in implementationFunctions)
+                        if (cc.variable.identifier == c.extends)
                         {
-                            if (contractFunctions.ContainsKey(entry.Key))
+                            Identifier contractIdent = cc.variable.identifier;
+                            c.accept(this);
+
+                            if (!_componentFunctionGraphs.ContainsKey(contractIdent))
                             {
-                                Dictionary<DFGNode, DFGNode> inOutEdges = new Dictionary<DFGNode, DFGNode>();
-                                DFG implementation = entry.Value;
-                                DFG contract = contractFunctions[entry.Key];
+                                cc.accept(this);
+                            }
 
-                                foreach (DFGNode inNode in implementation.ins)
+                            foreach (DeferredInvocation defInv in _deferredInvocations)
+                            {
+                                defInv.visitor.visitDeferredInvocation(defInv);
+                            }
+                            _deferredInvocations.Clear();
+                            //_cleanup();
+
+                            Dictionary<Identifier, DFG> implementationFunctions = _componentFunctionGraphs[implementationIdent];
+                            Dictionary<Identifier, DFG> contractFunctions = _componentFunctionGraphs[contractIdent];
+
+                            foreach (KeyValuePair<Identifier, DFG> entry in implementationFunctions)
+                            {
+                                if (contractFunctions.ContainsKey(entry.Key))
                                 {
-                                    // is there an edge from an in to an out?
-                                    foreach (DFGNode outNode in implementation.outs)
+                                    Dictionary<DFGNode, DFGNode> inOutEdges = new Dictionary<DFGNode, DFGNode>();
+                                    DFG implementationGraph = entry.Value;
+                                    DFG contractGraph = contractFunctions[entry.Key];
+                                    // perform closure on graphs
+                                    implementationGraph.performClosure();
+                                    contractGraph.performClosure();
+
+                                    foreach (DFGNode inNode in implementationGraph.ins)
                                     {
-                                        if (inNode.adjacencyList.Contains(outNode))
+                                        // is there an edge from an in to an out?
+                                        foreach (DFGNode outNode in implementationGraph.outs)
                                         {
-                                            DFGNode contractInNode = null;
-                                            try
+                                            if (inNode.adjacencyList.Contains(outNode))
                                             {
-                                                contractInNode = contract.ins.Single(fp => fp.label.Equals(inNode.label));
-                                            }
-                                            catch (InvalidOperationException ioe)
-                                            {
-                                                _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {i.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
-                                            }
+                                                DFGNode contractInNode = null;
+                                                try
+                                                {
+                                                    contractInNode = contractGraph.ins.Single(fp => fp.label.Equals(inNode.label));
+                                                }
+                                                catch (InvalidOperationException ioe)
+                                                {
+                                                    _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {implementationIdent.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
+                                                }
 
-                                            if (contractInNode != null && !contractInNode.adjacencyList.Any(n => n.label.Equals(outNode.label)))
-                                            {
+                                                if (contractInNode != null && !contractInNode.adjacencyList.Any(n => n.label.Equals(outNode.label) && (n.type != DFGNodeType.Return || n == contractGraph.returnNode)))
+                                                {
 
-                                                _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {i.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
+                                                    _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {implementationIdent.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
 
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                _errors.Add(new ParseException(0, 0, $"{i.name}.{entry.Key.name} does not exist in {c.extends.name}", ExceptionLevel.ERROR));
+                                else
+                                {
+                                    _errors.Add(new ParseException(0, 0, $"{implementationIdent.name}.{entry.Key.name} does not exist in {contractIdent.name}", ExceptionLevel.ERROR));
+                                }
                             }
                         }
                     }
                 }
             }
         }
+
+        //public void verifyComponents()
+        //{
+        //    foreach (Identifier i in _componentFunctionGraphs.Keys)
+        //    {
+        //        foreach (Component c in _program)
+        //        {
+        //            if (c.variable.identifier == i && c.type == GingerToken.Implementation && c.extends != null)
+        //            {
+        //                Dictionary<Identifier, DFG> implementationFunctions = _componentFunctionGraphs[i];
+        //                Dictionary<Identifier, DFG> contractFunctions = _componentFunctionGraphs[c.extends];
+
+        //                foreach (KeyValuePair<Identifier, DFG> entry in implementationFunctions)
+        //                {
+        //                    if (contractFunctions.ContainsKey(entry.Key))
+        //                    {
+        //                        Dictionary<DFGNode, DFGNode> inOutEdges = new Dictionary<DFGNode, DFGNode>();
+        //                        DFG implementation = entry.Value;
+        //                        DFG contract = contractFunctions[entry.Key];
+        //                        // perform closure on graphs
+        //                        implementation.performClosure();
+        //                        contract.performClosure();
+
+        //                        foreach (DFGNode inNode in implementation.ins)
+        //                        {
+        //                            // is there an edge from an in to an out?
+        //                            foreach (DFGNode outNode in implementation.outs)
+        //                            {
+        //                                if (inNode.adjacencyList.Contains(outNode))
+        //                                {
+        //                                    DFGNode contractInNode = null;
+        //                                    try
+        //                                    {
+        //                                        contractInNode = contract.ins.Single(fp => fp.label.Equals(inNode.label));
+        //                                    }
+        //                                    catch (InvalidOperationException ioe)
+        //                                    {
+        //                                        _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {i.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
+        //                                    }
+
+        //                                    if (contractInNode != null && !contractInNode.adjacencyList.Any(n => n.label.Equals(outNode.label) && (n.type != DFGNodeType.Return || n == contract.returnNode)))
+        //                                    {
+
+        //                                        _errors.Add(new ParseException(0, 0, $"Edge {inNode.label} to {outNode.label} in {i.name}.{entry.Key.name} does not exist in the contract", ExceptionLevel.ERROR));
+
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        _errors.Add(new ParseException(0, 0, $"{i.name}.{entry.Key.name} does not exist in {c.extends.name}", ExceptionLevel.ERROR));
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     public class ClosureVisitor : DFGVisitor, SLVisitor
     {
-        public ClosureVisitor(ComponentList program) : base(program)
+        public ClosureVisitor(ComponentList program) : base(program, false)
         {
             try
             {
@@ -137,26 +207,26 @@ namespace GingerParser.DFG
 
             foreach (DeferredInvocation defInv in _deferredInvocations)
             {
-                defInv.visitor.shouldReplaceNodes = true;
+                //defInv.visitor.shouldReplaceNodes = true;
                 defInv.visitor.visitDeferredInvocation(defInv);
-                defInv.visitor.shouldReplaceNodes = false;
+                //defInv.visitor.shouldReplaceNodes = false;
             }
 
             //program.accept(this);
             _cleanup();
         }
 
-        public ClosureVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent) : base(functionCode, formalParams, high, low, componentFunctionGraphs, deferredInvocations, currentComponent)
-        {
-            //try
-            //{
-            //    _code.accept(this);
-            //}
-            //catch (ParseException pe)
-            //{
-            //    _errors.Add(pe);
-            //}
-        }
+        //public ClosureVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent) : base(functionCode, formalParams, high, low, componentFunctionGraphs, deferredInvocations, currentComponent)
+        //{
+        //    //try
+        //    //{
+        //    //    _code.accept(this);
+        //    //}
+        //    //catch (ParseException pe)
+        //    //{
+        //    //    _errors.Add(pe);
+        //    //}
+        //}
 
         public new void visitComponentList(ComponentList cl)
         {
@@ -212,7 +282,8 @@ namespace GingerParser.DFG
         protected Identifier _currentComponent;
         protected ComponentList _program;
         protected List<ParseException> _errors;
-        public bool shouldReplaceNodes;
+        //public bool shouldReplaceNodes;
+        protected bool _isVerification;
 
         public DFG dfg
         {
@@ -224,10 +295,10 @@ namespace GingerParser.DFG
             get { return _errors; }
         }
 
-        public DFGVisitor(ComponentList program)
+        public DFGVisitor(ComponentList program, bool isVerification)
         {
             _isParent = true;
-            initialise(program, null, null, null, null, null, null);
+            _initialise(program, null, null, null, null, null, null, isVerification);
 
         }
 
@@ -237,10 +308,10 @@ namespace GingerParser.DFG
             {
                 // remove connections between high and low
                 // and stored graphs
-                if (n.type == DFGNodeType.High || n.type == DFGNodeType.Low)
-                {
-                    n.adjacencyList.RemoveAll(nn => nn.subGraphId.Equals(new Guid()) && nn.type != DFGNodeType.High && nn.type != DFGNodeType.Low);
-                }
+                //if (n.type == DFGNodeType.High || n.type == DFGNodeType.Low)
+                //{
+                //    n.adjacencyList.RemoveAll(nn => nn.subGraphId.Equals(new Guid()) && nn.type != DFGNodeType.High && nn.type != DFGNodeType.Low);
+                //}
 
                 // cleanup return nodes that don't go anywhere
                 n.adjacencyList.RemoveAll(nn => nn.type == DFGNodeType.Return && n.adjacencyList.Count == 0);
@@ -250,10 +321,10 @@ namespace GingerParser.DFG
             _dfg.nodes.RemoveAll(n => n.type == DFGNodeType.Return && n.adjacencyList.Count == 0);
         }
 
-        public DFGVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent)
+        public DFGVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent, bool isVerification)
         {
             _isParent = false;
-            initialise(functionCode, componentFunctionGraphs, formalParams, high, low, deferredInvocations, currentComponent);
+            _initialise(functionCode, componentFunctionGraphs, formalParams, high, low, deferredInvocations, currentComponent, isVerification);
             try
             {
                 _code.accept(this);
@@ -264,20 +335,30 @@ namespace GingerParser.DFG
             }
         }
 
-        private void initialise(SLNodeCollection code, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, VarList formalParams, DFGNode high, DFGNode low, List<DeferredInvocation> di, Identifier currentComponent)
+        private void _initialise(SLNodeCollection code, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, VarList formalParams, DFGNode high, DFGNode low, List<DeferredInvocation> di, Identifier currentComponent, bool isVerification)
         {
             _errors = new List<ParseException>();
             _addingSources = false;
             //_buildingExprList = false;
             _capturingFormalParams = false;
             _capturingComponent = false;
-            shouldReplaceNodes = false;
+            //shouldReplaceNodes = false;
             //_formalParams = formalParams;
             _sources = new List<Identifier>();
             _code = code;
             //_dfg = new DFG(high, low);
-            _dfg = new DFG();
+            //_dfg = new DFG();
             _currentComponent = currentComponent;
+            _isVerification = isVerification;
+
+            if ((high != null && low != null))
+            {
+                _dfg = new DFG(high, low);
+            }
+            else
+            {
+                _dfg = new DFG();
+            }
 
             if (di == null)
             {
@@ -344,7 +425,22 @@ namespace GingerParser.DFG
 
         public void visitFunction(Function f)
         {
-            DFGVisitor fv = new DFGVisitor(f.body, f.formalParams, _dfg.high, _dfg.low, _componentFunctionGraphs, _deferredInvocations, _currentComponent);
+            DFGNode high;
+            DFGNode low;
+            high = _dfg.high;
+            low = _dfg.low;
+            if (_isVerification)
+            {
+                high = DFGNode.generateHigh();
+                low = DFGNode.generateLow();
+            }
+            else
+            {
+                high = _dfg.high;
+                low = _dfg.low;
+            }
+
+            DFGVisitor fv = new DFGVisitor(f.body, f.formalParams, high, low, _componentFunctionGraphs, _deferredInvocations, _currentComponent, _isVerification);
             Dictionary<Identifier, DFG> functionList = _componentFunctionGraphs[_currentComponent];
 
             // if function has no return, add a ghost return
@@ -428,7 +524,7 @@ namespace GingerParser.DFG
             DFG fdfg = _getGraph(i, di.inComponent);
             //fdfg.high = _dfg.high;
             //fdfg.low = _dfg.low;
-            if (shouldReplaceNodes)
+            if (_isVerification)
             {
                 fdfg.replaceHigh(_dfg.high);
                 fdfg.replaceLow(_dfg.low);
@@ -513,21 +609,21 @@ namespace GingerParser.DFG
             throw new NotImplementedException();
         }
 
-        private DFGNode getSecurityNode(GingerToken securityLevel)
-        {
-            if (securityLevel == GingerToken.High)
-            {
-                return _dfg.high;
-            }
-            else if (securityLevel == GingerToken.Low)
-            {
-                return _dfg.low;
-            }
-            else
-            {
-                throw new ArgumentException();
-            }
-        }
+        //private DFGNode getSecurityNode(GingerToken securityLevel)
+        //{
+        //    if (securityLevel == GingerToken.High)
+        //    {
+        //        return _dfg.high;
+        //    }
+        //    else if (securityLevel == GingerToken.Low)
+        //    {
+        //        return _dfg.low;
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException();
+        //    }
+        //}
 
         //private bool haveSecurityNode(GingerToken securityLevel)
         //{

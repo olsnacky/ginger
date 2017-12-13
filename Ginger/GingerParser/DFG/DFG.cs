@@ -100,6 +100,16 @@ namespace GingerParser.DFG
         {
             return _id == other.id;
         }
+
+        public static DFGNode generateHigh()
+        {
+            return new DFGNode(DFGNodeType.High, DFGNodeType.High.ToString());
+        }
+
+        public static DFGNode generateLow()
+        {
+            return new DFGNode(DFGNodeType.Low, DFGNodeType.Low.ToString());
+        }
     }
 
     public class DFG
@@ -158,10 +168,10 @@ namespace GingerParser.DFG
         {
             _initialise();
 
-            _high = new DFGNode(DFGNodeType.High, DFGNodeType.High.ToString());
+            _high = DFGNode.generateHigh();
             addNode(_high);
 
-            _low = new DFGNode(DFGNodeType.Low, DFGNodeType.Low.ToString());
+            _low = DFGNode.generateLow();
             addNode(_low);
         }
 
@@ -171,6 +181,8 @@ namespace GingerParser.DFG
 
             _high = high;
             _low = low;
+            //addNode(high);
+            //addNode(low);
         }
 
         private void _initialise()
@@ -265,7 +277,7 @@ namespace GingerParser.DFG
                 newNode.addEdge(n);
             }
 
-            foreach(DFGNode n in nodeToReplace.parents)
+            foreach (DFGNode n in nodeToReplace.parents)
             {
                 n.adjacencyList.Remove(nodeToReplace);
                 n.addEdge(newNode);
@@ -297,6 +309,42 @@ namespace GingerParser.DFG
             {
                 shouldPerformClosure = _performClosure();
             } while (shouldPerformClosure);
+        }
+
+        private bool _performClosure()
+        {
+            bool edgesAdded = false;
+
+            // transitive closure
+            List<DFGNode> nodes = _nodes.ToList();
+            nodes.Add(_high);
+            nodes.Add(_low);
+            foreach (DFGNode n in nodes)
+            {
+                List<DFGNode> nodesToAdd = new List<DFGNode>();
+                foreach (DFGNode nn in n.adjacencyList)
+                {
+                    foreach (DFGNode nnn in nn.adjacencyList)
+                    {
+                        if (!n.adjacencyList.Contains(nnn) & n != nnn)
+                        {
+                            nodesToAdd.Add(nnn);
+                        }
+                    }
+                }
+
+                if (nodesToAdd.Count > 0)
+                {
+                    foreach (DFGNode nta in nodesToAdd)
+                    {
+                        n.adjacencyList.Add(nta);
+                    }
+
+                    edgesAdded = true;
+                }
+            }
+
+            return edgesAdded;
         }
 
         public bool hasInterference()
@@ -383,37 +431,6 @@ namespace GingerParser.DFG
             source.addEdge(target);
         }
 
-        private bool _performClosure()
-        {
-            bool edgesAdded = false;
-
-            // transitive closure
-            foreach (DFGNode n in _nodes)
-            {
-                List<DFGNode> nodesToAdd = new List<DFGNode>();
-                foreach (DFGNode nn in n.adjacencyList)
-                {
-                    foreach (DFGNode nnn in nn.adjacencyList)
-                    {
-                        if (!n.adjacencyList.Contains(nnn))
-                        {
-                            nodesToAdd.Add(nnn);
-                        }
-                    }
-                }
-
-                if (nodesToAdd.Count > 0)
-                {
-                    foreach (DFGNode nta in nodesToAdd)
-                    {
-                        n.adjacencyList.Add(nta);
-                    }
-
-                    edgesAdded = true;
-                }
-            }
-
-            return edgesAdded;
-        }
+        
     }
 }
