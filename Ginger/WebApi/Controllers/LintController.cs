@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             if (parser.errors.Count == 0 && sv.errors.Count == 0)
             {
                 VerificationVisitor vv = new VerificationVisitor(parser.ast);
-                vv.verifyComponents();
+                //vv.verifyComponents();
                 errors.AddRange(vv.errors);
             }
             //errors.AddRange(ddgv.errors);
