@@ -497,6 +497,11 @@ namespace GingerParser
         {
             ((SLVisitor)v).visitBinaryOperation(this);
         }
+
+        public override string ToString()
+        {
+            return $"{lhs.ToString()} + {rhs.ToString()}";
+        }
     }
 
     public class ImportList : SLNodeCollection
@@ -929,6 +934,11 @@ namespace GingerParser
 
                 return hash;
             }
+        }
+
+        public override string ToString()
+        {
+            return name;
         }
     }
 

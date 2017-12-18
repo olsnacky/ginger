@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerParser.DFG
 {
@@ -13,7 +11,8 @@ namespace GingerParser.DFG
         Invocation,
         Low,
         Return,
-        Subexpression
+        Subexpression,
+        Addition
     }
 
     public class DFGNode : IEquatable<DFGNode>
@@ -204,6 +203,22 @@ namespace GingerParser.DFG
                 DFGNode source = _findNode(i);
                 source.addEdge(sinkNode);
             }
+        }
+
+        public void addAddition(List<Identifier> sources, Identifier addition)
+        {
+            DFGNode sinkNode = _findNode(addition);
+            if (sinkNode == null)
+            {
+                sinkNode = new DFGNode(DFGNodeType.Addition, addition.name);
+                addNode(sinkNode);
+            }
+
+            foreach (Identifier i in sources)
+            {
+                DFGNode source = _findNode(i);
+                source.addEdge(sinkNode);
+            };
         }
 
         public void addFormalParam(DFGNode formalParam)
@@ -408,7 +423,7 @@ namespace GingerParser.DFG
         private DFGNode _findNode(Identifier i)
         {
             // find non-security nodes
-            DFGNode dfgn = _nodes.Find(n => n.subGraphId == new Guid() && (n.variable != null && n.variable.identifier == i) || (n.invocation != null && n.invocation.identifier == i && n.invocation.invocationCount == i.invocationCount));
+            DFGNode dfgn = _nodes.Find(n => n.subGraphId == new Guid() && ((n.variable != null && n.variable.identifier == i) || (n.invocation != null && n.invocation.identifier == i && n.invocation.invocationCount == i.invocationCount) || (n.type == DFGNodeType.Addition && n.label.Equals(i.name))));
 
             // find if security node
             if (dfgn == null)

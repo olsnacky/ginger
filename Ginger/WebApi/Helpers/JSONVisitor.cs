@@ -387,6 +387,11 @@ namespace WebApi.Helpers
                     return null;
                 }
             }
+            else if (n.type == DFGNodeType.Addition)
+            {
+                nt = NodeType.BinaryOperation;
+                label = n.label;
+            }
             else
             {
                 throw new ArgumentException();

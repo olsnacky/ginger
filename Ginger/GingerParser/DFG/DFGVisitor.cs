@@ -37,7 +37,7 @@ namespace GingerParser.DFG
             {
                 _errors.Add(pe);
             }
-            
+
         }
 
         //public VerificationVisitor(StatementList functionCode, VarList formalParams, DFGNode high, DFGNode low, Dictionary<Identifier, Dictionary<Identifier, DFG>> componentFunctionGraphs, List<DeferredInvocation> deferredInvocations, Identifier currentComponent) : base(functionCode, formalParams, high, low, componentFunctionGraphs, deferredInvocations, currentComponent)
@@ -406,7 +406,14 @@ namespace GingerParser.DFG
 
         public void visitBinaryOperation(BinaryOperation bo)
         {
+            Identifier i = new Identifier(0, 0, bo.ToString());
             visitChildren(bo);
+            if (_sources.Count > 0)
+            {
+                _dfg.addAddition(_sources, i);
+                _sources.Clear();
+            }
+            i.accept(this);
         }
 
         public void visitExpressionList(ExpressionList el)
